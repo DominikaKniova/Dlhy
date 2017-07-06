@@ -4,12 +4,15 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.icu.util.Calendar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MenuInflater;
 import android.widget.ImageButton;
@@ -23,11 +26,32 @@ public class NewDebt extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_debt);
 
-        Button expButton = (Button) findViewById(R.id.expandableButton_alert);
+        //expand date/time pickers
+        final Button expButton = (Button) findViewById(R.id.expandableButton_alert);
         expButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 expandableButtonAlerts(view);
+            }
+        });
+
+        TextInputEditText dateEditText = (TextInputEditText) findViewById(R.id.inputDate);
+        //disable input/keyboard
+        dateEditText.setFocusable(false);
+        dateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
+            }
+        });
+
+        TextInputEditText timeEditText = (TextInputEditText) findViewById(R.id.inputTime);
+        //disable input/keyboard
+        timeEditText.setFocusable(false);
+        timeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(v);
             }
         });
     }
@@ -45,16 +69,20 @@ public class NewDebt extends AppCompatActivity {
         return true;
     }
 
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), "timePicker");
-    }
-
     ExpandableRelativeLayout expandableLayout;
-
-    public void expandableButtonAlerts(View view) {
+    public void expandableButtonAlerts(View v) {
         expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
         expandableLayout.toggle(); // toggle expand and collapse
     }
-}
 
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragmentTime = new TimePickerFragment();
+        newFragmentTime.show(getFragmentManager(), "timePicker");
+
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragmentDate = new DatePickerFragment();
+        newFragmentDate.show(getFragmentManager(), "datePicker");
+    }
+}
