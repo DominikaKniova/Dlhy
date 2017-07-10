@@ -2,7 +2,8 @@
     <string name="app_name">Dluhy</string>
     <string name="title_activity_main">Dluhy</string>
     <string name="list_names">List of Names</string>
-    <string name="add_name">Add name</string>
+    <string name="add_person">Add person</string>
+    <string name="name">Name</string>
     <string name="calendar">Calendar</string>
     <string name="notification">Notification</string>
     <string name="sign_out">Sign Out</string>
@@ -12,9 +13,15 @@
     <string name="sum">Sum</string>
     <string name="set_date">Set Date</string>
     <string name="set_time">Set Time</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="new_password">New password</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_in">Sign in</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="set_alert">Set Alert</string>
+    <string name="title_activity_friend_profile">FriendProfile</string>
 </resources>

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/addName"
-        android:title="@string/add_name"
+        android:id="@+id/addPerson"
         android:icon="@drawable/ic_add_name"
+        android:title="@string/add_person"
         app:showAsAction="always" />
     <item
         android:id="@+id/listNames"
