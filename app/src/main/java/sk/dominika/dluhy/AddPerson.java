@@ -1,5 +1,6 @@
 package sk.dominika.dluhy;
 
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,6 +25,12 @@ public class AddPerson extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.check) {
+            TextInputEditText edTxtName = (TextInputEditText) findViewById(R.id.textInput_add_person_name);
+            TextInputEditText edTxtEmail = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
+
+            AddFriend f = new AddFriend(edTxtName, edTxtEmail);
+            AddFriend.myFriends.add(f);
+
             finish();
         }
         return super.onOptionsItemSelected(item);
