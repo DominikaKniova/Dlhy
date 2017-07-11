@@ -2,6 +2,10 @@ package sk.dominika.dluhy;
 
 import java.util.List;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -48,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent_person = new Intent(this,LogIn.class);
         startActivity(intent_person);
     }
+    public void newActivity_ListFriends(MenuItem item) {
+        Intent intent_friends = new Intent(this,ListFriendsActivity.class);
+        startActivity(intent_friends);
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -57,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 newActivity_addPerson(item);
                 break;
             case R.id.listNames:
-                printAccounts();
+                //printAccounts();
+                newActivity_ListFriends(item);
                 break;
             case R.id.calendar:
                 break;
