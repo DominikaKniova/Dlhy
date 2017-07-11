@@ -1,5 +1,7 @@
 package sk.dominika.dluhy;
 
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuInflater;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 newActivity_addPerson(item);
                 break;
             case R.id.listNames:
+                printAccounts();
                 break;
             case R.id.calendar:
                 break;
@@ -71,4 +75,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void printAccounts(){
+        TextView printer = (TextView) findViewById(R.id.printer);
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < Accounts.listOfAccounts.size(); i++) {
+            s.append(Accounts.listOfAccounts.get(i).getName());
+            s.append("\n");
+        }
+        printer.setText(s);
+    }
 }

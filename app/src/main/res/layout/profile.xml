@@ -33,4 +33,9 @@
         android:text="@string/sum"
         android:inputType="numberDecimal" />
 
+    <TextView
+        android:id="@+id/printer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
