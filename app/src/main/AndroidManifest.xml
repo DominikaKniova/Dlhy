@@ -25,10 +25,7 @@
         <activity android:name=".AddPerson" />
         <activity android:name=".LogIn" />
         <activity android:name=".SignIn" />
-        <activity
-            android:name=".FriendProfile"
-            android:label="@string/title_activity_friend_profile"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ListFriendsActivity"></activity>
     </application>
 
 </manifest>
