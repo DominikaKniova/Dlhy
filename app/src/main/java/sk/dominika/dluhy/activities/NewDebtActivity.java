@@ -9,15 +9,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
+import sk.dominika.dluhy.listeners.DialogListener;
 
-public class NewDebt extends AppCompatActivity {
+public class NewDebtActivity extends AppCompatActivity implements DialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,14 @@ public class NewDebt extends AppCompatActivity {
                 showTimePickerDialog(v);
             }
         });
+
+        TextView firendPic = (TextView) findViewById(R.id.friendsPic);
+        firendPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog_friends(v);
+            }
+        });
     }
 
     @Override
@@ -77,19 +89,30 @@ public class NewDebt extends AppCompatActivity {
     }
 
     ExpandableRelativeLayout expandableLayout;
-    public void expandableButtonAlerts(View v) {
+    private void expandableButtonAlerts(View v) {
         expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
         expandableLayout.toggle(); // toggle expand and collapse
     }
 
-    public void showTimePickerDialog(View v) {
+    private void showTimePickerDialog(View v) {
         DialogFragment newFragmentTime = new TimePickerFragment();
         newFragmentTime.show(getFragmentManager(), "timePicker");
 
     }
 
-    public void showDatePickerDialog(View v) {
+    private void showDatePickerDialog(View v) {
         DialogFragment newFragmentDate = new DatePickerFragment();
         newFragmentDate.show(getFragmentManager(), "datePicker");
+    }
+
+    private void showDialog_friends(View v) {
+        DialogFragment newDialog = new DialogFriends();
+        newDialog.show(getFragmentManager(), "friends");
+    }
+
+    @Override
+    public void onClick(String name) {
+        TextView tvName = (TextView) findViewById(R.id.friendsPic);
+        tvName.setText(name);
     }
 }

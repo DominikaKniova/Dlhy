@@ -22,18 +22,22 @@
             android:gravity="center"
             android:layout_marginBottom="@dimen/pic_margin">
 
-            <ImageView
+            <TextView
                 android:id="@+id/myPic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTop="@mipmap/ic_launcher"
                 android:layout_marginRight="@dimen/pic_margin"
-                app:srcCompat="@mipmap/ic_launcher" />
-            <ImageView
+                android:text="@string/name"
+                android:gravity="center"/>
+
+            <TextView
                 android:id="@+id/friendsPic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/pic_margin"
-                app:srcCompat="@mipmap/ic_launcher" />
+                android:drawableTop="@mipmap/ic_launcher"
+                android:gravity="center"/>
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout

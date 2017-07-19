@@ -27,9 +27,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     private Context memberContext;
 
-    public FriendAdapter(Context context, List<AddFriend> friends) {
+    private View.OnClickListener memberListener;
+
+    public FriendAdapter(Context context, List<AddFriend> friends, View.OnClickListener listener) {
         memberFriends = friends;
         memberContext = context;
+        memberListener = listener;
+
     }
 
     private Context getContext() {
@@ -45,6 +49,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
         ViewHolder viewHolder = new ViewHolder(friendView);
 
+
         return viewHolder;
     }
 
@@ -55,6 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         TextView textView = holder.nameTextView;
         textView.setText(friend.getName());
 
+        textView.setOnClickListener(memberListener);
     }
 
     @Override

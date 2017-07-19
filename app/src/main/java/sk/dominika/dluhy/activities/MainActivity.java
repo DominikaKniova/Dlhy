@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void newActivity_addDebt(View v){
-        Intent intent_debt = new Intent(this,NewDebt.class);
+        Intent intent_debt = new Intent(this,NewDebtActivity.class);
         startActivity(intent_debt);
     }
 
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.listNames:
                 //printAccounts();
-                //newActivity_ListFriends(item);
-                newDialog_friends(item);
+                newActivity_ListFriends(item);
+                //newDialog_friends(item);
                 break;
             case R.id.calendar:
                 break;

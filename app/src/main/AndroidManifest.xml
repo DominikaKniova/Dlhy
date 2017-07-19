@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity$NewDebt"
+            android:name=".activities.NewDebtActivity"
             android:parentActivityName=".activities.MainActivity" />
         <activity android:name=".activities.AddPerson" />
         <activity android:name=".activities.LogIn" />
