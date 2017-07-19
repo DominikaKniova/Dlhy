@@ -11,7 +11,7 @@ import android.widget.Button;
 import sk.dominika.dluhy.kindOfBackend.Person;
 import sk.dominika.dluhy.R;
 
-public class SignIn extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

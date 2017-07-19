@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.util.zip.Inflater;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.MainActivity;
 import sk.dominika.dluhy.adapters.FriendAdapter;
 import sk.dominika.dluhy.kindOfBackend.AddFriend;
 import sk.dominika.dluhy.listeners.DialogListener;

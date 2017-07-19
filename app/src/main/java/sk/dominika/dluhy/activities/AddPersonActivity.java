@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import sk.dominika.dluhy.kindOfBackend.AddFriend;
 import sk.dominika.dluhy.R;
 
-public class AddPerson extends AppCompatActivity {
+public class AddPersonActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

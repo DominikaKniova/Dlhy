@@ -9,7 +9,7 @@ import android.widget.Button;
 import sk.dominika.dluhy.R;
 
 
-public class LogIn extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void newAcitivity_signIn(View view){
-        Intent SignInActivity = new Intent(this,SignIn.class);
+        Intent SignInActivity = new Intent(this, sk.dominika.dluhy.activities.SignInActivity.class);
         startActivity(SignInActivity);
     }
 

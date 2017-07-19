@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void newActivity_addPerson(MenuItem item){
-        Intent intent_person = new Intent(this,AddPerson.class);
+        Intent intent_person = new Intent(this,AddPersonActivity.class);
         startActivity(intent_person);
     }
     private void newActivity_signOut(MenuItem item){
-        Intent intent_person = new Intent(this,LogIn.class);
+        Intent intent_person = new Intent(this,LogInActivity.class);
         startActivity(intent_person);
     }
     public void newActivity_ListFriends(MenuItem item) {
