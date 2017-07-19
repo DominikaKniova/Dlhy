@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="sk.dominika.dluhy.LogIn"
+    tools:context="sk.dominika.dluhy.activities.LogIn"
     android:orientation="vertical"
     android:padding="@dimen/fab_margin"
     android:layout_gravity="center">

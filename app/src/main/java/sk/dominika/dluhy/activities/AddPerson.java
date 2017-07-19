@@ -1,4 +1,4 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.activities;
 
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.R;
 
 public class AddPerson extends AppCompatActivity {
 

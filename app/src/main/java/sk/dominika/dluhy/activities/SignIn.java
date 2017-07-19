@@ -1,4 +1,4 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.activities;
 
 
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import sk.dominika.dluhy.kindOfBackend.Person;
+import sk.dominika.dluhy.R;
 
 public class SignIn extends AppCompatActivity {
 
@@ -25,7 +28,7 @@ public class SignIn extends AppCompatActivity {
                 TextInputEditText edTxtPassword = (TextInputEditText) findViewById(R.id.text_input_signIn_password);
 
                 Person p = new Person(edTxtName, edTxtEmail, edTxtPassword);
-                Accounts.listOfAccounts.add(p);
+                Person.listOfAccounts.add(p);
 
                 newAcitivity_main(view);
             }

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewDebt"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".AddPerson" />
-        <activity android:name=".LogIn" />
-        <activity android:name=".SignIn" />
-        <activity android:name=".ListFriendsActivity"></activity>
+            android:name=".activities.MainActivity$NewDebt"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.AddPerson" />
+        <activity android:name=".activities.LogIn" />
+        <activity android:name=".activities.SignIn" />
+        <activity android:name=".activities.ListFriendsActivity"></activity>
     </application>
 
 </manifest>

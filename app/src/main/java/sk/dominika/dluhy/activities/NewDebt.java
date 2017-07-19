@@ -1,27 +1,24 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.activities;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
-import android.icu.util.Calendar;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.view.MenuInflater;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
+import sk.dominika.dluhy.dialogs.DatePickerFragment;
+import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.dialogs.TimePickerFragment;
 
 public class NewDebt extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

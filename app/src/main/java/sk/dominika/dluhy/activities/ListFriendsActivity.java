@@ -1,7 +1,9 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import sk.dominika.dluhy.R;
 
 public class ListFriendsActivity extends AppCompatActivity {
 

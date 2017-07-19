@@ -1,4 +1,4 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.dialogs;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.adapters.FriendAdapter;
 
 
 /**
@@ -55,8 +57,6 @@ public class ListFriendsFragment extends Fragment {
         return fragment;
     }
 
-    ArrayList<Friend> friends;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,13 +64,6 @@ public class ListFriendsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-//        RecyclerView recycler_viewFriends = (RecyclerView) getView().findViewById(R.id.recycler_viewFriends);
-
-//        friends = Friend.createFriendList(20);
-//        FriendAdapter adapter = new FriendAdapter(getContext(), friends);
-//        recycler_viewFriends.setAdapter(adapter);
-//        recycler_viewFriends.setLayoutManager(new LinearLayoutManager(getContext()));
 
     }
 
@@ -81,8 +74,7 @@ public class ListFriendsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_list_friends, container, false);
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-        friends = Friend.createFriendList(100);
-        FriendAdapter adapter = new FriendAdapter(view.getContext(), friends);
+        FriendAdapter adapter = new FriendAdapter(view.getContext(), AddFriend.myFriends);
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

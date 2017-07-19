@@ -4,13 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sk.dominika.dluhy.ListFriendsActivity">
-
-    <fragment
-        android:id="@+id/fragmentFriends"
-        android:name="sk.dominika.dluhy.ListFriendsFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </fragment>
+    tools:context="sk.dominika.dluhy.activities.ListFriendsActivity">
 
 </RelativeLayout>

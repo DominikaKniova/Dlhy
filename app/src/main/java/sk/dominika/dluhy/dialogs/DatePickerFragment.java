@@ -1,4 +1,4 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.DatePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import sk.dominika.dluhy.R;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
 

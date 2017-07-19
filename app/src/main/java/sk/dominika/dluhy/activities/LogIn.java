@@ -1,10 +1,12 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import sk.dominika.dluhy.R;
 
 
 public class LogIn extends AppCompatActivity {

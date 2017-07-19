@@ -1,7 +1,6 @@
-package sk.dominika.dluhy;
+package sk.dominika.dluhy.adapters;
 
 import android.content.Context;
-import android.icu.util.Freezable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+
+import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.R;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
@@ -21,11 +23,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         }
     }
 
-    private List<Friend> memberFriends;
+    private List<AddFriend> memberFriends;
 
     private Context memberContext;
 
-    public FriendAdapter(Context context, List<Friend> friends) {
+    public FriendAdapter(Context context, List<AddFriend> friends) {
         memberFriends = friends;
         memberContext = context;
     }
@@ -48,7 +50,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(FriendAdapter.ViewHolder holder, int position) {
-        Friend friend = memberFriends.get(position);
+        AddFriend friend = memberFriends.get(position);
 
         TextView textView = holder.nameTextView;
         textView.setText(friend.getName());
