@@ -96,7 +96,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
             //add debt to database
             DebtsDBHandler dbDebts = new DebtsDBHandler(this);
-            Debt d = new Debt(edTxtName, edTxtSum, edTxtNote);
+            Debt d = new Debt(edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
             dbDebts.addDebtToDatabase(d);
 
             finish();

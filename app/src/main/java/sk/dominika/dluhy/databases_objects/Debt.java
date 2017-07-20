@@ -11,15 +11,19 @@ public class Debt {
     private String name;
     private String sum;
     private String note;
-    private SimpleDateFormat dateOfCreation;
-    private SimpleDateFormat timeOfCreation;
-    private SimpleDateFormat dateOfAlert;
-    private SimpleDateFormat timeOfAlert;
+    private String dateOfCreation;
+    private String timeOfCreation;
+    private String dateOfAlert;
+    private String timeOfAlert;
+    //TODO: casy a datumy na SimpleDateFormat
 
-    public Debt(TextView edTxtName, TextInputEditText edTxtSum, TextInputEditText edTxtNote) {
+    public Debt(TextView edTxtName, TextInputEditText edTxtSum, TextInputEditText edTxtNote,
+                TextInputEditText edTxtDateA, TextInputEditText edTxtTimeA) {
         this.name = edTxtName.getText().toString();
         this.sum = edTxtSum.getText().toString();
         this.note = edTxtNote.getText().toString();
+        this.dateOfAlert = edTxtDateA.getText().toString();
+        this.timeOfAlert = edTxtTimeA.getText().toString();
     }
 
     public Debt(String name, String sum, String note) {
@@ -40,19 +44,19 @@ public class Debt {
         return this.note;
     }
 
-    public SimpleDateFormat getDateOfCreation(){
+    public String getDateOfCreation(){
         return this.dateOfCreation;
     }
 
-    public SimpleDateFormat getTimeOfCreation(){
+    public String getTimeOfCreation(){
         return this.timeOfCreation;
     }
 
-    public SimpleDateFormat getDateOfAlert(){
+    public String getDateOfAlert(){
         return this.dateOfAlert;
     }
 
-    public SimpleDateFormat getTimeOfAlert(){
+    public String getTimeOfAlert(){
         return this.timeOfAlert;
     }
 

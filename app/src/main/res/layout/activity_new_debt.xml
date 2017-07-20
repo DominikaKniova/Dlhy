@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="@dimen/pic_margin">
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:id="@+id/myPic"
@@ -98,6 +98,7 @@
                 app:ael_orientation="vertical">
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/textLayoutDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/set_date">

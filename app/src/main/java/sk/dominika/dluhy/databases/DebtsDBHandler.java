@@ -57,10 +57,10 @@ public class DebtsDBHandler extends SQLiteOpenHelper {
         values.put(TableDebts.COLUMN_NAME, debt.getName());
         values.put(TableDebts.COLUMN_SUM, debt.getSum());
         values.put(TableDebts.COLUMN_NOTE, debt.getNote());
-        values.put(TableDebts.COLUMN_DATE_OF_CREATION, debt.getDateOfCreation().toString());
-        values.put(TableDebts.COLUMN_TIME_OF_CREATION, debt.getTimeOfCreation().toString());
-        values.put(TableDebts.COLUMN_ALERT_DATE, debt.getDateOfAlert().toString());
-        values.put(TableDebts.COLUMN_ALERT_TIME, debt.getTimeOfAlert().toString());
+        values.put(TableDebts.COLUMN_DATE_OF_CREATION, "test");
+        values.put(TableDebts.COLUMN_TIME_OF_CREATION, "test");
+        values.put(TableDebts.COLUMN_ALERT_DATE, "test");
+        values.put(TableDebts.COLUMN_ALERT_TIME, "test");
 
         //Insert Row
         db.insert(TableDebts.TABLE_NAME, null, values);
