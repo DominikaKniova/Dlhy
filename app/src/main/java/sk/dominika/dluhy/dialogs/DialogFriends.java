@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.zip.Inflater;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
+import sk.dominika.dluhy.databases.FriendsDBHandler;
 import sk.dominika.dluhy.kindOfBackend.AddFriend;
 import sk.dominika.dluhy.listeners.DialogListener;
 
@@ -56,6 +58,9 @@ public  class DialogFriends extends DialogFragment {
         };
 
         View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
+
+        FriendsDBHandler dbFr = new FriendsDBHandler(this.getActivity());
+        AddFriend.myFriends= dbFr.getFriendFromDatabase();
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
         FriendAdapter adapter = new FriendAdapter(view.getContext(), AddFriend.myFriends, lis);

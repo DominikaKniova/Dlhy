@@ -14,8 +14,17 @@ public class AddFriend {
         this.email = edTxtEmail.getText().toString();
     }
 
+    public AddFriend(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public String getName() {
         return this.name;
+    }
+
+    public String getEmail() {
+        return this.email;
     }
 
     public static List<AddFriend> myFriends = new ArrayList<AddFriend>();

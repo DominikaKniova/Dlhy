@@ -7,15 +7,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import sk.dominika.dluhy.databases.FriendsDBHandler;
 import sk.dominika.dluhy.kindOfBackend.AddFriend;
 import sk.dominika.dluhy.R;
 
-public class AddPersonActivity extends AppCompatActivity {
+public class AddFriendActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_person);
+        setContentView(R.layout.activity_add_friend);
+
     }
 
     @Override
@@ -31,8 +33,15 @@ public class AddPersonActivity extends AppCompatActivity {
             TextInputEditText edTxtName = (TextInputEditText) findViewById(R.id.textInput_add_person_name);
             TextInputEditText edTxtEmail = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
 
+            //My backend
+//            AddFriend f = new AddFriend(edTxtName, edTxtEmail);
+//            AddFriend.myFriends.add(f);
+
+            //Database
+            FriendsDBHandler dbFriends = new FriendsDBHandler(this);
+            //Add friend to database
             AddFriend f = new AddFriend(edTxtName, edTxtEmail);
-            AddFriend.myFriends.add(f);
+            dbFriends.addFriendToDatabase(f);
 
             finish();
         }

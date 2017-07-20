@@ -12,7 +12,12 @@ import android.view.View;
 import android.view.MenuInflater;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import sk.dominika.dluhy.databases.FriendsDBHandler;
 import sk.dominika.dluhy.dialogs.DialogFriends;
+import sk.dominika.dluhy.kindOfBackend.AddFriend;
 import sk.dominika.dluhy.kindOfBackend.Person;
 import sk.dominika.dluhy.R;
 
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void newActivity_addPerson(MenuItem item){
-        Intent intent_person = new Intent(this,AddPersonActivity.class);
+        Intent intent_person = new Intent(this,AddFriendActivity.class);
         startActivity(intent_person);
     }
     private void newActivity_signOut(MenuItem item){
@@ -67,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 newActivity_addPerson(item);
                 break;
             case R.id.listNames:
+                //newActivity_ListFriends(item);
                 //printAccounts();
-                newActivity_ListFriends(item);
                 //newDialog_friends(item);
                 break;
             case R.id.calendar:
@@ -87,13 +92,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void printAccounts(){
-        TextView printer = (TextView) findViewById(R.id.printer);
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < Person.listOfAccounts.size(); i++) {
-            s.append(Person.listOfAccounts.get(i).getName());
-            s.append("\n");
-        }
-        printer.setText(s);
-    }
+    //print my friends from database ...testing
+//    private void printAccounts(){
+//        FriendsDBHandler dbFr = new FriendsDBHandler(this);
+//        List<AddFriend> myFr = dbFr.getFriendFromDatabase();
+//
+//        TextView printer = (TextView) findViewById(R.id.printer);
+//        StringBuilder s = new StringBuilder();
+//        for (int i = 0; i < myFr.size(); i++) {
+//            s.append(myFr.get(i).getName());
+//            s.append("\n");
+//        }
+//        printer.setText(s);
+//    }
 }
