@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.R;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
@@ -23,13 +23,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         }
     }
 
-    private List<AddFriend> memberFriends;
+    private List<Friend> memberFriends;
 
     private Context memberContext;
 
     private View.OnClickListener memberListener;
 
-    public FriendAdapter(Context context, List<AddFriend> friends, View.OnClickListener listener) {
+    public FriendAdapter(Context context, List<Friend> friends, View.OnClickListener listener) {
         memberFriends = friends;
         memberContext = context;
         memberListener = listener;
@@ -55,7 +55,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(FriendAdapter.ViewHolder holder, int position) {
-        AddFriend friend = memberFriends.get(position);
+        Friend friend = memberFriends.get(position);
 
         TextView textView = holder.nameTextView;
         textView.setText(friend.getName());

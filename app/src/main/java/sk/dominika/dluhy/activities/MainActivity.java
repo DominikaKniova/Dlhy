@@ -10,15 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuInflater;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import sk.dominika.dluhy.databases.FriendsDBHandler;
 import sk.dominika.dluhy.dialogs.DialogFriends;
-import sk.dominika.dluhy.kindOfBackend.AddFriend;
-import sk.dominika.dluhy.kindOfBackend.Person;
 import sk.dominika.dluhy.R;
 
 
@@ -95,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     //print my friends from database ...testing
 //    private void printAccounts(){
 //        FriendsDBHandler dbFr = new FriendsDBHandler(this);
-//        List<AddFriend> myFr = dbFr.getFriendFromDatabase();
+//        List<Friend> myFr = dbFr.getFriendFromDatabase();
 //
 //        TextView printer = (TextView) findViewById(R.id.printer);
 //        StringBuilder s = new StringBuilder();

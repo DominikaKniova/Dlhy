@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
 
@@ -83,7 +83,7 @@ public class ListFriendsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.dialog_friends, container, false);
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-        FriendAdapter adapter = new FriendAdapter(view.getContext(), AddFriend.myFriends, lis);
+        FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, lis);
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

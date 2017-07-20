@@ -2,24 +2,18 @@ package sk.dominika.dluhy.dialogs;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-import java.util.zip.Inflater;
-
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
 import sk.dominika.dluhy.databases.FriendsDBHandler;
-import sk.dominika.dluhy.kindOfBackend.AddFriend;
+import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 public  class DialogFriends extends DialogFragment {
@@ -59,11 +53,12 @@ public  class DialogFriends extends DialogFragment {
 
         View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
 
+        //get friends from database
         FriendsDBHandler dbFr = new FriendsDBHandler(this.getActivity());
-        AddFriend.myFriends= dbFr.getFriendFromDatabase();
+        Friend.myFriends= dbFr.getFriendFromDatabase();
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-        FriendAdapter adapter = new FriendAdapter(view.getContext(), AddFriend.myFriends, lis);
+        FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, lis);
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
+import sk.dominika.dluhy.databases.DebtsDBHandler;
+import sk.dominika.dluhy.databases_objects.Debt;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
@@ -83,6 +85,20 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.check) {
+
+            //get data from inputs
+            TextView edTxtName = (TextView) findViewById(R.id.friendsPic);
+            TextInputEditText edTxtNote = (TextInputEditText) findViewById(R.id.textInput_note);
+            TextInputEditText edTxtSum = (TextInputEditText) findViewById(R.id.textInput_money);
+            TextInputEditText edTxtDateCreated = (TextInputEditText) findViewById(R.id.inputDate);
+            TextInputEditText edTxtTimeCreated = (TextInputEditText) findViewById(R.id.inputTime);
+
+
+            //add debt to database
+            DebtsDBHandler dbDebts = new DebtsDBHandler(this);
+            Debt d = new Debt(edTxtName, edTxtSum, edTxtNote);
+            dbDebts.addDebtToDatabase(d);
+
             finish();
         }
         return super.onOptionsItemSelected(item);

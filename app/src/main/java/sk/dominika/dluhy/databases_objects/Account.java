@@ -1,18 +1,18 @@
-package sk.dominika.dluhy.kindOfBackend;
+package sk.dominika.dluhy.databases_objects;
 
 import android.support.design.widget.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Person {
+public class Account {
     private String name;
     private String email;
     private String password;
 
-    public static List<Person> listOfAccounts = new ArrayList<Person>();
+    public static List<Account> listOfAccounts = new ArrayList<Account>();
 
-    public Person(TextInputEditText edTxtName, TextInputEditText edTxtEmail, TextInputEditText edTxtPassword) {
+    public Account(TextInputEditText edTxtName, TextInputEditText edTxtEmail, TextInputEditText edTxtPassword) {
         this.name = edTxtName.getText().toString();
         this.email = edTxtEmail.getText().toString();
         this.password = edTxtPassword.getText().toString();

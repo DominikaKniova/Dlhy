@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import sk.dominika.dluhy.kindOfBackend.Person;
+import sk.dominika.dluhy.databases_objects.Account;
 import sk.dominika.dluhy.R;
 
 public class SignInActivity extends AppCompatActivity {
@@ -27,8 +27,8 @@ public class SignInActivity extends AppCompatActivity {
                 TextInputEditText edTxtEmail = (TextInputEditText) findViewById(R.id.text_input_signIn_email);
                 TextInputEditText edTxtPassword = (TextInputEditText) findViewById(R.id.text_input_signIn_password);
 
-                Person p = new Person(edTxtName, edTxtEmail, edTxtPassword);
-                Person.listOfAccounts.add(p);
+                Account p = new Account(edTxtName, edTxtEmail, edTxtPassword);
+                Account.listOfAccounts.add(p);
 
                 newAcitivity_main(view);
             }
