@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
-import sk.dominika.dluhy.databases.DebtsDBHandler;
+import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
@@ -39,6 +39,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             }
         });
 
+        //date picker
         TextInputEditText dateEditText = (TextInputEditText) findViewById(R.id.inputDate);
         //disable input/keyboard
         dateEditText.setFocusable(false);
@@ -49,6 +50,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             }
         });
 
+        //time picker
         TextInputEditText timeEditText = (TextInputEditText) findViewById(R.id.inputTime);
         //disable input/keyboard
         timeEditText.setFocusable(false);
@@ -59,11 +61,30 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             }
         });
 
+        //choose friend
         TextView firendPic = (TextView) findViewById(R.id.friendsPic);
         firendPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog_friends(v);
+            }
+        });
+
+        //change arrow
+        final ImageView arrow = (ImageView) findViewById(R.id.arrow);
+        arrow.setImageResource(R.drawable.ic_arrow_forward);
+        arrow.setTag("arrForward");
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String imageTag = (String) arrow.getTag();
+                if (imageTag.equals("arrForward")) {
+                    arrow.setTag("arrBack");
+                    arrow.setImageResource(R.drawable.ic_arrow_back);
+                }else {
+                    arrow.setTag("arrForward");
+                    arrow.setImageResource(R.drawable.ic_arrow_forward);
+                }
             }
         });
     }
@@ -95,7 +116,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
 
             //add debt to database
-            DebtsDBHandler dbDebts = new DebtsDBHandler(this);
+            DatabaseHandler dbDebts = new DatabaseHandler(this);
             Debt d = new Debt(edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
             dbDebts.addDebtToDatabase(d);
 

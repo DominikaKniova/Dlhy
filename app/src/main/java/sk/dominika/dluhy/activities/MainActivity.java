@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     //print my friends from database ...testing
 //    private void printAccounts(){
-//        FriendsDBHandler dbFr = new FriendsDBHandler(this);
+//        DatabaseHandler dbFr = new DatabaseHandler(this);
 //        List<Friend> myFr = dbFr.getFriendFromDatabase();
 //
 //        TextView printer = (TextView) findViewById(R.id.printer);

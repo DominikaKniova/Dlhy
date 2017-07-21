@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
-import sk.dominika.dluhy.databases.FriendsDBHandler;
+import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.listeners.DialogListener;
 
@@ -23,7 +23,6 @@ public  class DialogFriends extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -54,7 +53,7 @@ public  class DialogFriends extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
 
         //get friends from database
-        FriendsDBHandler dbFr = new FriendsDBHandler(this.getActivity());
+        DatabaseHandler dbFr = new DatabaseHandler(this.getActivity());
         Friend.myFriends= dbFr.getFriendFromDatabase();
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);

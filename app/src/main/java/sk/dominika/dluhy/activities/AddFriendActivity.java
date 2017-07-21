@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import sk.dominika.dluhy.databases.FriendsDBHandler;
+import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.R;
 
@@ -41,7 +41,7 @@ public class AddFriendActivity extends AppCompatActivity {
 //            Friend.myFriends.add(f);
 
             //Database
-            FriendsDBHandler dbFriends = new FriendsDBHandler(this);
+            DatabaseHandler dbFriends = new DatabaseHandler(this);
             //Add friend to database
             Friend f = new Friend(edTxtName, edTxtEmail);
             dbFriends.addFriendToDatabase(f);
