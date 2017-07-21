@@ -35,7 +35,10 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         Calendar c = Calendar.getInstance();
         c.set(hourOfDay, minute);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+
+        //TODO: prerobit
+
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
         String formattedTime = sdf.format(c.getTime());
 
         TextInputEditText inputTime = (TextInputEditText)getActivity().findViewById(R.id.inputTime);

@@ -85,22 +85,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         //read all friends from database
-        public List<Friend> getFriendFromDatabase() {
-            List<Friend> list = new ArrayList<Friend>();
-            SQLiteDatabase db = this.getReadableDatabase();
+        public List<Friend> getFriendsFromDatabase() {
+            List<Friend> list_friends = new ArrayList<Friend>();
+            SQLiteDatabase dbFriends = this.getReadableDatabase();
             String selectQuery = "SELECT * FROM " + TableFriends.TABLE_NAME;
-            Cursor cursor = db.rawQuery(selectQuery, null);
+            Cursor cursor = dbFriends.rawQuery(selectQuery, null);
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do{
                     Friend fr = new Friend(cursor.getString(1), cursor.getString(2));
-                    list.add(fr);
+                    list_friends.add(fr);
                 }while (cursor.moveToNext());
             }
             cursor.close();
-            db.close();
-            return list;
+            dbFriends.close();
+            return list_friends;
         }
 
     //add new debt to database from NewDebtActivity
@@ -118,6 +118,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //Insert Row
         db.insert(TableDebts.TABLE_NAME, null, values);
         db.close();
+    }
+
+    //read all debts from database
+    public List<Debt> getDebtsFromDatabase(){
+        List<Debt> list_debts = new ArrayList<Debt>();
+        SQLiteDatabase dbDebts = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TableDebts.TABLE_NAME;
+        Cursor cursor = dbDebts.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do{
+                Debt d = new Debt(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                list_debts.add(d);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        dbDebts.close();
+        return list_debts;
     }
 
         //delete whole database of friends

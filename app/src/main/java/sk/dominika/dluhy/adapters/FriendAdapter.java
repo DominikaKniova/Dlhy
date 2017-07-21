@@ -14,6 +14,8 @@ import sk.dominika.dluhy.R;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
+    // Provide a direct reference to each of the views within a data item
+    // Used to cache the views within the item layout for fast access
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
 
@@ -36,10 +38,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     }
 
-    private Context getContext() {
-        return memberContext;
-    }
-
     @Override
     public FriendAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -49,12 +47,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
         ViewHolder viewHolder = new ViewHolder(friendView);
 
-
         return viewHolder;
     }
 
+    // Involves populating data into the item through holder
     @Override
     public void onBindViewHolder(FriendAdapter.ViewHolder holder, int position) {
+        // Get the data model based on position
         Friend friend = memberFriends.get(position);
 
         TextView textView = holder.nameTextView;
@@ -63,6 +62,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         textView.setOnClickListener(memberListener);
     }
 
+    // Returns the total count of items in the list
     @Override
     public int getItemCount() {
         return memberFriends.size();

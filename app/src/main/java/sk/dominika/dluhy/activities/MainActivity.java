@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuInflater;
 
+import sk.dominika.dluhy.dialogs.DialogDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 //newActivity_ListFriends(item);
                 //printAccounts();
                 //newDialog_friends(item);
+                showDialog_debts(item);
                 break;
             case R.id.calendar:
                 break;
@@ -85,10 +87,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void showDialog_debts(MenuItem item) {
+        DialogFragment newDialog = new DialogDebts();
+        newDialog.show(getFragmentManager(), "debts");
+
+    }
+
     //print my friends from database ...testing
 //    private void printAccounts(){
 //        DatabaseHandler dbFr = new DatabaseHandler(this);
-//        List<Friend> myFr = dbFr.getFriendFromDatabase();
+//        List<Friend> myFr = dbFr.getFriendsFromDatabase();
 //
 //        TextView printer = (TextView) findViewById(R.id.printer);
 //        StringBuilder s = new StringBuilder();

@@ -9,6 +9,7 @@
     android:background="?android:attr/selectableItemBackground">
 
     <TextView
+        android:id="@+id/dialog_debt_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="$$$"
@@ -16,6 +17,7 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/dialog_debt_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
@@ -23,6 +25,7 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/dialog_debt_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Note"
@@ -30,6 +33,7 @@
         android:textSize="16sp"/>
 
     <ImageView
+        android:id="@+id/dialog_debt_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_more_options"/>

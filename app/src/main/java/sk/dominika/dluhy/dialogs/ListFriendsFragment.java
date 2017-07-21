@@ -82,6 +82,7 @@ public class ListFriendsFragment extends Fragment {
 
         View view =  inflater.inflate(R.layout.dialog_friends, container, false);
 
+        //create recycle view for friends
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
         FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, lis);
         recycler_viewFriends.setAdapter(adapter);

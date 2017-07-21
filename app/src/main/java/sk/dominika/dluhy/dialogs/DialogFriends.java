@@ -54,7 +54,7 @@ public  class DialogFriends extends DialogFragment {
 
         //get friends from database
         DatabaseHandler dbFr = new DatabaseHandler(this.getActivity());
-        Friend.myFriends= dbFr.getFriendFromDatabase();
+        Friend.myFriends= dbFr.getFriendsFromDatabase();
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
         FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, lis);
