@@ -3,12 +3,12 @@ package sk.dominika.dluhy.databases_objects;
 import android.support.design.widget.TextInputEditText;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Debt {
-    private String name;
+    private String id_friend;
+    private String friend_name;
     private String sum;
     private String note;
     private String dateOfCreation;
@@ -19,7 +19,7 @@ public class Debt {
 
     public Debt(TextView edTxtName, TextInputEditText edTxtSum, TextInputEditText edTxtNote,
                 TextInputEditText edTxtDateA, TextInputEditText edTxtTimeA) {
-        this.name = edTxtName.getText().toString();
+        this.friend_name = edTxtName.getText().toString();
         this.sum = edTxtSum.getText().toString();
         this.note = edTxtNote.getText().toString();
         this.dateOfAlert = edTxtDateA.getText().toString();
@@ -27,13 +27,13 @@ public class Debt {
     }
 
     public Debt(String name, String sum, String note) {
-        this.name = name;
+        this.friend_name = name;
         this.sum = sum;
         this.note = note;
     }
 
-    public String getName() {
-        return this.name;
+    public String getFriend_name() {
+        return this.friend_name;
     }
 
     public String getSum(){
@@ -43,6 +43,8 @@ public class Debt {
     public String getNote() {
         return this.note;
     }
+
+    public String getId_friend() { return this.id_friend; }
 
     public String getDateOfCreation(){
         return this.dateOfCreation;

@@ -18,10 +18,12 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     // Used to cache the views within the item layout for fast access
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
+        public TextView idTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.friend_name);
+            idTextView = (TextView) itemView.findViewById(R.id.idid);
         }
     }
 
@@ -57,7 +59,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         Friend friend = memberFriends.get(position);
 
         TextView textView = holder.nameTextView;
-        textView.setText(friend.getName());
+        textView.setText(friend.getFirstName());
+
+        //test
+        TextView textView1 = holder.idTextView;
+        textView1.setText(Long.toString(friend.getId()));
 
         textView.setOnClickListener(memberListener);
     }

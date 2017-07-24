@@ -4,11 +4,14 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.DebtAdapter;
@@ -30,6 +33,32 @@ public class DialogDebts extends DialogFragment {
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+//        setHasOptionsMenu(true);
+//        setMenuVisibility(true);
+//        registerForContextMenu(view.findViewById(R.id.dialog_debt_menu));
+
         return view;
     }
+
+//    private void showMenu(View view) {
+//        setMenuVisibility(true);
+//    }
+//
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.menu_dialog_debts, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        menu.add("delete");
+//    }
 }

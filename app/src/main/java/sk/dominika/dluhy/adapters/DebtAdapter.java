@@ -31,7 +31,6 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
             nameTextView = (TextView) itemView.findViewById(R.id.dialog_debt_name);
             noteTextView = (TextView) itemView.findViewById(R.id.dialog_debt_note);
             menuImageView = (ImageView) itemView.findViewById(R.id.dialog_debt_menu);
-
         }
     }
 
@@ -51,6 +50,8 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
         View debtView = inflater.inflate(R.layout.debt, parent, false);
         ViewHolder viewHolder = new ViewHolder(debtView);
 
+
+
         return viewHolder;
     }
 
@@ -64,7 +65,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
         tvSum.setText(debt.getSum());
 
         TextView tvName = holder.nameTextView;
-        tvName.setText(debt.getName());
+        tvName.setText(debt.getFriend_name());
 
         TextView tvNote = holder.noteTextView;
         tvNote.setText(debt.getNote());

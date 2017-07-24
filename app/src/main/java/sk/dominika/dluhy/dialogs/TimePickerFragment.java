@@ -30,15 +30,15 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
                 DateFormat.is24HourFormat(getActivity()));
     }
 
+    // Do something with the time chosen by the user
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // Do something with the time chosen by the user
         Calendar c = Calendar.getInstance();
-        c.set(hourOfDay, minute);
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
 
+        //TODO:skus vecer
 
-        //TODO: prerobit
-
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         String formattedTime = sdf.format(c.getTime());
 
         TextInputEditText inputTime = (TextInputEditText)getActivity().findViewById(R.id.inputTime);

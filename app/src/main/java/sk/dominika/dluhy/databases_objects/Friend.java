@@ -6,26 +6,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Friend {
-    private String name;
+    private long id;
+    private String firstName;
+    private String lastName;
     private String email;
 
-    public Friend(TextInputEditText edTxtName, TextInputEditText edTxtEmail) {
-        this.name = edTxtName.getText().toString();
-        this.email = edTxtEmail.getText().toString();
+    public Friend(TextInputEditText firstname, TextInputEditText lastname, TextInputEditText email) {
+        this.firstName = firstname.getText().toString();
+        this.lastName = lastname.getText().toString();
+        this.email = email.getText().toString();
     }
 
-    public Friend(String name, String email) {
-        this.name = name;
+    public Friend(String firstname, String lastname, String email) {
+        this.firstName = firstname;
+        this.lastName = lastname;
         this.email = email;
     }
 
-    public String getName() {
-        return this.name;
+    public String getFirstName() {
+        return this.firstName;
     }
+
+    public String getLastName() { return this.lastName; }
 
     public String getEmail() {
         return this.email;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() { return this.id; }
 
     public static List<Friend> myFriends = new ArrayList<Friend>();
 }

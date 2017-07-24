@@ -4,6 +4,8 @@
     <string name="list_names">List of Names</string>
     <string name="add_person">Add person</string>
     <string name="name">Name</string>
+    <string name="firstname">First name</string>
+    <string name="lastname">Last name</string>
     <string name="calendar">Calendar</string>
     <string name="notification">Notification</string>
     <string name="sign_out">Sign Out</string>
@@ -11,6 +13,7 @@
     <string name="Money">$</string>
     <string name="check">Check</string>
     <string name="sum">Sum</string>
+    <string name="set_alert">Set Alert</string>
     <string name="set_date">Set Date</string>
     <string name="set_time">Set Time</string>
     <string name="email">Email</string>
@@ -21,9 +24,8 @@
     <string name="pay_debt">Pay debt</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="my_debts">My debts</string>
+    <string name="our_debts">Our debts</string>
+    <string name="close">Close</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="set_alert">Set Alert</string>
-    <string name="title_activity_friend_profile">FriendProfile</string>
 </resources>

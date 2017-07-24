@@ -21,37 +21,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //table scheme_FRIENDS
         public static class TableFriends implements BaseColumns {
             public static final String TABLE_NAME = "myFriends";
-            public static final String COLUMN_NAME = "name";
+            public static final String COLUMN_FIRSTNAME = "firstname";
+            public static final String COLUMN_LASTNAME = "lastname";
             public static final String COLUMN_EMAIL = "email";
         }
 
         // SQL statements_FRIENDS
         private static final String SQL_CREATE_FRIENDS = "CREATE TABLE " + TableFriends.TABLE_NAME +
-                " (" + "INTEGER PRIMARY KEY, " + TableFriends.COLUMN_NAME +
+                " (" + TableFriends._ID + " INTEGER PRIMARY KEY, " + TableFriends.COLUMN_FIRSTNAME +
+                " TEXT, " + TableFriends.COLUMN_LASTNAME +
                 " TEXT, " + TableFriends.COLUMN_EMAIL + " TEXT)";
         private static final String SQL_DELETE_FRIENDS = "DROP TABLE IF EXISTS " + TableFriends.TABLE_NAME;
 
         //table scheme_DEBTS
         public static class TableDebts implements BaseColumns {
             public static final String TABLE_NAME = "myDebts";
-            public static final String COLUMN_NAME = "name";
+            public static final String COLUMN_FRIEND_ID = "id_friend";
+            public static final String COLUMN_FRIEND_NAME = "friend_name";
             public static final String COLUMN_SUM = "sum";
             public static final String COLUMN_NOTE = "note";
             public static final String COLUMN_DATE_OF_CREATION = "date_created";
             public static final String COLUMN_TIME_OF_CREATION = "time_created";
             public static final String COLUMN_ALERT_DATE = "date_alert";
             public static final String COLUMN_ALERT_TIME = "time_alert";
+            public static final String COLUMN_PAID = "paid";
         }
 
         //SQL statements_DEBTS
         private static String SQL_CREATE_DEBTS = "CREATE TABLE " + TableDebts.TABLE_NAME +
-                " (" + "INTEGER PRIMARY KEY, " + TableDebts.COLUMN_NAME +
+                " (" + TableDebts._ID + " INTEGER PRIMARY KEY, " + TableDebts.COLUMN_FRIEND_ID +
+                " TEXT, " + TableDebts.COLUMN_FRIEND_NAME +
                 " TEXT, " + TableDebts.COLUMN_SUM +
                 " TEXT, " + TableDebts.COLUMN_NOTE +
                 " TEXT, " + TableDebts.COLUMN_DATE_OF_CREATION +
                 " TEXT, " + TableDebts.COLUMN_TIME_OF_CREATION +
                 " TEXT, " + TableDebts.COLUMN_ALERT_DATE +
-                " TEXT, " + TableDebts.COLUMN_ALERT_TIME + " TEXt)";
+                " TEXT, " + TableDebts.COLUMN_ALERT_TIME +
+                " TEXT, " + TableDebts.COLUMN_PAID + " TEXT)";
         private static String SQL_DELETE_DEBTS = "DROP TABLE IF EXISTS " + TableDebts.TABLE_NAME;
 
 
@@ -73,15 +79,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         //add my new friend from AddFriendActivity
-        public void addFriendToDatabase(Friend friend) {
+        //returns friend's ID
+        public long addFriendToDatabase(Friend friend) {
+
+            // Gets the data repository in write mode
             SQLiteDatabase db = this.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
-            values.put(TableFriends.COLUMN_NAME, friend.getName());
+            values.put(TableFriends.COLUMN_FIRSTNAME, friend.getFirstName());
+            values.put(TableFriends.COLUMN_LASTNAME, friend.getLastName());
             values.put(TableFriends.COLUMN_EMAIL, friend.getEmail());
 
-            //Insert Row
-            db.insert(TableFriends.TABLE_NAME, null, values);
+            //Insert Row and return new ID
+            long newId = db.insert(TableFriends.TABLE_NAME, null, values);
+
+//            //get id of friend
+//            String selectQuery = "SELECT * FROM " + TableFriends.TABLE_NAME;
+//            Cursor cursor = db.rawQuery(selectQuery, null);
+//            cursor.moveToLast();
+
             db.close();
+            return newId;
         }
 
         //read all friends from database
@@ -94,7 +113,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do{
-                    Friend fr = new Friend(cursor.getString(1), cursor.getString(2));
+                    //cursor get FIRSTNAME, LASTNAME, EMAIL
+                    Friend fr = new Friend(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                    fr.setId(new Long(cursor.getString(0)));
                     list_friends.add(fr);
                 }while (cursor.moveToNext());
             }
@@ -105,15 +126,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //add new debt to database from NewDebtActivity
     public void addDebtToDatabase(Debt debt) {
+        // Gets the data repository in write mode
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(TableDebts.COLUMN_NAME, debt.getName());
+        values.put(TableDebts.COLUMN_FRIEND_ID, debt.getId_friend());
+        values.put(TableDebts.COLUMN_FRIEND_NAME, debt.getFriend_name());
         values.put(TableDebts.COLUMN_SUM, debt.getSum());
         values.put(TableDebts.COLUMN_NOTE, debt.getNote());
         values.put(TableDebts.COLUMN_DATE_OF_CREATION, "test");
         values.put(TableDebts.COLUMN_TIME_OF_CREATION, "test");
         values.put(TableDebts.COLUMN_ALERT_DATE, "test");
         values.put(TableDebts.COLUMN_ALERT_TIME, "test");
+        values.put(TableDebts.COLUMN_PAID, "false");
 
         //Insert Row
         db.insert(TableDebts.TABLE_NAME, null, values);
@@ -130,6 +156,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do{
+                //cursor get NAME OF FRIEND, SUM, NOTE
                 Debt d = new Debt(cursor.getString(1), cursor.getString(2), cursor.getString(3));
                 list_debts.add(d);
             }while (cursor.moveToNext());

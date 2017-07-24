@@ -18,6 +18,8 @@ public class AddFriendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
 
+        setTitle("Add Friend");
+
     }
 
     @Override
@@ -33,8 +35,9 @@ public class AddFriendActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.check) {
 
             //get data from inputs
-            TextInputEditText edTxtName = (TextInputEditText) findViewById(R.id.textInput_add_person_name);
-            TextInputEditText edTxtEmail = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
+            TextInputEditText firstName = (TextInputEditText) findViewById(R.id.textInput_add_person_firstname);
+            TextInputEditText lastName = (TextInputEditText) findViewById(R.id.textInput_add_person_lastname);
+            TextInputEditText email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
 
             //My backend
 //            Friend f = new Friend(edTxtName, edTxtEmail);
@@ -43,8 +46,10 @@ public class AddFriendActivity extends AppCompatActivity {
             //Database
             DatabaseHandler dbFriends = new DatabaseHandler(this);
             //Add friend to database
-            Friend f = new Friend(edTxtName, edTxtEmail);
-            dbFriends.addFriendToDatabase(f);
+            Friend f = new Friend(firstName, lastName, email);
+            long newID = dbFriends.addFriendToDatabase(f);
+            //set friend's ID
+            f.setId(newID);
 
             finish();
         }
