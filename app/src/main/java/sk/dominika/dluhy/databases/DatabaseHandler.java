@@ -52,7 +52,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 " (" + TableDebts._ID + " INTEGER PRIMARY KEY, " + TableDebts.COLUMN_FRIEND_ID +
                 " TEXT, " + TableDebts.COLUMN_FRIEND_NAME +
                 " TEXT, " + TableDebts.COLUMN_SUM +
-                " TEXT, " + TableDebts.COLUMN_NOTE +
+                " REAL, " + TableDebts.COLUMN_NOTE +
                 " TEXT, " + TableDebts.COLUMN_DATE_OF_CREATION +
                 " TEXT, " + TableDebts.COLUMN_TIME_OF_CREATION +
                 " TEXT, " + TableDebts.COLUMN_ALERT_DATE +
@@ -114,7 +114,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do{
                     //cursor get FIRSTNAME, LASTNAME, EMAIL
-                    Friend fr = new Friend(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                    Friend fr = new Friend(
+                            cursor.getString(cursor.getColumnIndex("firstname")),
+                            cursor.getString(cursor.getColumnIndex("lastname")),
+                            cursor.getString(cursor.getColumnIndex("email")));
                     fr.setId(new Long(cursor.getString(0)));
                     list_friends.add(fr);
                 }while (cursor.moveToNext());
@@ -147,7 +150,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //read all debts from database
-    public List<Debt> getDebtsFromDatabase(){
+
+    /**
+     * Get whole database of my debts
+     * @return list of all my debts
+     */
+    public List<Debt> getMyDebtsFromDatabase(){
         List<Debt> list_debts = new ArrayList<Debt>();
         SQLiteDatabase dbDebts = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TableDebts.TABLE_NAME;
@@ -156,8 +164,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do{
-                //cursor get NAME OF FRIEND, SUM, NOTE
-                Debt d = new Debt(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                //cursor get ID OD FRIEND, NAME OF FRIEND, SUM, NOTE
+                Debt d = new Debt(
+                        cursor.getInt(cursor.getColumnIndex("id_friend")),
+                        cursor.getString(cursor.getColumnIndex("friend_name")),
+                        cursor.getFloat(cursor.getColumnIndex("sum")),
+                        cursor.getString(cursor.getColumnIndex("note")));
                 list_debts.add(d);
             }while (cursor.moveToNext());
         }
@@ -166,9 +178,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return list_debts;
     }
 
-        //delete whole database of friends
-        public void deleteDatabase() {
-            SQLiteDatabase db = this.getWritableDatabase();
-            db.delete(TableFriends.TABLE_NAME, null, null);
+    /**
+     * Finds the friend through ID in database.
+     * @param friend_id
+     * @return Firstname of friend.
+     */
+    public String getNameFromDatabase(long friend_id) {
+        String name = "";
+        SQLiteDatabase dbFriends = this.getReadableDatabase();
+        String selectQuery = "SELECT " + DatabaseHandler.TableFriends.COLUMN_FIRSTNAME + " FROM "
+                + DatabaseHandler.TableFriends.TABLE_NAME + " WHERE " + DatabaseHandler.TableFriends._ID
+                + "='" + friend_id +"'";
+        Cursor cursor = dbFriends.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            name = cursor.getString(cursor.getColumnIndex("firstname"));
         }
+
+        return name;
     }
+}
