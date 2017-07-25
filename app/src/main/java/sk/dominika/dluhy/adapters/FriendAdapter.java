@@ -23,7 +23,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.friend_name);
-            idTextView = (TextView) itemView.findViewById(R.id.idid);
+            idTextView = (TextView) itemView.findViewById(R.id.id_friend);
+            //idTextView.setVisibility(View.INVISIBLE);
         }
     }
 
