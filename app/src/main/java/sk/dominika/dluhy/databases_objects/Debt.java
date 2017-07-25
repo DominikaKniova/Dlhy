@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Debt {
+    private long id_debt;
     private long id_friend;
     private String friend_name;
     private float sum;
@@ -47,6 +48,10 @@ public class Debt {
     }
 
     public long getId_friend() { return this.id_friend; }
+
+    public void setId_debt(long id) {
+        this.id_friend = id;
+    }
 
     public String getDateOfCreation(){
         return this.dateOfCreation;

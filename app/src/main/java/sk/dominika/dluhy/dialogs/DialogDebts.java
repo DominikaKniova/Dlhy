@@ -22,6 +22,7 @@ public class DialogDebts extends DialogFragment {
         //get debts from database
         DatabaseHandler dbDeb = new DatabaseHandler(this.getActivity());
         Debt.myDebts= dbDeb.getMyDebtsFromDatabase();
+//        Debt.myDebts = dbDeb.getOurDebtsWithFriend(2);
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewDebts);
         DebtAdapter adapter = new DebtAdapter(view.getContext(), Debt.myDebts);

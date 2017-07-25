@@ -39,10 +39,6 @@ public class AddFriendActivity extends AppCompatActivity {
             TextInputEditText lastName = (TextInputEditText) findViewById(R.id.textInput_add_person_lastname);
             TextInputEditText email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
 
-            //My backend
-//            Friend f = new Friend(edTxtName, edTxtEmail);
-//            Friend.myFriends.add(f);
-
             //Database
             DatabaseHandler dbFriends = new DatabaseHandler(this);
             //Add friend to database
