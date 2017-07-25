@@ -40,15 +40,7 @@ public  class DialogFriends extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View.OnClickListener lis = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onClick(((TextView) v).getText().toString());
-                dismiss();
-            }
-        };
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
 
@@ -57,7 +49,7 @@ public  class DialogFriends extends DialogFragment {
         Friend.myFriends= dbFr.getFriendsFromDatabase();
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-        FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, lis);
+        FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, mListener, DialogFriends.this);
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

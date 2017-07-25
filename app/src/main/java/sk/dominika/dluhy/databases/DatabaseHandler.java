@@ -195,7 +195,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
             name = cursor.getString(cursor.getColumnIndex("firstname"));
         }
-
         return name;
     }
 }

@@ -1,5 +1,6 @@
 package sk.dominika.dluhy.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import java.util.List;
 
 import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.dialogs.DialogFriends;
+import sk.dominika.dluhy.listeners.DialogListener;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
@@ -24,7 +27,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.friend_name);
             idTextView = (TextView) itemView.findViewById(R.id.id_friend);
-            //idTextView.setVisibility(View.INVISIBLE);
+            idTextView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -32,12 +35,22 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     private Context memberContext;
 
-    private View.OnClickListener memberListener;
+    private DialogListener memberListener;
 
-    public FriendAdapter(Context context, List<Friend> friends, View.OnClickListener listener) {
+    private DialogFriends dialogFriends;
+
+    /**
+     *
+     * @param context
+     * @param friends
+     * @param listener
+     * @param dFriends Reference to dialog DialogFriend, so that can be dismissed.
+     */
+    public FriendAdapter(Context context, List<Friend> friends, DialogListener listener, DialogFriends dFriends) {
         memberFriends = friends;
         memberContext = context;
         memberListener = listener;
+        dialogFriends = dFriends;
 
     }
 
@@ -55,7 +68,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(FriendAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final FriendAdapter.ViewHolder holder, final int position) {
         // Get the data model based on position
         Friend friend = memberFriends.get(position);
 
@@ -66,7 +79,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         TextView textView1 = holder.idTextView;
         textView1.setText(Long.toString(friend.getId()));
 
-        textView.setOnClickListener(memberListener);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                memberListener.onClick(memberFriends.get(position).getId());
+                dialogFriends.dismiss();
+            }
+        });
     }
 
     // Returns the total count of items in the list

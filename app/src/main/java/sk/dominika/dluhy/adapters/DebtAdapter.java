@@ -62,7 +62,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
         Debt debt = memberDebts.get(position);
 
         TextView tvSum = holder.sumTextView;
-        tvSum.setText(debt.getSum());
+        tvSum.setText(String.valueOf(debt.getSum()));
 
         TextView tvName = holder.nameTextView;
         tvName.setText(debt.getFriend_name());

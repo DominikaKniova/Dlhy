@@ -1,7 +1,10 @@
 package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.ContactsContract;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +21,7 @@ import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
+import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
@@ -120,7 +124,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
             //add debt to database
             DatabaseHandler dbDebts = new DatabaseHandler(this);
-            Debt d = new Debt(edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
+            Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
             dbDebts.addDebtToDatabase(d);
 
             finish();
@@ -150,9 +154,17 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         newDialog.show(getFragmentManager(), "friends");
     }
 
+
+    /**
+     * Makes access to friend's id through DialogFriends.
+     * Sets the text (name of friend) of TextView friendsPic.
+     */
+    private  long id_of_friend;
     @Override
-    public void onClick(String name) {
+    public void onClick(long friend_id) {
         TextView tvName = (TextView) findViewById(R.id.friendsPic);
-        tvName.setText(name);
+        id_of_friend = friend_id;
+        DatabaseHandler database = new DatabaseHandler(this);
+        tvName.setText(database.getNameFromDatabase(friend_id));
     }
 }

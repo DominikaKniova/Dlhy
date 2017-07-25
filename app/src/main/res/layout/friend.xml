@@ -12,11 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_toRightOf="@+id/idid"
+        android:layout_toRightOf="@+id/id_friend"
         android:textSize="16dp"/>
 
     <TextView
-        android:id="@+id/idid"
+        android:id="@+id/id_friend"
         android:layout_toLeftOf="@+id/friend_profile_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
