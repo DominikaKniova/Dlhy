@@ -15,9 +15,10 @@ import android.widget.Button;
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.listeners.DialogListener;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 //printAccounts();
                 //newDialog_friends(item);
                 //showDialog_debts(item);
+                newDialog_friends(item);
                 break;
             case R.id.calendar:
                 break;
@@ -111,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onClick(long id) {
+        Intent intent = new Intent(this, FriendProfileActivity.class);
+        //add data to intent
+        intent.putExtra("id", id);
+        startActivity(intent);
     }
 
     //print my friends from database ...testing

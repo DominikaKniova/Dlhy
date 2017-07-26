@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.adapters.AllDebtAdapter;
 import sk.dominika.dluhy.adapters.FriendDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
