@@ -49,7 +49,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         our_debts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog_ourDebts(v);
+                showDialog_ourDebts(id_friend);
             }
         });
 
@@ -71,9 +71,15 @@ public class FriendProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    //Start dialog list of out debts
-    private void showDialog_ourDebts(View view){
+    /**
+     * Starts dialog- list of debts shared with the friend.
+     * @param id ID of friend.
+     */
+    private void showDialog_ourDebts(long id){
         DialogFragment newDialog = new DialogFriendDebts();
+        Bundle args = new Bundle();
+        args.putLong("id", id);
+        newDialog.setArguments(args);
         newDialog.show(getFragmentManager(), "debts");
 
     }

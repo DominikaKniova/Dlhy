@@ -14,7 +14,16 @@ import sk.dominika.dluhy.adapters.FriendDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
 
+
 public class DialogFriendDebts extends DialogFragment{
+    //sent id from FriendProfileActivity
+    private long id_friend;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        id_friend = getArguments().getLong("id");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -22,8 +31,7 @@ public class DialogFriendDebts extends DialogFragment{
 
         //get debts from database
         DatabaseHandler dbDeb = new DatabaseHandler(this.getActivity());
-        Debt.myDebts = dbDeb.getOurDebtsWithFriend(2);
-        //TODO: intent extras
+        Debt.myDebts = dbDeb.getOurDebtsWithFriend(id_friend);
 
         RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewFriendDebts);
         FriendDebtAdapter adapter = new FriendDebtAdapter(view.getContext(), Debt.myDebts);
