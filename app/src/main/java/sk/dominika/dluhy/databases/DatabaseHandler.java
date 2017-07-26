@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
@@ -24,10 +25,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             public static final String COLUMN_FIRSTNAME = "firstname";
             public static final String COLUMN_LASTNAME = "lastname";
             public static final String COLUMN_EMAIL = "email";
+            //TODO: pridat overal sumu
+
         }
 
         // SQL statements_FRIENDS
-        private static final String SQL_CREATE_FRIENDS = "CREATE TABLE " + TableFriends.TABLE_NAME +
+        private static final String SQL_CREATE_FRIENDS =
+                "CREATE TABLE " + TableFriends.TABLE_NAME +
                 " (" + TableFriends._ID + " INTEGER PRIMARY KEY, " + TableFriends.COLUMN_FIRSTNAME +
                 " TEXT, " + TableFriends.COLUMN_LASTNAME +
                 " TEXT, " + TableFriends.COLUMN_EMAIL + " TEXT)";
@@ -48,7 +52,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         //SQL statements_DEBTS
-        private static String SQL_CREATE_DEBTS = "CREATE TABLE " + TableDebts.TABLE_NAME +
+        private static String SQL_CREATE_DEBTS =
+                "CREATE TABLE " + TableDebts.TABLE_NAME +
                 " (" + TableDebts._ID + " INTEGER PRIMARY KEY, " + TableDebts.COLUMN_FRIEND_ID +
                 " TEXT, " + TableDebts.COLUMN_FRIEND_NAME +
                 " TEXT, " + TableDebts.COLUMN_SUM +
@@ -129,9 +134,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
 
         /**
-         * Adds debt (Debt object) to database from NewDebtActivity
+         * Adds debt_all (Debt object) to database from NewDebtActivity
          * @param debt Object to be added.
-         * @return ID of debt.
+         * @return ID of debt_all.
          */
         public long addDebtToDatabase(Debt debt) {
                 // Gets the data repository in write mode
@@ -209,6 +214,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 return name;
             }
+
+    /**
+     * Finds friend based ib id.
+     * @param id
+     * @return Bundle object containing name, email of friend and the overall sum of our debts.
+     */
+    public Bundle getFriend(long id) {
+        Bundle bundle = new Bundle();
+
+        SQLiteDatabase dFriends = this.getReadableDatabase();
+        String selectQuery =
+                        "SELECT " + TableFriends.COLUMN_FIRSTNAME + ", "
+                                + TableFriends.COLUMN_LASTNAME +
+                        " FROM " + TableFriends.TABLE_NAME +
+                        " WHERE " + TableFriends._ID + "='" + id + "'";
+        Cursor cursor = dFriends.rawQuery(selectQuery,null);
+
+        if (cursor.moveToFirst()) {
+            bundle.putString("firstname", cursor.getString(cursor.getColumnIndex(TableFriends.COLUMN_FIRSTNAME)));
+            bundle.putString("lastname", cursor.getString(cursor.getColumnIndex(TableFriends.COLUMN_LASTNAME)));
+//            bundle.putString("email", cursor.getString(cursor.getColumnIndex("email")));
+//            bundle.putString("sum", cursor.getString(cursor.getColumnIndex("overall_sum")));
+            //TODO: suma
+        }
+
+        cursor.close();
+        dFriends.close();
+
+        return bundle;
+    }
 
     /**
      * Gets only the debts created with the friend

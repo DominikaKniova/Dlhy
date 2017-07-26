@@ -16,7 +16,7 @@
         android:padding="16dp">
 
         <Button
-            android:id="@+id/mour_debts"
+            android:id="@+id/our_debts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/our_debts"

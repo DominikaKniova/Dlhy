@@ -36,8 +36,6 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
         c.set(Calendar.MINUTE, minute);
 
-        //TODO:skus vecer
-
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         String formattedTime = sdf.format(c.getTime());
 

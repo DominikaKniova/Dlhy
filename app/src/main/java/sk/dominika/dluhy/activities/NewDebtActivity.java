@@ -121,11 +121,11 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextInputEditText edTxtDateCreated = (TextInputEditText) findViewById(R.id.inputDate);
             TextInputEditText edTxtTimeCreated = (TextInputEditText) findViewById(R.id.inputTime);
 
-            //add debt to database
+            //add debt_all to database
             DatabaseHandler dbDebts = new DatabaseHandler(this);
             Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
             long newID = dbDebts.addDebtToDatabase(d);
-            //set debt's ID
+            //set debt_all's ID
             d.setId_debt(newID);
 
             finish();

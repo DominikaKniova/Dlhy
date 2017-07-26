@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.MenuInflater;
 import android.widget.Button;
 
-import sk.dominika.dluhy.dialogs.DialogDebts;
+import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         setTitle("My profile");
 
-        //On click listener: Adding new debt
+        //On click listener: Adding new debt_all
         FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_add);
         floatingButton_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Start dialog list of my debts
     private void showDialog_debts(View view){
-        DialogFragment newDialog = new DialogDebts();
+        DialogFragment newDialog = new DialogAllDebts();
         newDialog.show(getFragmentManager(), "debts");
 
     }

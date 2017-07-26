@@ -27,7 +27,7 @@ public class FragmentContextMenu extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View root = inflater.inflate(R.layout.debt, container, false);
+            View root = inflater.inflate(R.layout.debt_all, container, false);
             registerForContextMenu(root.findViewById(R.id.dialog_debt_menu));
             return root;
         }
