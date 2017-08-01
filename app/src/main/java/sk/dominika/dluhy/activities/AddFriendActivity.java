@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
+
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.R;
@@ -46,6 +49,19 @@ public class AddFriendActivity extends AppCompatActivity {
             long newID = dbFriends.addFriendToDatabase(f);
             //set friend's ID
             f.setId(newID);
+
+            /**
+             * Add friend to Firebase database.
+             */
+            //get instance to database
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            // get reference to 'friends' node
+            DatabaseReference ref = mDatabase.getReference("friends");
+            //get key of new node
+            String key = ref.push().getKey();
+            f.setKey(key);
+            //get a reference to location key and set the data at this location to the given value
+            ref.child(key).setValue(f);
 
             finish();
         }

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "311161483301",
+    "firebase_url": "https://dluhy-18d64.firebaseio.com",
+    "project_id": "dluhy-18d64",
+    "storage_bucket": "dluhy-18d64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311161483301:android:22f5c20cf3e6284c",
+        "android_client_info": {
+          "package_name": "sk.dominika.dluhy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311161483301-usacfi9klm4mkb6sa7725plvnmfev5ha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.dominika.dluhy",
+            "certificate_hash": "4958f1cc44216c34c19daef3695e542785e939aa"
+          }
+        },
+        {
+          "client_id": "311161483301-9trp2eucue43lvpqbknofa87e4skklea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3dBR0VTPkAUzCl33y4yonB--S2IWyWm4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311161483301-9trp2eucue43lvpqbknofa87e4skklea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

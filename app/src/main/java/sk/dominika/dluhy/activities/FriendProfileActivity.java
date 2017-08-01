@@ -11,8 +11,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.DatabaseHandler;
+import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 
@@ -39,10 +46,38 @@ public class FriendProfileActivity extends AppCompatActivity {
         Bundle bundle = db.getFriend(id_friend);
 
         //set views
-        TextView profile_name = (TextView) findViewById(R.id.profile_name);
-        profile_name.setText(bundle.getString("firstname") + " " + bundle.getString("lastname"));
+        //TextView profile_name = (TextView) findViewById(R.id.profile_name);
+        //profile_name.setText(bundle.getString("firstname") + " " + bundle.getString("lastname"));
 
-        //TODO: email, sum, pic ....
+
+        /**
+         * find friend in database based on the friend's key
+         */
+        //get instance to database
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        // get reference to 'friends' node and child with the key
+        DatabaseReference ref = mDatabase.getReference("friends").child("-KqSKbwrB5QO1KM3P2Jk");
+
+        // get data (name of friend) from firebase database and set views
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                Friend value = dataSnapshot.getValue(Friend.class);
+
+                TextView profile_name = (TextView) findViewById(R.id.profile_name);
+                profile_name.setText(value.getFirstName() + " " + value.getLastName());
+                //TODO: email, sum, pic ....
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //TODO
+            }
+        });
 
         //On click listener: Showing all out debts
         Button our_debts = (Button) findViewById(R.id.our_debts);

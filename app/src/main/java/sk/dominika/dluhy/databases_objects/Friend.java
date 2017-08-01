@@ -10,6 +10,9 @@ public class Friend {
     private String firstName;
     private String lastName;
     private String email;
+    private String key;
+
+    public  Friend() {}
 
     public Friend(TextInputEditText firstname, TextInputEditText lastname, TextInputEditText email) {
         this.firstName = firstname.getText().toString();
@@ -38,6 +41,12 @@ public class Friend {
     }
 
     public long getId() { return this.id; }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getKey() { return this.key; }
 
     public static List<Friend> myFriends = new ArrayList<Friend>();
 }
