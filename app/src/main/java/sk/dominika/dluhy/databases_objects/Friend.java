@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Friend {
-    private long id;
+    //private long id;
     private String firstName;
     private String lastName;
     private String email;
-    private String key;
+    private String id;
 
     public  Friend() {}
 
@@ -36,17 +36,17 @@ public class Friend {
         return this.email;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public long getId() { return this.id; }
+    public String getId() { return this.id; }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+//    public void setKey(String key) {
+//        this.key = key;
+//    }
 
-    public String getKey() { return this.key; }
+    //public String getKey() { return this.key; }
 
     public static List<Friend> myFriends = new ArrayList<Friend>();
 }

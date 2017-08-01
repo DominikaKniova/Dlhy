@@ -37,26 +37,26 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         //Get data (id of friend) from previous activity and set correct profile
         Intent intent = getIntent();
-        final long id_friend = intent.getLongExtra("id", 0);
+        final String id_friend = intent.getStringExtra("id");
 
-//        if (id_friend != 0)
+        // if id_friend = null
 
-        //find friend in database based on the id_friend
-        final DatabaseHandler db = new DatabaseHandler(this);
-        Bundle bundle = db.getFriend(id_friend);
-
-        //set views
-        //TextView profile_name = (TextView) findViewById(R.id.profile_name);
-        //profile_name.setText(bundle.getString("firstname") + " " + bundle.getString("lastname"));
+//        //find friend in database based on the id_friend
+//        final DatabaseHandler db = new DatabaseHandler(this);
+//        Bundle bundle = db.getFriend(id_friend);
+//
+//        //set views
+//        //TextView profile_name = (TextView) findViewById(R.id.profile_name);
+//        //profile_name.setText(bundle.getString("firstname") + " " + bundle.getString("lastname"));
 
 
         /**
-         * find friend in database based on the friend's key
+         * find friend in database based on the friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'friends' node and child with the key
-        DatabaseReference ref = mDatabase.getReference("friends").child("-KqSKbwrB5QO1KM3P2Jk");
+        // get reference to 'friends' node and child with the id
+        DatabaseReference ref = mDatabase.getReference("friends").child(id_friend);
 
         // get data (name of friend) from firebase database and set views
         ref.addValueEventListener(new ValueEventListener() {
@@ -88,12 +88,12 @@ public class FriendProfileActivity extends AppCompatActivity {
             }
         });
 
-        //On click listener: Adding new debt_all from friend profile
+        //On click listener: Adding new debt(_all) from friend profile
         FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.new_debt_from_friend);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //TODO pridavanie dlhu z profilu kamarata
             }
         });
     }
@@ -110,12 +110,13 @@ public class FriendProfileActivity extends AppCompatActivity {
      * Starts dialog- list of debts shared with the friend.
      * @param id ID of friend.
      */
-    private void showDialog_ourDebts(long id){
+    private void showDialog_ourDebts(String id){
         DialogFragment newDialog = new DialogFriendDebts();
         Bundle args = new Bundle();
-        args.putLong("id", id);
+        args.putString("id", id);
         newDialog.setArguments(args);
         newDialog.show(getFragmentManager(), "debts");
+        //TODO
 
     }
 }

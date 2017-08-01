@@ -18,6 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
@@ -121,12 +126,28 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextInputEditText edTxtDateCreated = (TextInputEditText) findViewById(R.id.inputDate);
             TextInputEditText edTxtTimeCreated = (TextInputEditText) findViewById(R.id.inputTime);
 
-            //add debt_all to database
-            DatabaseHandler dbDebts = new DatabaseHandler(this);
+//            //add debt_all to database
+//            DatabaseHandler dbDebts = new DatabaseHandler(this);
+//            Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
+//            long newID = dbDebts.addDebtToDatabase(d);
+//            //set debt_all's ID
+//            d.setId_debt(newID);
+//
+//            //TODO  id of friend<<<
             Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
-            long newID = dbDebts.addDebtToDatabase(d);
-            //set debt_all's ID
-            d.setId_debt(newID);
+
+            /**
+             * Add debt d to Firebase database.
+             */
+            //get instance to database
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            // get reference to 'friends' node
+            DatabaseReference ref = mDatabase.getReference("debts");
+            //get id of new node
+            String id = ref.push().getKey();
+            d.setId_debt(id);
+            //get a reference to location id and set the data at this location to the given value
+            ref.child(id).setValue(d);
 
             finish();
         }
@@ -160,12 +181,39 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
      * Makes access to friend's id through DialogFriends.
      * Sets the text (name of friend) of TextView friendsPic.
      */
-    private  long id_of_friend;
+    private String id_of_friend;
     @Override
-    public void onClick(long friend_id) {
-        TextView tvName = (TextView) findViewById(R.id.friendsPic);
+    public void onClick(String friend_id) {
         id_of_friend = friend_id;
-        DatabaseHandler database = new DatabaseHandler(this);
-        tvName.setText(database.getNameFromDatabase(friend_id));
+        //DatabaseHandler database = new DatabaseHandler(this);
+        //tvName.setText(database.getNameFromDatabase(friend_id));
+
+        /**
+         * find friend in database based on the friend's id
+         */
+        //get instance to database
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        // get reference to 'friends' node and child with the id
+        DatabaseReference ref = mDatabase.getReference("friends").child(friend_id);
+
+        // get data (name of friend) from firebase database and set view
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                Friend value = dataSnapshot.getValue(Friend.class);
+
+                TextView tvName = (TextView) findViewById(R.id.friendsPic);
+                tvName.setText(value.getFirstName());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //TODO
+            }
+        });
     }
 }

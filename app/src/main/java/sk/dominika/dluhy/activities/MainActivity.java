@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     }
 
     @Override
-    public void onClick(long id) {
+    public void onClick(String id) {
         Intent intent = new Intent(this, FriendProfileActivity.class);
         //add data to intent
         intent.putExtra("id", id);

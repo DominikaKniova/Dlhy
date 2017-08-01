@@ -42,26 +42,28 @@ public class AddFriendActivity extends AppCompatActivity {
             TextInputEditText lastName = (TextInputEditText) findViewById(R.id.textInput_add_person_lastname);
             TextInputEditText email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
 
-            //Database
-            DatabaseHandler dbFriends = new DatabaseHandler(this);
-            //Add friend to database
             Friend f = new Friend(firstName, lastName, email);
-            long newID = dbFriends.addFriendToDatabase(f);
-            //set friend's ID
-            f.setId(newID);
+
+//            //Database
+//            DatabaseHandler dbFriends = new DatabaseHandler(this);
+//            //Add friend to database
+//            Friend f = new Friend(firstName, lastName, email);
+//            long newID = dbFriends.addFriendToDatabase(f);
+//            //set friend's ID
+//            f.setId(newID);
 
             /**
-             * Add friend to Firebase database.
+             * Add friend f to Firebase database.
              */
             //get instance to database
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
             // get reference to 'friends' node
             DatabaseReference ref = mDatabase.getReference("friends");
-            //get key of new node
-            String key = ref.push().getKey();
-            f.setKey(key);
-            //get a reference to location key and set the data at this location to the given value
-            ref.child(key).setValue(f);
+            //get id of new node
+            String id = ref.push().getKey();
+            f.setId(id);
+            //get a reference to location id and set the data at this location to the given value
+            ref.child(id).setValue(f);
 
             finish();
         }

@@ -8,19 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.Debt;
 
-
+/**
+ * Dialog for showing recycleview.
+ */
 public class DialogFriendDebts extends DialogFragment{
     //sent id from FriendProfileActivity
-    private long id_friend;
+    private String id_friend;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id_friend = getArguments().getLong("id");
+        id_friend = getArguments().getString("id");
     }
 
     @Override
@@ -28,9 +37,33 @@ public class DialogFriendDebts extends DialogFragment{
 
         View view = inflater.inflate(R.layout.fragment_list_friend_debts, container, false);
 
-        //get debts from database
-        DatabaseHandler dbDeb = new DatabaseHandler(this.getActivity());
-        Debt.myDebts = dbDeb.getOurDebtsWithFriend(id_friend);
+//        //get debts from database
+//        DatabaseHandler dbDeb = new DatabaseHandler(this.getActivity());
+//        Debt.myDebts = dbDeb.getOurDebtsWithFriend(id_friend);
+
+        Debt.myDebts.clear();
+
+        /**
+         * Get only debts created with the friend of id_friend.
+         */
+        //get instance to database
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        // get reference to 'debts' node
+        DatabaseReference ref = mDatabase.getReference("debts");
+        ref.orderByChild("id_friend").equalTo(id_friend).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt value = snapshot.getValue(Debt.class);
+                    Debt.myDebts.add(value);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TODO
+            }
+        });
 
         RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewFriendDebts);
         FriendDebtAdapter adapter = new FriendDebtAdapter(view.getContext(), Debt.myDebts);

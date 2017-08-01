@@ -52,8 +52,6 @@ public class AllDebtAdapter extends RecyclerView.Adapter<AllDebtAdapter.ViewHold
         View debtView = inflater.inflate(R.layout.debt_all, parent, false);
         ViewHolder viewHolder = new ViewHolder(debtView);
 
-
-
         return viewHolder;
     }
 

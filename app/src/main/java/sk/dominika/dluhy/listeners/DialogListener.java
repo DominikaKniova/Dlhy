@@ -13,5 +13,5 @@ public interface DialogListener {
      * @param id Id of friend
      */
 
-    void onClick(long id);
+    void onClick(String id);
 }

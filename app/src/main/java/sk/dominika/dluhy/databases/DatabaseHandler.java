@@ -124,7 +124,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                                 cursor.getString(cursor.getColumnIndex("firstname")),
                                 cursor.getString(cursor.getColumnIndex("lastname")),
                                 cursor.getString(cursor.getColumnIndex("email")));
-                        fr.setId(new Long(cursor.getString(0)));
+                        fr.setId(cursor.getString(cursor.getColumnIndex(TableFriends._ID)));
                         list_friends.add(fr);
                     }while (cursor.moveToNext());
                 }
@@ -178,7 +178,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     do{
                         //cursor gets ID OD FRIEND, NAME OF FRIEND, SUM, NOTE
                         Debt d = new Debt(
-                                cursor.getInt(cursor.getColumnIndex("id_friend")),
+                                cursor.getString(cursor.getColumnIndex("id_friend")),
                                 cursor.getString(cursor.getColumnIndex("friend_name")),
                                 cursor.getFloat(cursor.getColumnIndex("sum")),
                                 cursor.getString(cursor.getColumnIndex("note")));
@@ -261,7 +261,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if(cursor.moveToFirst()) {
             do {
                 Debt d = new Debt(
-                        cursor.getInt(cursor.getColumnIndex("id_friend")),
+                        cursor.getString(cursor.getColumnIndex("id_friend")),
                         cursor.getString(cursor.getColumnIndex("friend_name")),
                         cursor.getFloat(cursor.getColumnIndex("sum")),
                         cursor.getString(cursor.getColumnIndex("note"))

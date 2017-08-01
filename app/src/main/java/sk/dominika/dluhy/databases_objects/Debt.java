@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Debt {
-    private long id_debt;
-    private long id_friend;
+    private String id_debt;
+    private String id_friend;
     private String friend_name;
     private float sum;
     private String note;
@@ -18,7 +18,9 @@ public class Debt {
     private String timeOfAlert;
     //TODO: casy a datumy na SimpleDateFormat
 
-    public Debt(long id_friend, TextView edTxtName, TextInputEditText edTxtSum, TextInputEditText edTxtNote,
+    public Debt() {}
+
+    public Debt(String id_friend, TextView edTxtName, TextInputEditText edTxtSum, TextInputEditText edTxtNote,
                 TextInputEditText edTxtDateA, TextInputEditText edTxtTimeA) {
         this.id_friend = id_friend;
         this.friend_name = edTxtName.getText().toString();
@@ -28,7 +30,7 @@ public class Debt {
         this.timeOfAlert = edTxtTimeA.getText().toString();
     }
 
-    public Debt(long id_friend, String name, float sum, String note) {
+    public Debt(String id_friend, String name, float sum, String note) {
         this.id_friend = id_friend;
         this.friend_name = name;
         this.sum = sum;
@@ -47,10 +49,10 @@ public class Debt {
         return this.note;
     }
 
-    public long getId_friend() { return this.id_friend; }
+    public String getId_friend() { return this.id_friend; }
 
-    public void setId_debt(long id) {
-        this.id_friend = id;
+    public void setId_debt(String id) {
+        this.id_debt = id;
     }
 
     public String getDateOfCreation(){

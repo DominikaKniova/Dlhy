@@ -85,9 +85,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         TextView textView = holder.nameTextView;
         textView.setText(friend.getFirstName());
 
-        //test
-        TextView textView1 = holder.idTextView;
-        textView1.setText(Long.toString(friend.getId()));
+//        //test
+//        TextView textView1 = holder.idTextView;
+//        textView1.setText(friend.getId());
 
         //icon imageview leads to friend's profile
         ImageView profileIcon = holder.icon;
@@ -117,7 +117,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
      * Starts FriendProfileActivity
      * @param id ID of friend to be shown.
      */
-    private void newActivity_profileFriend(long id) {
+    private void newActivity_profileFriend(String id) {
         Intent intent = new Intent(memberContext, FriendProfileActivity.class);
         //add data to intent
         intent.putExtra("id", id);
