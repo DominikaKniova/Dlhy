@@ -11,6 +11,7 @@ public class Friend {
     private String lastName;
     private String email;
     private String id;
+    private float overallDebt;
 
     public  Friend() {}
 
@@ -18,12 +19,14 @@ public class Friend {
         this.firstName = firstname.getText().toString();
         this.lastName = lastname.getText().toString();
         this.email = email.getText().toString();
+        this.overallDebt = 0;
     }
 
     public Friend(String firstname, String lastname, String email) {
         this.firstName = firstname;
         this.lastName = lastname;
         this.email = email;
+        this.overallDebt = 0;
     }
 
     public String getFirstName() {

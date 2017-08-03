@@ -177,12 +177,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 if (cursor.moveToFirst()) {
                     do{
                         //cursor gets ID OD FRIEND, NAME OF FRIEND, SUM, NOTE
-                        Debt d = new Debt(
-                                cursor.getString(cursor.getColumnIndex("id_friend")),
-                                cursor.getString(cursor.getColumnIndex("friend_name")),
-                                cursor.getFloat(cursor.getColumnIndex("sum")),
-                                cursor.getString(cursor.getColumnIndex("note")));
-                        list_debts.add(d);
+//                        Debt d = new Debt(
+//                                cursor.getString(cursor.getColumnIndex("id_friend")),
+//                                cursor.getString(cursor.getColumnIndex("friend_name")),
+//                                cursor.getFloat(cursor.getColumnIndex("sum")),
+//                                cursor.getString(cursor.getColumnIndex("note")));
+//                        list_debts.add(d);
                     }while (cursor.moveToNext());
                 }
                 cursor.close();
@@ -260,13 +260,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()) {
             do {
-                Debt d = new Debt(
-                        cursor.getString(cursor.getColumnIndex("id_friend")),
-                        cursor.getString(cursor.getColumnIndex("friend_name")),
-                        cursor.getFloat(cursor.getColumnIndex("sum")),
-                        cursor.getString(cursor.getColumnIndex("note"))
-                );
-                list_debts.add(d);
+//                Debt d = new Debt(
+//                        cursor.getString(cursor.getColumnIndex("id_friend")),
+//                        cursor.getString(cursor.getColumnIndex("friend_name")),
+//                        cursor.getFloat(cursor.getColumnIndex("sum")),
+//                        cursor.getString(cursor.getColumnIndex("note"))
+//                );
+//                list_debts.add(d);
             }while (cursor.moveToNext());
         }
 

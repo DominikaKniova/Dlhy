@@ -15,13 +15,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.databases_objects.User;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth2;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +38,7 @@ public class SignUpActivity extends AppCompatActivity {
         /**
          * FirebaseAut instance.
          */
-        mAuth = FirebaseAuth.getInstance();
+        mAuth2 = FirebaseAuth.getInstance();
         /**
          * method tracking whenever the user signs in or out
          */
@@ -43,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null) {
                     // Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+//                    firebaseAuth.signOut();
                 } else {
                     // User is signed out
                     // Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -55,14 +61,14 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                TextInputEditText edTxtName = (TextInputEditText) findViewById(R.id.text_input_signUp_name);
-                TextInputEditText edTxtEmail = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
-                TextInputEditText edTxtPassword = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
+                TextInputEditText firstname = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
+                TextInputEditText lastname = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
+                TextInputEditText email = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
+                TextInputEditText password = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
 
-//                Account p = new Account(edTxtName, edTxtEmail, edTxtPassword);
-//                Account.listOfAccounts.add(p);
+                user = new User("",firstname.getText().toString(), lastname.getText().toString(), email.getText().toString(), "");
 
-                createAccount(edTxtEmail.getText().toString(), edTxtEmail.getText().toString());
+                createUser(user.getEmail(), password.getText().toString());
 
                 newAcitivity_main(view);
             }
@@ -72,24 +78,30 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        mAuth2.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+
+        FirebaseUser currentUseruser= mAuth2.getCurrentUser();
+        String id = currentUseruser.getUid();
+        user.setId(id);
+        addNewUser(user);
+
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            mAuth2.removeAuthStateListener(mAuthListener);
         }
     }
 
     /**
-     * Validates email and password and creates a new user
+     * Validate email and password and create a new user
      * @param email
      * @param password
      */
-    private void createAccount(String email, String password){
-        mAuth.createUserWithEmailAndPassword(email, password)
+    private String createUser(String email, String password){
+        mAuth2.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -104,6 +116,47 @@ public class SignUpActivity extends AppCompatActivity {
                         }
 
                         // ...
+                    }
+                });
+        return mAuth2.getCurrentUser().getUid();
+    }
+
+    /**
+     * Add new user to Firebase database.
+     * @param user User to be added.
+     */
+    private void addNewUser(User user) {
+        //get instance to database
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        // get reference to 'users' node
+        DatabaseReference ref = mDatabase.getReference("users");
+        //get a reference to location id and set the data at this location to the given value
+        ref.child(user.getId()).setValue(user);
+    }
+
+    /**
+     * Validate email and password and log in an existing user
+     * @param email
+     * @param password
+     */
+    private void logIn(String email, String password) {
+        mAuth2.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            //Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(SignUpActivity.this, "auth failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                        //TODO
                     }
                 });
     }

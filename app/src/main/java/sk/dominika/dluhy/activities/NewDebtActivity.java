@@ -132,9 +132,18 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 //            long newID = dbDebts.addDebtToDatabase(d);
 //            //set debt_all's ID
 //            d.setId_debt(newID);
-//
-//            //TODO  id of friend<<<
-            Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
+
+            //find out if I owe friend money or other way round
+            boolean heOwesMe;
+            ImageView arrow = (ImageView) findViewById(R.id.arrow);
+            String imageTag = (String) arrow.getTag();
+            if(imageTag.equals("arrForward")) {
+                heOwesMe = false;
+            } else {
+                heOwesMe = true;
+            }
+
+            Debt d = new Debt();
 
             /**
              * Add debt d to Firebase database.
@@ -148,6 +157,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             d.setId_debt(id);
             //get a reference to location id and set the data at this location to the given value
             ref.child(id).setValue(d);
+
+            //TODO: vyronanie cien
 
             finish();
         }

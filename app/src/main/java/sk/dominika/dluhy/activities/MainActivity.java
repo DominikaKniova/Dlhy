@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.MenuInflater;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
@@ -101,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
             case R.id.calendar:
                 break;
             case R.id.signOut:
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.signOut();
                 newActivity_signOut(item);
                 break;
         }

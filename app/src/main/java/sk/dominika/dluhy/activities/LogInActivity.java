@@ -65,10 +65,13 @@ public class LogInActivity extends AppCompatActivity {
             public void onClick(View view) {
                 TextInputEditText email = (TextInputEditText) findViewById(R.id.text_input_logIn_email);
                 TextInputEditText password = (TextInputEditText) findViewById(R.id.text_input_logIn_password);
+
                 logIn(email.getText().toString(), password.getText().toString());
+
                 newAcitivity_main(view);
             }
         });
+
     }
 
     @Override
@@ -80,6 +83,7 @@ public class LogInActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+        FirebaseUser user = mAuth.getCurrentUser();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
