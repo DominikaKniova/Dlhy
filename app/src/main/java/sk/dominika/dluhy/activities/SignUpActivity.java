@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -27,6 +28,8 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private User user;
+
+    private CurrentUser userCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,9 @@ public class SignUpActivity extends AppCompatActivity {
 
                 createUser(user.getEmail(), password.getText().toString());
 
+                //set current user
+                CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+
                 newAcitivity_main(view);
             }
         });
@@ -85,8 +91,9 @@ public class SignUpActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
 
-        FirebaseUser currentUseruser= mAuth2.getCurrentUser();
-        String id = currentUseruser.getUid();
+        FirebaseUser currentUser= mAuth2.getCurrentUser();
+        String id = currentUser.getUid();
+        CurrentUser.setId(id);
         user.setId(id);
         addNewUser(user);
 
@@ -100,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
      * @param email
      * @param password
      */
-    private String createUser(String email, String password){
+    private void createUser(String email, String password){
         mAuth2.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -118,7 +125,6 @@ public class SignUpActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-        return mAuth2.getCurrentUser().getUid();
     }
 
     /**
