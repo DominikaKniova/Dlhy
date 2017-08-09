@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.AllDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 
 /**
@@ -46,7 +47,12 @@ public class DialogAllDebts extends DialogFragment {
                 //loop through all debts in the database
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     Debt value = snapshot.getValue(Debt.class);
-                    Debt.myDebts.add(value);
+                    //add only my debts from database
+                    if ( value.getId_who().equals(CurrentUser.UserCurrent.id)
+                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                        Debt.myDebts.add(value);
+                    }
+
                 }
             }
 

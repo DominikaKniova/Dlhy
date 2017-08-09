@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,8 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.databases.DatabaseHandler;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 import sk.dominika.dluhy.databases_objects.Friend;
+import sk.dominika.dluhy.databases_objects.User;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
@@ -120,11 +123,11 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         if(item.getItemId() == R.id.check) {
 
             //get data from inputs
-            TextView edTxtName = (TextView) findViewById(R.id.friendsPic);
-            TextInputEditText edTxtNote = (TextInputEditText) findViewById(R.id.textInput_note);
-            TextInputEditText edTxtSum = (TextInputEditText) findViewById(R.id.textInput_money);
-            TextInputEditText edTxtDateCreated = (TextInputEditText) findViewById(R.id.inputDate);
-            TextInputEditText edTxtTimeCreated = (TextInputEditText) findViewById(R.id.inputTime);
+            TextView tName = (TextView) findViewById(R.id.friendsPic);
+            TextInputEditText tNote = (TextInputEditText) findViewById(R.id.textInput_note);
+            TextInputEditText tSum = (TextInputEditText) findViewById(R.id.textInput_money);
+            TextInputEditText tDateAlert = (TextInputEditText) findViewById(R.id.inputDate);
+            TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
 
 //            //add debt_all to database
 //            DatabaseHandler dbDebts = new DatabaseHandler(this);
@@ -143,20 +146,49 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 heOwesMe = true;
             }
 
-            Debt d = new Debt();
 
             /**
              * Add debt d to Firebase database.
              */
             //get instance to database
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-            // get reference to 'friends' node
+            // get reference to 'debts' node
             DatabaseReference ref = mDatabase.getReference("debts");
-            //get id of new node
-            String id = ref.push().getKey();
-            d.setId_debt(id);
-            //get a reference to location id and set the data at this location to the given value
-            ref.child(id).setValue(d);
+
+            //I owe
+            if (heOwesMe == false) {
+                //get id of new node
+                String id = ref.push().getKey();
+                Debt debt = new Debt(
+                        id,
+                        CurrentUser.UserCurrent.id,
+                        id_of_friend,
+                        CurrentUser.UserCurrent.firstName,
+                        tName.getText().toString(),
+                        Float.parseFloat(tSum.getText().toString()),
+                        tNote.getText().toString(),
+                        tDateAlert.getText().toString(),
+                        tTimeAlert.getText().toString());
+                //get a reference to location id and set the data at this location to the given value
+                ref.child(id).setValue(debt);
+            }
+            //they owe
+            else {
+                //get id of new node
+                String id = ref.push().getKey();
+                Debt debt = new Debt(
+                        id,
+                        id_of_friend,
+                        CurrentUser.UserCurrent.id,
+                        tName.getText().toString(),
+                        CurrentUser.UserCurrent.firstName,
+                        Float.parseFloat(tSum.getText().toString()),
+                        tNote.getText().toString(),
+                        tDateAlert.getText().toString(),
+                        tTimeAlert.getText().toString());
+                //get a reference to location id and set the data at this location to the given value
+                ref.child(id).setValue(debt);
+            }
 
             //TODO: vyronanie cien
 
@@ -204,8 +236,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'friends' node and child with the id
-        DatabaseReference ref = mDatabase.getReference("friends").child(friend_id);
+        // get reference to 'users' node and child with the id
+        DatabaseReference ref = mDatabase.getReference("users").child(friend_id);
 
         // get data (name of friend) from firebase database and set view
         ref.addValueEventListener(new ValueEventListener() {
@@ -213,10 +245,10 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Friend value = dataSnapshot.getValue(Friend.class);
+                User value = dataSnapshot.getValue(User.class);
 
                 TextView tvName = (TextView) findViewById(R.id.friendsPic);
-                tvName.setText(value.getFirstName());
+                tvName.setText(value.getFirstname());
 
             }
 

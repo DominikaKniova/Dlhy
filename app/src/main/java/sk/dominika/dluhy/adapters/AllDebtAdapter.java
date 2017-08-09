@@ -1,6 +1,7 @@
 package sk.dominika.dluhy.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 
 /**
@@ -61,16 +63,32 @@ public class AllDebtAdapter extends RecyclerView.Adapter<AllDebtAdapter.ViewHold
         // Get the data model based on position
         Debt debt = memberDebts.get(position);
 
-        TextView tvSum = holder.sumTextView;
-        tvSum.setText(String.valueOf(debt.getSum()));
+        //I owe somebody
+        if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
+            TextView tSum = holder.sumTextView;
+            tSum.setText("-" + String.valueOf(debt.getSum()));
+            tSum.setTextColor(Color.RED);
 
-        TextView tvName = holder.nameTextView;
-        tvName.setText(debt.getFriend_name());
+            TextView tName = holder.nameTextView;
+            tName.setText(debt.getName_toWhom());
+            tName.setTextColor(Color.RED);
 
-        TextView tvNote = holder.noteTextView;
-        tvNote.setText(debt.getNote());
+            TextView tNote = holder.noteTextView;
+            tNote.setText(debt.getNote());
+        }
+        //they owe me
+        else {
+            TextView tSum = holder.sumTextView;
+            tSum.setText("+" + String.valueOf(debt.getSum()));
+            tSum.setTextColor(Color.GREEN);
 
-        ImageView tvMenu = holder.menuImageView;
+            TextView tName = holder.nameTextView;
+            tName.setText(debt.getName_who());
+            tName.setTextColor(Color.GREEN);
+
+            TextView tNote = holder.noteTextView;
+            tNote.setText(debt.getNote());
+        }
     }
     // Returns the total count of items in the list
     @Override

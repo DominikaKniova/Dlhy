@@ -1,6 +1,7 @@
 package sk.dominika.dluhy.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 
 /**
@@ -56,6 +58,25 @@ public class FriendDebtAdapter extends RecyclerView.Adapter<FriendDebtAdapter.Vi
     public void onBindViewHolder(FriendDebtAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         Debt debt = memberDebts.get(position);
+
+        //I owe
+        if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
+            TextView tSum = holder.sumTextView;
+            tSum.setText(String.valueOf(debt.getSum()));
+            tSum.setTextColor(Color.RED);
+
+            TextView tName = holder.noteTextView;
+            tName.setText(debt.getNote());
+        }
+        //they owe me
+        else {
+            TextView tSum = holder.sumTextView;
+            tSum.setText(String.valueOf(debt.getSum()));
+            tSum.setTextColor(Color.GREEN);
+
+            TextView tNote = holder.noteTextView;
+            tNote.setText(debt.getNote());
+        }
 
         TextView tvSum = holder.sumTextView;
         tvSum.setText(String.valueOf(debt.getSum()));

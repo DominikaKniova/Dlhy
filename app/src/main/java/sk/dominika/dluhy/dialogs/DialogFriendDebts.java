@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 
 /**
@@ -50,20 +51,37 @@ public class DialogFriendDebts extends DialogFragment{
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         // get reference to 'debts' node
         DatabaseReference ref = mDatabase.getReference("debts");
-        ref.orderByChild("id_friend").equalTo(id_friend).addValueEventListener(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Debt value = snapshot.getValue(Debt.class);
-                    Debt.myDebts.add(value);
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    Debt debt = snapshot.getValue(Debt.class);
+                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
+                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        Debt.myDebts.add(debt);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                //TODO
+
             }
         });
+//        ref.orderByChild("id_friend").equalTo(id_friend).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Debt value = snapshot.getValue(Debt.class);
+//                    Debt.myDebts.add(value);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                //TODO
+//            }
+//        });
 
         RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewFriendDebts);
         FriendDebtAdapter adapter = new FriendDebtAdapter(view.getContext(), Debt.myDebts);

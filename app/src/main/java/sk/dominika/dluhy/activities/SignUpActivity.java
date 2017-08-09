@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,6 +24,8 @@ import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.User;
 
 public class SignUpActivity extends AppCompatActivity {
+
+    public final String TAG = "signing";
 
     private FirebaseAuth mAuth2;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -42,19 +45,28 @@ public class SignUpActivity extends AppCompatActivity {
          * FirebaseAut instance.
          */
         mAuth2 = FirebaseAuth.getInstance();
+
         /**
          * method tracking whenever the user signs in or out
          */
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null) {
-                    // Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-//                    firebaseAuth.signOut();
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                if(currentUser != null) {
+//                    String id = currentUser.getUid();
+//                    CurrentUser.setId(id);
+//                    user.setId(id);
+//                    addNewUser(user);
+                    Toast.makeText(SignUpActivity.this, "auth successed",
+                            Toast.LENGTH_LONG).show();
+//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
                 } else {
                     // User is signed out
-                    // Log.d(TAG, "onAuthStateChanged:signed_out");
+//                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Toast.makeText(SignUpActivity.this, "nepodarilo sa zaregistrovat", Toast.LENGTH_SHORT);
+
                 }
             }
         };
@@ -69,12 +81,21 @@ public class SignUpActivity extends AppCompatActivity {
                 TextInputEditText email = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
                 TextInputEditText password = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
 
-                user = new User("",firstname.getText().toString(), lastname.getText().toString(), email.getText().toString(), "");
+                user = new User("",firstname.getText().toString(), lastname.getText().toString(), email.getText().toString());
 
                 createUser(user.getEmail(), password.getText().toString());
 
                 //set current user
                 CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+
+                FirebaseUser currentUser = mAuth2.getCurrentUser();
+                while (currentUser == null) {
+                    currentUser = mAuth2.getCurrentUser();
+                }
+                String id = currentUser.getUid();
+                CurrentUser.setId(id);
+                user.setId(id);
+                addNewUser(user);
 
                 newAcitivity_main(view);
             }
@@ -91,12 +112,6 @@ public class SignUpActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
 
-        FirebaseUser currentUser= mAuth2.getCurrentUser();
-        String id = currentUser.getUid();
-        CurrentUser.setId(id);
-        user.setId(id);
-        addNewUser(user);
-
         if (mAuthListener != null) {
             mAuth2.removeAuthStateListener(mAuthListener);
         }
@@ -109,11 +124,13 @@ public class SignUpActivity extends AppCompatActivity {
      */
     private void createUser(String email, String password){
         mAuth2.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+//                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
+                        Toast.makeText(SignUpActivity.this, "auth",
+                                Toast.LENGTH_SHORT).show();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -138,33 +155,6 @@ public class SignUpActivity extends AppCompatActivity {
         DatabaseReference ref = mDatabase.getReference("users");
         //get a reference to location id and set the data at this location to the given value
         ref.child(user.getId()).setValue(user);
-    }
-
-    /**
-     * Validate email and password and log in an existing user
-     * @param email
-     * @param password
-     */
-    private void logIn(String email, String password) {
-        mAuth2.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            //Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(SignUpActivity.this, "auth failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                        //TODO
-                    }
-                });
     }
 
     private void newAcitivity_main(View view){

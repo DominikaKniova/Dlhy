@@ -2,15 +2,18 @@ package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,9 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.databases.DatabaseHandler;
-import sk.dominika.dluhy.databases_objects.Friend;
-import sk.dominika.dluhy.dialogs.DialogAllDebts;
+import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
+import sk.dominika.dluhy.databases_objects.User;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 
 public class FriendProfileActivity extends AppCompatActivity {
@@ -39,24 +42,16 @@ public class FriendProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String id_friend = intent.getStringExtra("id");
 
-        // if id_friend = null
-
-//        //find friend in database based on the id_friend
-//        final DatabaseHandler db = new DatabaseHandler(this);
-//        Bundle bundle = db.getFriend(id_friend);
-//
-//        //set views
-//        //TextView profile_name = (TextView) findViewById(R.id.profile_name);
-//        //profile_name.setText(bundle.getString("firstname") + " " + bundle.getString("lastname"));
-
+        //if id friend == null
+        setTitle(CurrentUser.UserCurrent.firstName);
 
         /**
-         * find friend in database based on the friend's id
+         * find friend (user) in database based on the friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'friends' node and child with the id
-        DatabaseReference ref = mDatabase.getReference("friends").child(id_friend);
+        // get reference to 'users' node and child with the id
+        DatabaseReference ref = mDatabase.getReference("users").child(id_friend);
 
         // get data (name of friend) from firebase database and set views
         ref.addValueEventListener(new ValueEventListener() {
@@ -64,10 +59,10 @@ public class FriendProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Friend value = dataSnapshot.getValue(Friend.class);
+                User value = dataSnapshot.getValue(User.class);
 
                 TextView profile_name = (TextView) findViewById(R.id.profile_name);
-                profile_name.setText(value.getFirstName() + " " + value.getLastName());
+                profile_name.setText(value.getFirstname() + " " + value.getLastname());
                 //TODO: email, sum, pic ....
 
             }
@@ -79,7 +74,10 @@ public class FriendProfileActivity extends AppCompatActivity {
             }
         });
 
-        //On click listener: Showing all out debts
+        TextView sum = (TextView) findViewById(R.id.friend_profile_sum);
+        FirebaseDatabaseHandler.getOverallSum(id_friend, sum);
+
+        //On click listener: Showing all our debts
         Button our_debts = (Button) findViewById(R.id.our_debts);
         our_debts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,15 +100,37 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_profile_friend, menu);
         return true;
+    }
+
+    //Start activities from Menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.delete_friend:
+                break;
+            case R.id.close_profile:
+                newActivity_main();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //Start activity Main
+    private void newActivity_main(){
+        Intent intent_debt = new Intent(this,MainActivity.class);
+        startActivity(intent_debt);
     }
 
     /**
      * Starts dialog- list of debts shared with the friend.
+     *
      * @param id ID of friend.
      */
-    private void showDialog_ourDebts(String id){
+    private void showDialog_ourDebts(String id) {
         DialogFragment newDialog = new DialogFriendDebts();
         Bundle args = new Bundle();
         args.putString("id", id);

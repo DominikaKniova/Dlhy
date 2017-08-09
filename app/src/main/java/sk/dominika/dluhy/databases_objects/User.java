@@ -10,17 +10,17 @@ public class User {
     private String firstname;
     private String lastname;
     private String email;
-    private String friends;
 
     public static List<User> listOfUsers = new ArrayList<User>();
 
-    public User(String id, String firstname, String lastname, String email, String friends) {
+    public User(String id, String firstname, String lastname, String email) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.friends = friends;
     }
+
+    public User() {}
 
     public String getFirstname() {
         return this.firstname;

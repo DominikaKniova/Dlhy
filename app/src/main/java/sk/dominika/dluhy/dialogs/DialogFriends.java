@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.common.data.Freezable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +21,9 @@ import com.google.firebase.database.ValueEventListener;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
+import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Friend;
+import sk.dominika.dluhy.databases_objects.Relationship;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**
@@ -61,17 +64,18 @@ public  class DialogFriends extends DialogFragment {
         Friend.myFriends.clear();
 
         /**
-         * Get friends from firebase database and store them in arraylist Friend.myFriends.
+         * Get my friends from firebase database and store them in arraylist Friend.myFriends.
          */
         // get instance of database and reference to 'friends' node
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("friends");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.orderByChild("fromUserId").equalTo(CurrentUser.UserCurrent.id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //loop through all friends in the database
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    Friend value = snapshot.getValue(Friend.class);
-                    Friend.myFriends.add(value);
+                    Relationship value = snapshot.getValue(Relationship.class);
+                    Friend friend = new Friend(value.getToUserName(), value.getToUserId());
+                    Friend.myFriends.add(friend);
                 }
             }
 
@@ -89,5 +93,6 @@ public  class DialogFriends extends DialogFragment {
 
         return view;
     }
+
 
 }

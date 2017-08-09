@@ -144,8 +144,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 // Create a new map of values, where column names are the keys
                 ContentValues values = new ContentValues();
-                values.put(TableDebts.COLUMN_FRIEND_ID, debt.getId_friend());
-                values.put(TableDebts.COLUMN_FRIEND_NAME, debt.getFriend_name());
+                //values.put(TableDebts.COLUMN_FRIEND_ID, debt.getId_friend());
+                //values.put(TableDebts.COLUMN_FRIEND_NAME, debt.getFriend_name());
                 values.put(TableDebts.COLUMN_SUM, debt.getSum());
                 values.put(TableDebts.COLUMN_NOTE, debt.getNote());
                 values.put(TableDebts.COLUMN_DATE_OF_CREATION, "test");

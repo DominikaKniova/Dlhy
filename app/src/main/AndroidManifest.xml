@@ -25,8 +25,7 @@
         <activity android:name=".activities.AddFriendActivity" />
         <activity android:name=".activities.LogInActivity" />
         <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.ListFriendsActivity" />
-        <activity android:name=".activities.FriendProfileActivity"></activity>
+        <activity android:name=".activities.FriendProfileActivity"/>
     </application>
 
 </manifest>
