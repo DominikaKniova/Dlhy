@@ -12,6 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
+import sk.dominika.dluhy.databases_objects.Relationship;
 
 public class FirebaseDatabaseHandler {
 
@@ -104,5 +105,56 @@ public class FirebaseDatabaseHandler {
                 }
             });
         }
+    }
+
+    /**
+     * Delete friend with all debts created with them.
+     * @param id ID of friend to be deleted.
+     */
+    public static void deleteFriendAndDebts(final String id) {
+
+        final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+        //delete debts
+        final DatabaseReference refDebts = mDatabase.getReference("debts");
+        refDebts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt value = snapshot.getValue(Debt.class);
+                    if((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
+                            || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        refDebts.child(value.getId_debt()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //delete friendship
+        //TODO vyriesit co ked nie je user
+        final DatabaseReference refFriends = mDatabase.getReference("friends");
+        refFriends.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Relationship value = snapshot.getValue(Relationship.class);
+                    if( (value.getFromUserId().equals(CurrentUser.UserCurrent.id) && value.getToUserId().equals(id))
+                            || (value.getFromUserId().equals(id) && value.getToUserId().equals(CurrentUser.UserCurrent.id)) ) {
+                        refFriends.child(snapshot.getKey()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

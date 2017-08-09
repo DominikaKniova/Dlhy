@@ -28,6 +28,8 @@ import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 
 public class FriendProfileActivity extends AppCompatActivity {
 
+    private String id_friend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         //Get data (id of friend) from previous activity and set correct profile
         Intent intent = getIntent();
-        final String id_friend = intent.getStringExtra("id");
+        id_friend = intent.getStringExtra("id");
 
         //if id friend == null
         setTitle(CurrentUser.UserCurrent.firstName);
@@ -110,6 +112,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.delete_friend:
+                FirebaseDatabaseHandler.deleteFriendAndDebts(id_friend);
                 break;
             case R.id.close_profile:
                 newActivity_main();
