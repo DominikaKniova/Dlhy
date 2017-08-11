@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -88,14 +90,14 @@ public class SignUpActivity extends AppCompatActivity {
                 //set current user
                 CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
 
-                FirebaseUser currentUser = mAuth2.getCurrentUser();
-                while (currentUser == null) {
-                    currentUser = mAuth2.getCurrentUser();
-                }
-                String id = currentUser.getUid();
-                CurrentUser.setId(id);
-                user.setId(id);
-                addNewUser(user);
+//                FirebaseUser currentUser = mAuth2.getCurrentUser();
+//                while (currentUser == null) {
+//                    currentUser = mAuth2.getCurrentUser();
+//                }
+//                String id = currentUser.getUid();
+//                CurrentUser.setId(id);
+//                user.setId(id);
+//                addNewUser(user);
 
                 newAcitivity_main(view);
             }
@@ -127,7 +129,8 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-//                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        Log.d(TAG,"zavolal sa onComplete listener");
 
                         Toast.makeText(SignUpActivity.this, "auth",
                                 Toast.LENGTH_SHORT).show();
@@ -141,7 +144,23 @@ public class SignUpActivity extends AppCompatActivity {
 
                         // ...
                     }
-                });
+                }).addOnSuccessListener(SignUpActivity.this, new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                FirebaseUser currentUser = mAuth2.getCurrentUser();
+                String id = currentUser.getUid();
+                CurrentUser.setId(id);
+                user.setId(id);
+                addNewUser(user);
+                Log.d(TAG,"zavolal sa onSuccess listener");
+            }
+        }).addOnFailureListener(SignUpActivity.this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "zavolal sa onFailure listener");
+            }
+        });
+
     }
 
     /**
