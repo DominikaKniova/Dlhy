@@ -24,6 +24,7 @@ import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Friend;
 import sk.dominika.dluhy.databases_objects.Relationship;
+import sk.dominika.dluhy.decorations.DividerItemDecoration;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**
@@ -88,6 +89,7 @@ public  class DialogFriends extends DialogFragment {
 
         RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
         FriendAdapter adapter = new FriendAdapter(view.getContext(), Friend.myFriends, mListener, DialogFriends.this);
+        //recycler_viewFriends.addItemDecoration(new DividerItemDecoration(view.getContext(), LinearLayoutManager.VERTICAL));
         recycler_viewFriends.setAdapter(adapter);
         recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

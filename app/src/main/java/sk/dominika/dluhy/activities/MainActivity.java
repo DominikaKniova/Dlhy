@@ -110,12 +110,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                     });
 
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Toast.makeText(MainActivity.this, "signed in", Toast.LENGTH_SHORT).show();
-
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
-                    Toast.makeText(MainActivity.this, "signed out, will be logged in", Toast.LENGTH_SHORT).show();
                 }
             }
         };

@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:text="@string/sum"
             android:textSize="@dimen/sum_size"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:inputType="numberDecimal|numberSigned"/>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

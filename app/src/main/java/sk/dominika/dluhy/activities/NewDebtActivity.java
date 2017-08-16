@@ -1,6 +1,7 @@
 package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
+import android.content.ClipData;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -121,6 +122,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.check) {
+            item.setEnabled(false);
 
             //get data from inputs
             TextView tName = (TextView) findViewById(R.id.friendsPic);
@@ -156,7 +158,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             DatabaseReference ref = mDatabase.getReference("debts");
 
             //I owe
-            if (heOwesMe == false) {
+            if (!heOwesMe) {
                 //get id of new node
                 String id = ref.push().getKey();
                 Debt debt = new Debt(
@@ -193,6 +195,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             //TODO: vyronanie cien
 
             finish();
+            item.setEnabled(true);
         }
         return super.onOptionsItemSelected(item);
     }

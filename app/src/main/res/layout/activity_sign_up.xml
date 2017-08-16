@@ -13,49 +13,56 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_launcher"
-        android:layout_gravity="center"
+        android:layout_gravity="left"
         android:background="#ffffffff"/>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/firstname">
+        android:hint="@string/firstname"
+        app:errorEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/text_input_signUp_firstname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"/>
 
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/lastname">
+        android:hint="@string/lastname"
+        app:errorEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/text_input_signUp_lastname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"/>
 
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/email">
+        android:hint="@string/email"
+        app:errorEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/text_input_signUp_email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
 
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/new_password">
+        android:hint="@string/new_password"
+        app:errorEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/text_input_signUp_password"

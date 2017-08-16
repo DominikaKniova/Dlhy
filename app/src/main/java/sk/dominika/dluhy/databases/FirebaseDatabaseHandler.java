@@ -1,8 +1,10 @@
 package sk.dominika.dluhy.databases;
 
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -10,9 +12,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.activities.MainActivity;
 import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
 import sk.dominika.dluhy.databases_objects.Relationship;
+import sk.dominika.dluhy.databases_objects.User;
 
 public class FirebaseDatabaseHandler {
 
@@ -117,7 +122,7 @@ public class FirebaseDatabaseHandler {
 
         //delete debts
         final DatabaseReference refDebts = mDatabase.getReference("debts");
-        refDebts.addValueEventListener(new ValueEventListener() {
+        refDebts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -138,7 +143,7 @@ public class FirebaseDatabaseHandler {
         //delete friendship
         //TODO vyriesit co ked nie je user
         final DatabaseReference refFriends = mDatabase.getReference("friends");
-        refFriends.addValueEventListener(new ValueEventListener() {
+        refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -156,5 +161,53 @@ public class FirebaseDatabaseHandler {
             }
         });
 
+    }
+
+    /**
+     * Check if new adding relationship doesn't already exist.
+     * If not then add new relationship.
+     * Show result toast in activity
+     * @param fromUser
+     * @param user the user I am adding
+     * @param activity
+     */
+    public static void checkIfRelationshipExists(String fromUser, final User user, final Activity activity) {
+
+        final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference ref = mDatabase.getReference("friends");
+        ref.orderByChild("fromUserId").equalTo(fromUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean result = false;
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    Relationship relationship = snapshot.getValue(Relationship.class);
+                    if (relationship.getToUserId().equals(user.getId())){
+                        //relationship exists
+                        result = true;
+                    }
+                }
+                if(!result) {
+                    //relationship doesn't exist
+                    Relationship r = new Relationship(CurrentUser.UserCurrent.id, user.getId(), user.getFirstname());
+                    DatabaseReference friends = mDatabase.getReference("friends");
+                    String id = friends.push().getKey();
+                    friends.child(id).setValue(r);
+
+                    Relationship r2 = new Relationship(user.getId(), CurrentUser.UserCurrent.id, CurrentUser.UserCurrent.firstName);
+                    id = friends.push().getKey();
+                    friends.child(id).setValue(r2);
+                    Toast.makeText(activity, R.string.friend_added, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(activity, R.string.friend_not_added, Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

@@ -1,4 +1,5 @@
 <resources>
+    <!--XML files-->
     <string name="app_name">Dluhy</string>
     <string name="title_activity_main">Dluhy</string>
     <string name="list_names">List of Names</string>
@@ -27,5 +28,15 @@
     <string name="my_debts">My debts</string>
     <string name="our_debts">Our debts</string>
     <string name="close">Close</string>
+
+    <!--ACTIVITY MESSAGES-->
+    <string name="dialog_unsuccessful_registration">Registration was unsuccessful. Check if enetered datas are correct</string>
+    <string name="ok">OK</string>
+    <string name="incorrect_email">The email address is badly formatted</string>
+    <string name="error_weak_password">The password must have at least 6 characters</string>
+    <string name="error_invalid_email">The email is invalid</string>
+    <string name="error_user_exists">The user already exists</string>
+    <string name="friend_added">Added new friend</string>
+    <string name="friend_not_added">User is already friend</string>
 
 </resources>

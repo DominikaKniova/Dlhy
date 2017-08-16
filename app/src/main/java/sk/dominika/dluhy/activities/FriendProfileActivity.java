@@ -80,7 +80,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         FirebaseDatabaseHandler.getOverallSum(id_friend, sum);
 
         //On click listener: Showing all our debts
-        Button our_debts = (Button) findViewById(R.id.our_debts);
+        final Button our_debts = (Button) findViewById(R.id.our_debts);
         our_debts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
