@@ -3,6 +3,7 @@ package sk.dominika.dluhy.databases;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,10 +60,10 @@ public class FirebaseDatabaseHandler {
                     }
                     textView.setText(String.valueOf(sum));
                     if (sum <0) {
-                        textView.setTextColor(Color.RED);
+                        textView.setTextColor(Color.parseColor("#a01919"));
                     }
                     else {
-                        textView.setTextColor(Color.GREEN);
+                        textView.setTextColor(Color.parseColor("#3ba100"));
                     }
                 }
 
@@ -97,10 +98,10 @@ public class FirebaseDatabaseHandler {
                     }
                     textView.setText(String.valueOf(sum));
                     if (sum <0) {
-                        textView.setTextColor(Color.RED);
+                        textView.setTextColor(Color.parseColor("#a01919"));
                     }
                     else {
-                        textView.setTextColor(Color.GREEN);
+                        textView.setTextColor(Color.parseColor("#3ba100"));
                     }
                 }
 
