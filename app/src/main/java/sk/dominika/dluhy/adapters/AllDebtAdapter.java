@@ -2,6 +2,7 @@ package sk.dominika.dluhy.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,11 +68,11 @@ public class AllDebtAdapter extends RecyclerView.Adapter<AllDebtAdapter.ViewHold
         if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
             TextView tSum = holder.sumTextView;
             tSum.setText("-" + String.valueOf(debt.getSum()));
-            tSum.setTextColor(Color.RED);
+            tSum.setTextColor(ContextCompat.getColor(memberContext, R.color.red_sum));
 
             TextView tName = holder.nameTextView;
             tName.setText(debt.getName_toWhom());
-            tName.setTextColor(Color.RED);
+            tName.setTextColor(ContextCompat.getColor(memberContext, R.color.red_sum));
 
             TextView tNote = holder.noteTextView;
             tNote.setText(debt.getNote());
@@ -80,11 +81,11 @@ public class AllDebtAdapter extends RecyclerView.Adapter<AllDebtAdapter.ViewHold
         else {
             TextView tSum = holder.sumTextView;
             tSum.setText("+" + String.valueOf(debt.getSum()));
-            tSum.setTextColor(Color.GREEN);
+            tSum.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
 
             TextView tName = holder.nameTextView;
             tName.setText(debt.getName_who());
-            tName.setTextColor(Color.GREEN);
+            tName.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
 
             TextView tNote = holder.noteTextView;
             tNote.setText(debt.getNote());

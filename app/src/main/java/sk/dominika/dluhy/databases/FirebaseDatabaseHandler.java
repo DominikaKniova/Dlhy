@@ -60,10 +60,12 @@ public class FirebaseDatabaseHandler {
                     }
                     textView.setText(String.valueOf(sum));
                     if (sum <0) {
-                        textView.setTextColor(Color.parseColor("#a01919"));
+                        //red
+                        textView.setTextColor(Color.parseColor("#df2d00"));
                     }
                     else {
-                        textView.setTextColor(Color.parseColor("#3ba100"));
+                        //green
+                        textView.setTextColor(Color.parseColor("#52df00"));
                     }
                 }
 
@@ -98,10 +100,12 @@ public class FirebaseDatabaseHandler {
                     }
                     textView.setText(String.valueOf(sum));
                     if (sum <0) {
-                        textView.setTextColor(Color.parseColor("#a01919"));
+                        //red
+                        textView.setTextColor(Color.parseColor("#df2d00"));
                     }
                     else {
-                        textView.setTextColor(Color.parseColor("#3ba100"));
+                        //green
+                        textView.setTextColor(Color.parseColor("#52df00"));
                     }
                 }
 

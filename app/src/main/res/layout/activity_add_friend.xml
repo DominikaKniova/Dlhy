@@ -13,7 +13,8 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/firstname">
+        android:hint="@string/firstname"
+        app:errorTextAppearance="@style/error_appearance">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/textInput_add_person_firstname"
@@ -27,7 +28,8 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/lastname">
+        android:hint="@string/lastname"
+        app:errorTextAppearance="@style/error_appearance">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/textInput_add_person_lastname"
@@ -41,14 +43,15 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/email">
+        android:hint="@string/email"
+        app:errorTextAppearance="@style/error_appearance">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/textInput_add_person_mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress" />
 
     </android.support.design.widget.TextInputLayout>
 

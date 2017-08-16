@@ -8,6 +8,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.User;
+import sk.dominika.dluhy.dialogs.ShowAlertDialog;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -55,6 +58,98 @@ public class SignUpActivity extends AppCompatActivity {
          */
         mAuth2 = FirebaseAuth.getInstance();
 
+        firstname = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
+        lastname = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
+        emailInput = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
+        passwordInput = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
+
+        firstname.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (firstname.getText().toString().equals("")){
+                    firstname.setError("First name is required");
+                }
+                else {
+                    firstname.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        lastname.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (lastname.getText().toString().equals("")){
+                    lastname.setError("Last name is required");
+                }
+                else {
+                    lastname.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        emailInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (emailInput.getText().toString().equals("")){
+                    emailInput.setError("Email is required");
+                }
+                else {
+                    emailInput.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        passwordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (passwordInput.getText().toString().equals("")){
+                    passwordInput.setError("Password is required");
+                }
+                else {
+                    passwordInput.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         final Button newAccountCreated = (Button) findViewById(R.id.button_signUp);
         newAccountCreated.setOnClickListener(new View.OnClickListener(){
@@ -62,17 +157,27 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 newAccountCreated.setEnabled(false);
 
-                firstname = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
-                lastname = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
-                emailInput = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
-                passwordInput = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
+                if (firstname.getText().toString().equals("") ||
+                        lastname.getText().toString().equals("") ||
+                        emailInput.getText().toString().equals("") ||
+                        passwordInput.getText().toString().equals("")) {
+                    ShowAlertDialog.showAlertDialog("You must complete text fields", SignUpActivity.this);
+                    firstname.setError("First name is required");
+                    lastname.setError("Last name is required");
+                    emailInput.setError("Email is required");
+                    passwordInput.setError("Password is required");
+                    newAccountCreated.setEnabled(true);
+                }
+                else {
+                    user = new User("",firstname.getText().toString(), lastname.getText().toString(), emailInput.getText().toString());
 
-                user = new User("",firstname.getText().toString(), lastname.getText().toString(), emailInput.getText().toString());
+                    //set current user
+                    CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
 
-                //set current user
-                CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+                    createUser(user.getEmail(), passwordInput.getText().toString());
 
-                createUser(user.getEmail(), passwordInput.getText().toString());
+                    newAccountCreated.setEnabled(true);
+                }
             }
         });
     }

@@ -19,6 +19,7 @@ import sk.dominika.dluhy.adapters.FriendDebtAdapter;
 import sk.dominika.dluhy.databases.DatabaseHandler;
 import sk.dominika.dluhy.databases_objects.CurrentUser;
 import sk.dominika.dluhy.databases_objects.Debt;
+import sk.dominika.dluhy.decorations.DividerDecoration;
 
 /**
  * Dialog for showing recycleview.
@@ -85,6 +86,7 @@ public class DialogFriendDebts extends DialogFragment{
 
         RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewFriendDebts);
         FriendDebtAdapter adapter = new FriendDebtAdapter(view.getContext(), Debt.myDebts);
+        recycler_viewDebts.addItemDecoration(new DividerDecoration(view.getContext()));
         recycler_viewDebts.setAdapter(adapter);
         recycler_viewDebts.setLayoutManager(new LinearLayoutManager(view.getContext()));
 

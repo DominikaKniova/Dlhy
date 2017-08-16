@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="red_sum">#df2d00</color>
+    <color name="green_sum">#52df00</color>
+    <color name="divider">#9c9c9c</color>
 </resources>

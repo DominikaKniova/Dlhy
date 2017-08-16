@@ -34,6 +34,7 @@ import sk.dominika.dluhy.databases_objects.User;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
+import sk.dominika.dluhy.dialogs.ShowAlertDialog;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
 
@@ -76,6 +77,10 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 showTimePickerDialog(v);
             }
         });
+
+        //name of current user
+        TextView myName = (TextView) findViewById(R.id.myPic);
+        myName.setText(CurrentUser.UserCurrent.firstName);
 
         //choose friend
         TextView firendPic = (TextView) findViewById(R.id.friendsPic);
@@ -131,71 +136,75 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextInputEditText tDateAlert = (TextInputEditText) findViewById(R.id.inputDate);
             TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
 
-//            //add debt_all to database
-//            DatabaseHandler dbDebts = new DatabaseHandler(this);
-//            Debt d = new Debt(id_of_friend, edTxtName, edTxtSum, edTxtNote, edTxtDateCreated, edTxtTimeCreated);
-//            long newID = dbDebts.addDebtToDatabase(d);
-//            //set debt_all's ID
-//            d.setId_debt(newID);
-
-            //find out if I owe friend money or other way round
-            boolean heOwesMe;
-            ImageView arrow = (ImageView) findViewById(R.id.arrow);
-            String imageTag = (String) arrow.getTag();
-            if(imageTag.equals("arrForward")) {
-                heOwesMe = false;
-            } else {
-                heOwesMe = true;
+            //if user hasn't chosen friend
+            if ( tName.getText().toString().equals("")){
+                ShowAlertDialog.showAlertDialog("You must choose friend", NewDebtActivity.this);
+                item.setEnabled(true);
             }
-
-
-            /**
-             * Add debt d to Firebase database.
-             */
-            //get instance to database
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-            // get reference to 'debts' node
-            DatabaseReference ref = mDatabase.getReference("debts");
-
-            //I owe
-            if (!heOwesMe) {
-                //get id of new node
-                String id = ref.push().getKey();
-                Debt debt = new Debt(
-                        id,
-                        CurrentUser.UserCurrent.id,
-                        id_of_friend,
-                        CurrentUser.UserCurrent.firstName,
-                        tName.getText().toString(),
-                        Float.parseFloat(tSum.getText().toString()),
-                        tNote.getText().toString(),
-                        tDateAlert.getText().toString(),
-                        tTimeAlert.getText().toString());
-                //get a reference to location id and set the data at this location to the given value
-                ref.child(id).setValue(debt);
-            }
-            //they owe
             else {
-                //get id of new node
-                String id = ref.push().getKey();
-                Debt debt = new Debt(
-                        id,
-                        id_of_friend,
-                        CurrentUser.UserCurrent.id,
-                        tName.getText().toString(),
-                        CurrentUser.UserCurrent.firstName,
-                        Float.parseFloat(tSum.getText().toString()),
-                        tNote.getText().toString(),
-                        tDateAlert.getText().toString(),
-                        tTimeAlert.getText().toString());
-                //get a reference to location id and set the data at this location to the given value
-                ref.child(id).setValue(debt);
+
+                if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")){
+                    ShowAlertDialog.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
+                    item.setEnabled(true);
+                }
+                else {
+                    //find out if I owe friend money or other way round
+                    boolean heOwesMe;
+                    ImageView arrow = (ImageView) findViewById(R.id.arrow);
+                    String imageTag = (String) arrow.getTag();
+                    if(imageTag.equals("arrForward")) {
+                        heOwesMe = false;
+                    } else {
+                        heOwesMe = true;
+                    }
+
+
+                    /**
+                     * Add debt d to Firebase database.
+                     */
+                    //get instance to database
+                    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                    // get reference to 'debts' node
+                    DatabaseReference ref = mDatabase.getReference("debts");
+
+                    //I owe
+                    if (!heOwesMe) {
+                        //get id of new node
+                        String id = ref.push().getKey();
+                        Debt debt = new Debt(
+                                id,
+                                CurrentUser.UserCurrent.id,
+                                id_of_friend,
+                                CurrentUser.UserCurrent.firstName,
+                                tName.getText().toString(),
+                                Float.parseFloat(tSum.getText().toString()),
+                                tNote.getText().toString(),
+                                tDateAlert.getText().toString(),
+                                tTimeAlert.getText().toString());
+                        //get a reference to location id and set the data at this location to the given value
+                        ref.child(id).setValue(debt);
+                    }
+                    //they owe
+                    else {
+                        //get id of new node
+                        String id = ref.push().getKey();
+                        Debt debt = new Debt(
+                                id,
+                                id_of_friend,
+                                CurrentUser.UserCurrent.id,
+                                tName.getText().toString(),
+                                CurrentUser.UserCurrent.firstName,
+                                Float.parseFloat(tSum.getText().toString()),
+                                tNote.getText().toString(),
+                                tDateAlert.getText().toString(),
+                                tTimeAlert.getText().toString());
+                        //get a reference to location id and set the data at this location to the given value
+                        ref.child(id).setValue(debt);
+                    }
+                    finish();
+                    item.setEnabled(true);
+                }
             }
-
-            //TODO: vyronanie cien
-
-            finish();
-            item.setEnabled(true);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -42,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/pic_margin"
                 android:drawableTop="@mipmap/ic_launcher"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text=""/>
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout

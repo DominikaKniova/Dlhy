@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +44,46 @@ public class LogInActivity extends AppCompatActivity {
         // FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
 
+        emailInput = (TextInputEditText) findViewById(R.id.text_input_logIn_email);
+        passwordInput = (TextInputEditText) findViewById(R.id.text_input_logIn_password);
+
+        emailInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (emailInput.getText().toString().equals("")){
+                    emailInput.setError("Email is required");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        passwordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (passwordInput.getText().toString().equals("")){
+                    passwordInput.setError("Password is required");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         Button signIn = (Button) findViewById(R.id.button_signUp);
         signIn.setOnClickListener(new View.OnClickListener(){
@@ -56,10 +98,17 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 toMain.setEnabled(false);
-                emailInput = (TextInputEditText) findViewById(R.id.text_input_logIn_email);
-                passwordInput = (TextInputEditText) findViewById(R.id.text_input_logIn_password);
+                if (emailInput.getText().toString().equals("") || passwordInput.getText().toString().equals("")){
+                    ShowAlertDialog.showAlertDialog("You must complete text fields", LogInActivity.this);
+                    toMain.setEnabled(true);
+                    emailInput.setError("Email is required");
+                    passwordInput.setError("Password is required");
+                }
+                else {
+                    logIn(emailInput.getText().toString(), passwordInput.getText().toString());
+                    toMain.setEnabled(true);
+                }
 
-                logIn(emailInput.getText().toString(), passwordInput.getText().toString());
             }
         });
 
@@ -69,6 +118,8 @@ public class LogInActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
     }
+
+
 
     @Override
     public void onStop() {
