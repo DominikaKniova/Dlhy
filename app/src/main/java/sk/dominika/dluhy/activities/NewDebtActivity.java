@@ -48,7 +48,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     protected void onResume() {
         super.onResume();
-
         /**
          * Check if there exists data (id of friend) from previous activity
          * YES - NewDebtActivity is called from FriendProfileActivity
