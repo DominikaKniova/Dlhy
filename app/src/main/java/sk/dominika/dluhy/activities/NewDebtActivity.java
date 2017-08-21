@@ -58,7 +58,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             onClick(intent.getStringExtra("id"));
         }
 
-
         //expand date/time pickers
         final Button expButton = (Button) findViewById(R.id.expandableButton_alert);
         expButton.setOnClickListener(new View.OnClickListener() {
