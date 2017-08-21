@@ -1,11 +1,9 @@
 package sk.dominika.dluhy.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.dialogs.ShowAlertDialog;
+import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 
 
 public class LogInActivity extends AppCompatActivity {
@@ -99,7 +97,7 @@ public class LogInActivity extends AppCompatActivity {
             public void onClick(View view) {
                 toMain.setEnabled(false);
                 if (emailInput.getText().toString().equals("") || passwordInput.getText().toString().equals("")){
-                    ShowAlertDialog.showAlertDialog("You must complete text fields", LogInActivity.this);
+                    ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", LogInActivity.this);
                     toMain.setEnabled(true);
                     emailInput.setError("Email is required");
                     passwordInput.setError("Password is required");
@@ -151,13 +149,13 @@ public class LogInActivity extends AppCompatActivity {
                                 emailInput.setText("");
                                 passwordInput.setText("");
 
-                                ShowAlertDialog.showAlertDialog("Email or password not valid.", LogInActivity.this);
+                                ShowAlertDialogNeutral.showAlertDialog("Email or password not valid.", LogInActivity.this);
                             } catch(Exception e) {
                                 Log.e(TAG, e.getMessage());
                                 emailInput.setText("");
                                 passwordInput.setText("");
 
-                                ShowAlertDialog.showAlertDialog("Enter email and password again.", LogInActivity.this);
+                                ShowAlertDialogNeutral.showAlertDialog("Enter email and password again.", LogInActivity.this);
                             }
                         }
                     }

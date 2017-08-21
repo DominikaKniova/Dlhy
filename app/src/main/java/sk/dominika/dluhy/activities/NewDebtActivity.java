@@ -22,16 +22,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-import sk.dominika.dluhy.calendar.MyCalendarProvider;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
-import sk.dominika.dluhy.dialogs.ShowAlertDialog;
+import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
 import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
@@ -45,6 +43,22 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         setContentView(R.layout.activity_new_debt);
 
         setTitle("New Debt");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /**
+         * Check if there exists data (id of friend) from previous activity
+         * YES - NewDebtActivity is called from FriendProfileActivity
+         * NO - NewDebtActivity is called from MainActivity
+         */
+        Intent intent = getIntent();
+        if (intent.getStringExtra("id") != null) {
+            onClick(intent.getStringExtra("id"));
+        }
+
 
         //expand date/time pickers
         final Button expButton = (Button) findViewById(R.id.expandableButton_alert);
@@ -52,7 +66,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             @Override
             public void onClick(View view) {
                 expandableButtonAlerts(view);
-//                createReminder();
             }
         });
 
@@ -137,14 +150,16 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
             //if user hasn't chosen friend
             if (tName.getText().toString().equals("")) {
-                ShowAlertDialog.showAlertDialog("You must choose friend", NewDebtActivity.this);
+                ShowAlertDialogNeutral.showAlertDialog("You must choose friend", NewDebtActivity.this);
                 item.setEnabled(true);
             } else {
 
                 if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")) {
-                    ShowAlertDialog.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
+                    ShowAlertDialogNeutral.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
                 } else {
+                    //id of new debt
+                    String id;
                     //find out if I owe friend money or other way round
                     boolean heOwesMe;
                     ImageView arrow = (ImageView) findViewById(R.id.arrow);
@@ -167,7 +182,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                     //I owe
                     if (!heOwesMe) {
                         //get id of new node
-                        String id = ref.push().getKey();
+                        id = ref.push().getKey();
                         Debt debt = new Debt(
                                 id,
                                 CurrentUser.UserCurrent.id,
@@ -184,7 +199,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                     //they owe
                     else {
                         //get id of new node
-                        String id = ref.push().getKey();
+                        id = ref.push().getKey();
                         Debt debt = new Debt(
                                 id,
                                 id_of_friend,
@@ -207,9 +222,12 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         calendar.set(Calendar.MINUTE, minute);
                         calendar.set(Calendar.DAY_OF_MONTH, day);
                         calendar.set(Calendar.MONTH, month);
-//                        MyAlarmManager.scheduleNotification(NewDebtActivity.this, 5000, 1);
-                        MyAlarmManager.scheduleNotification(getBaseContext(), calendar, 4);
-
+                        MyAlarmManager.scheduleNotification(
+                                getBaseContext(),
+                                calendar,
+                                4,
+                                tName.getText().toString(),
+                                tSum.getText().toString() + ", " + tNote.getText().toString());
                     }
                     finish();
                     item.setEnabled(true);
@@ -248,9 +266,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         TextView viewName = (TextView) findViewById(R.id.friendsPic);
 
         if (viewName.getText().toString().equals("")) {
-            ShowAlertDialog.showAlertDialog("Before creating reminder choose friend", NewDebtActivity.this);
+            ShowAlertDialogNeutral.showAlertDialog("Before creating reminder choose friend", NewDebtActivity.this);
         } else if (viewNote.getText().toString().equals("") || viewSum.getText().toString().equals("")) {
-            ShowAlertDialog.showAlertDialog("Before creating reminder enter note and sum", NewDebtActivity.this);
+            ShowAlertDialogNeutral.showAlertDialog("Before creating reminder enter note and sum", NewDebtActivity.this);
         } else {
             String desctiption;
             //find out if I owe friend money or other way round
@@ -327,7 +345,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     public void onReturnValueDate(Calendar calendar) {
         this.year = calendar.get(Calendar.YEAR);
-        this.month = calendar.get(Calendar.MONTH) + 1;
+        this.month = calendar.get(Calendar.MONTH);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
 
     }

@@ -39,6 +39,7 @@
     <string name="friend_added">Added new friend</string>
     <string name="friend_not_added">User is already friend</string>
     <string name="not_existing_user">The user does not exist</string>
+    <string name="alert_dialog_delete_friend">Do you want to delete friend and all debts created with them?</string>
 
     <!--NOTIFICATIONS-->
     <string name="title">Title</string>

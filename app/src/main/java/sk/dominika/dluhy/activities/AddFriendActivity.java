@@ -20,7 +20,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
-import sk.dominika.dluhy.dialogs.ShowAlertDialog;
+import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 
 public class AddFriendActivity extends AppCompatActivity {
     private TextInputEditText firstName, lastName, email;
@@ -122,7 +122,7 @@ public class AddFriendActivity extends AppCompatActivity {
             if (firstName.getText().toString().equals("")
                     || lastName.getText().toString().equals("")
                     || email.getText().toString().equals("")){
-                ShowAlertDialog.showAlertDialog("You must complete input fields", AddFriendActivity.this);
+                ShowAlertDialogNeutral.showAlertDialog("You must complete input fields", AddFriendActivity.this);
                 item.setEnabled(true);
                 email.setError("Email is required");
                 lastName.setError("Last name is required");

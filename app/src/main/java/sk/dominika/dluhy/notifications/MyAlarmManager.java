@@ -12,23 +12,24 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.activities.MainActivity;
 
 public class MyAlarmManager {
 
-    public static void scheduleNotification(Context context, Calendar calendar, int notificationId) {
+    public static void scheduleNotification(Context context, Calendar calendar, int notificationId, String title, String content) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setContentTitle(context.getString(R.string.title))
-                .setContentText(context.getString(R.string.content))
+                .setContentTitle(title)
+                .setContentText(content)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-//        Intent intent = new Intent(context, MainActivity.class);
-//        PendingIntent activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        builder.setContentIntent(activity);
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(activity);
 
         Notification notification = builder.build();
 
@@ -36,11 +37,11 @@ public class MyAlarmManager {
         notificationIntent.putExtra(MyNotificationPublisher.NOTIFICATION_ID, notificationId);
         notificationIntent.putExtra(MyNotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        PendingIntent pendingIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
 
-//        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        Date date = calendar.getTime();
+        long alertCalculatedMillis = date.getTime();
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-     alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertCalculatedMillis, pendingIntent);
     }
 }

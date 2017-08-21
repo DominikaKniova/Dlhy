@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
-import sk.dominika.dluhy.dialogs.ShowAlertDialog;
+import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -156,7 +156,7 @@ public class SignUpActivity extends AppCompatActivity {
                         lastname.getText().toString().equals("") ||
                         emailInput.getText().toString().equals("") ||
                         passwordInput.getText().toString().equals("")) {
-                    ShowAlertDialog.showAlertDialog("You must complete text fields", SignUpActivity.this);
+                    ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", SignUpActivity.this);
                     firstname.setError("First name is required");
                     lastname.setError("Last name is required");
                     emailInput.setError("Email is required");

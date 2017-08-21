@@ -23,6 +23,7 @@ import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
+import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 public class FriendProfileActivity extends AppCompatActivity {
 
@@ -91,7 +92,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO pridavanie dlhu z profilu kamarata
+                newDebtActivityWithName();
             }
         });
     }
@@ -110,7 +111,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.delete_friend:
-                FirebaseDatabaseHandler.deleteFriendAndDebts(id_friend);
+                ShowAlertDialogDeleteFriend.showAlertDialog(getBaseContext().getString(R.string.alert_dialog_delete_friend), FriendProfileActivity.this, id_friend);
                 break;
             case R.id.close_profile:
                 newActivity_main();
@@ -139,6 +140,16 @@ public class FriendProfileActivity extends AppCompatActivity {
         newDialog.show(getFragmentManager(), "debts");
         //TODO
 
+    }
+
+    /**
+     * Add new debt from friend's profile.
+     * Send id as extra through intent.
+     */
+    private void newDebtActivityWithName() {
+        Intent intent = new Intent(this, NewDebtActivity.class);
+        intent.putExtra("id", id_friend);
+        startActivity(intent);
     }
 }
 

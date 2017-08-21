@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import sk.dominika.dluhy.activities.LogInActivity;
 
 
-public class ShowAlertDialog {
+public class ShowAlertDialogNeutral {
     /**
      * Show alert dialog with a message in an activity.
      * Dialog has only one neutral button.
