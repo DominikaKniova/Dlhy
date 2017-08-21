@@ -1,7 +1,6 @@
 package sk.dominika.dluhy.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +12,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Debt;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.Debt;
 
 /**
  * Adapter for showing debts I share with concrete friend.

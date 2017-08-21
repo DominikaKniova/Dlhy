@@ -1,6 +1,5 @@
 package sk.dominika.dluhy.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +8,8 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,10 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Friend;
-import sk.dominika.dluhy.databases_objects.Relationship;
-import sk.dominika.dluhy.databases_objects.User;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.ShowAlertDialog;
 
 public class AddFriendActivity extends AppCompatActivity {
@@ -118,7 +113,7 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         //add friend
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
@@ -144,7 +139,7 @@ public class AddFriendActivity extends AppCompatActivity {
                 /**
                  * check if new friend is user
                  * Yes - create AB, BA friendship in database "friends"
-                 * No - create only AB, with generated ID for friend
+                 * No - make toast that user doesn't exist
                  */
                 refUsers.orderByChild("email").equalTo(email.getText().toString()).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -162,13 +157,19 @@ public class AddFriendActivity extends AppCompatActivity {
                              * if not then add new relationship
                              */
                             FirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
+                            finish();
+                            item.setEnabled(true);
                         }
                         //user does not exist
                         else {
-                            DatabaseReference friends = mDatabase.getReference("friends");
-                            String id = friends.push().getKey();
-                            Relationship r = new Relationship(CurrentUser.UserCurrent.id, id, firstName.getText().toString());
-                            friends.child(id).setValue(r);
+//                            DatabaseReference friends = mDatabase.getReference("friends");
+//                            String id = friends.push().getKey();
+//                            Relationship r = new Relationship(CurrentUser.UserCurrent.id, id, firstName.getText().toString());
+//                            friends.child(id).setValue(r);
+                            Toast.makeText(AddFriendActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
+                            item.setEnabled(true);
+                            email.setText("");
+                            email.setError("Invalid email");
                         }
                     }
 
@@ -177,9 +178,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
                     }
                 });
-
-                finish();
-                item.setEnabled(true);
             }
         }
         return super.onOptionsItemSelected(item);

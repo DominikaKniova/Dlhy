@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sk.dominika.dluhy">
 
+    <uses-sdk android:minSdkVersion="14" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +34,10 @@
         <activity android:name=".activities.LogInActivity" />
         <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.FriendProfileActivity"/>
+
+        <receiver android:name="sk.dominika.dluhy.notifications.MyNotificationPublisher"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

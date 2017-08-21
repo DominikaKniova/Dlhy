@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
 
@@ -37,6 +38,10 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
         TextInputEditText inputDate = (TextInputEditText) getActivity().findViewById(R.id.inputDate);
         inputDate.setText(formattedDate);
+
+        //return date to NewDebtActivity
+        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
+        activity.onReturnValueDate(c);
 
     }
 }

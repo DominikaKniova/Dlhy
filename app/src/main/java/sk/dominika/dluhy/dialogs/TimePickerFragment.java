@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
@@ -26,8 +27,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         int minute = c.get(Calendar.MINUTE);
 
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
+        return new TimePickerDialog(getActivity(), this, hour, minute, true);
     }
 
     // Do something with the time chosen by the user
@@ -36,11 +36,16 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
         c.set(Calendar.MINUTE, minute);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String formattedTime = sdf.format(c.getTime());
 
         TextInputEditText inputTime = (TextInputEditText)getActivity().findViewById(R.id.inputTime);
         inputTime.setText(formattedTime);
+
+        //return selcted time to NewDebtActivity
+        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
+        activity.onReturnValueTime(c);
+
     }
 }
 

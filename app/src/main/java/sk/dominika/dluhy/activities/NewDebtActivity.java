@@ -1,44 +1,43 @@
 package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
-import android.content.ClipData;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.provider.ContactsContract;
+import android.provider.CalendarContract;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import sk.dominika.dluhy.databases.DatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Debt;
-import sk.dominika.dluhy.databases_objects.Friend;
-import sk.dominika.dluhy.databases_objects.User;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import sk.dominika.dluhy.calendar.MyCalendarProvider;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.Debt;
+import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.ShowAlertDialog;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
+import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
+import sk.dominika.dluhy.notifications.MyAlarmManager;
 
-public class NewDebtActivity extends AppCompatActivity implements DialogListener {
+public class NewDebtActivity extends AppCompatActivity implements DialogListener, ReturnValueFragment {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +48,11 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
         //expand date/time pickers
         final Button expButton = (Button) findViewById(R.id.expandableButton_alert);
-        expButton.setOnClickListener(new View.OnClickListener(){
+        expButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 expandableButtonAlerts(view);
+//                createReminder();
             }
         });
 
@@ -102,7 +102,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 if (imageTag.equals("arrForward")) {
                     arrow.setTag("arrBack");
                     arrow.setImageResource(R.drawable.ic_arrow_back);
-                }else {
+                } else {
                     arrow.setTag("arrForward");
                     arrow.setImageResource(R.drawable.ic_arrow_forward);
                 }
@@ -111,8 +111,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
@@ -126,7 +125,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.check) {
+        if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
 
             //get data from inputs
@@ -137,22 +136,20 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
 
             //if user hasn't chosen friend
-            if ( tName.getText().toString().equals("")){
+            if (tName.getText().toString().equals("")) {
                 ShowAlertDialog.showAlertDialog("You must choose friend", NewDebtActivity.this);
                 item.setEnabled(true);
-            }
-            else {
+            } else {
 
-                if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")){
+                if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")) {
                     ShowAlertDialog.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
-                }
-                else {
+                } else {
                     //find out if I owe friend money or other way round
                     boolean heOwesMe;
                     ImageView arrow = (ImageView) findViewById(R.id.arrow);
                     String imageTag = (String) arrow.getTag();
-                    if(imageTag.equals("arrForward")) {
+                    if (imageTag.equals("arrForward")) {
                         heOwesMe = false;
                     } else {
                         heOwesMe = true;
@@ -201,6 +198,19 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         //get a reference to location id and set the data at this location to the given value
                         ref.child(id).setValue(debt);
                     }
+
+                    //handle alert
+                    if (!(tDateAlert.getText().toString().equals("") && tTimeAlert.getText().toString().equals(""))) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.HOUR_OF_DAY, hour);
+                        calendar.set(Calendar.MINUTE, minute);
+                        calendar.set(Calendar.DAY_OF_MONTH, day);
+                        calendar.set(Calendar.MONTH, month);
+//                        MyAlarmManager.scheduleNotification(NewDebtActivity.this, 5000, 1);
+                        MyAlarmManager.scheduleNotification(getBaseContext(), calendar, 4);
+
+                    }
                     finish();
                     item.setEnabled(true);
                 }
@@ -210,6 +220,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     }
 
     ExpandableRelativeLayout expandableLayout;
+
     private void expandableButtonAlerts(View v) {
         expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
         expandableLayout.toggle(); // toggle expand and collapse
@@ -231,12 +242,48 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         newDialog.show(getFragmentManager(), "friends");
     }
 
+    private void createReminder() {
+        TextView viewNote = (TextView) findViewById(R.id.textInput_note);
+        TextView viewSum = (TextView) findViewById(R.id.textInput_money);
+        TextView viewName = (TextView) findViewById(R.id.friendsPic);
+
+        if (viewName.getText().toString().equals("")) {
+            ShowAlertDialog.showAlertDialog("Before creating reminder choose friend", NewDebtActivity.this);
+        } else if (viewNote.getText().toString().equals("") || viewSum.getText().toString().equals("")) {
+            ShowAlertDialog.showAlertDialog("Before creating reminder enter note and sum", NewDebtActivity.this);
+        } else {
+            String desctiption;
+            //find out if I owe friend money or other way round
+            boolean theyOwesMe;
+            ImageView arrow = (ImageView) findViewById(R.id.arrow);
+            String imageTag = (String) arrow.getTag();
+            if (imageTag.equals("arrForward")) {
+                theyOwesMe = false;
+            } else {
+                theyOwesMe = true;
+            }
+            //I owe
+            if (!theyOwesMe) {
+                desctiption = "-" + viewSum.getText().toString() + ", " + viewNote.getText().toString();
+            } else {
+                //they owe
+                desctiption = "+" + viewSum.getText().toString() + ", " + viewNote.getText().toString();
+            }
+            Intent intent = new Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.Events.TITLE, viewName.getText().toString())
+                    .putExtra(CalendarContract.Events.DESCRIPTION, desctiption);
+
+            startActivity(intent);
+        }
+    }
 
     /**
      * Makes access to friend's id through DialogFriends.
      * Sets the text (name of friend) of TextView friendsPic.
      */
     private String id_of_friend;
+
     @Override
     public void onClick(String friend_id) {
         id_of_friend = friend_id;
@@ -270,5 +317,24 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 //TODO
             }
         });
+    }
+
+    /**
+     * get returned values from date and time pickers
+     */
+    private int year, month, day, hour, minute;
+
+    @Override
+    public void onReturnValueDate(Calendar calendar) {
+        this.year = calendar.get(Calendar.YEAR);
+        this.month = calendar.get(Calendar.MONTH) + 1;
+        this.day = calendar.get(Calendar.DAY_OF_MONTH);
+
+    }
+
+    @Override
+    public void onReturnValueTime(Calendar calendar) {
+        this.hour = calendar.get(Calendar.HOUR_OF_DAY);
+        this.minute = calendar.get(Calendar.MINUTE);
     }
 }

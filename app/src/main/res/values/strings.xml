@@ -38,5 +38,10 @@
     <string name="error_user_exists">The user already exists</string>
     <string name="friend_added">Added new friend</string>
     <string name="friend_not_added">User is already friend</string>
+    <string name="not_existing_user">The user does not exist</string>
+
+    <!--NOTIFICATIONS-->
+    <string name="title">Title</string>
+    <string name="content">Content</string>
 
 </resources>

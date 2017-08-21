@@ -1,9 +1,7 @@
 package sk.dominika.dluhy.adapters;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sk.dominika.dluhy.activities.FriendProfileActivity;
-import sk.dominika.dluhy.databases_objects.Friend;
+import sk.dominika.dluhy.database_models.Friend;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.listeners.DialogListener;

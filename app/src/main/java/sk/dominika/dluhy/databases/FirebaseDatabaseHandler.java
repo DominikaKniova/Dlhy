@@ -3,7 +3,6 @@ package sk.dominika.dluhy.databases;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,11 +13,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.MainActivity;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Debt;
-import sk.dominika.dluhy.databases_objects.Relationship;
-import sk.dominika.dluhy.databases_objects.User;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.Debt;
+import sk.dominika.dluhy.database_models.Relationship;
+import sk.dominika.dluhy.database_models.User;
 
 public class FirebaseDatabaseHandler {
 
@@ -146,7 +144,6 @@ public class FirebaseDatabaseHandler {
         });
 
         //delete friendship
-        //TODO vyriesit co ked nie je user
         final DatabaseReference refFriends = mDatabase.getReference("friends");
         refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -173,10 +170,10 @@ public class FirebaseDatabaseHandler {
      * If not then add new relationship.
      * Show result toast in activity
      * @param fromUser
-     * @param user the user I am adding
+     * @param toUser the user I am adding relationship with
      * @param activity
      */
-    public static void checkIfRelationshipExists(String fromUser, final User user, final Activity activity) {
+    public static void checkIfRelationshipExists(String fromUser, final User toUser, final Activity activity) {
 
         final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference ref = mDatabase.getReference("friends");
@@ -186,19 +183,19 @@ public class FirebaseDatabaseHandler {
                 boolean result = false;
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     Relationship relationship = snapshot.getValue(Relationship.class);
-                    if (relationship.getToUserId().equals(user.getId())){
+                    if (relationship.getToUserId().equals(toUser.getId())){
                         //relationship exists
                         result = true;
                     }
                 }
                 if(!result) {
                     //relationship doesn't exist
-                    Relationship r = new Relationship(CurrentUser.UserCurrent.id, user.getId(), user.getFirstname());
+                    Relationship r = new Relationship(CurrentUser.UserCurrent.id, toUser.getId(), toUser.getFirstname());
                     DatabaseReference friends = mDatabase.getReference("friends");
                     String id = friends.push().getKey();
                     friends.child(id).setValue(r);
 
-                    Relationship r2 = new Relationship(user.getId(), CurrentUser.UserCurrent.id, CurrentUser.UserCurrent.firstName);
+                    Relationship r2 = new Relationship(toUser.getId(), CurrentUser.UserCurrent.id, CurrentUser.UserCurrent.firstName);
                     id = friends.push().getKey();
                     friends.child(id).setValue(r2);
                     Toast.makeText(activity, R.string.friend_added, Toast.LENGTH_SHORT).show();

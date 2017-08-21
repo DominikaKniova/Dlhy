@@ -26,12 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.User;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
+import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 
 public class MainActivity extends AppCompatActivity implements DialogListener {
@@ -219,6 +220,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 newDialog_friends(item);
                 break;
             case R.id.calendar:
+//                MyAlarmManager.scheduleNotification(MainActivity.this, 10000, 45);
+//                MyAlarmManager.scheduleNotification(MainActivity.this, 20000, 32);
                 break;
             case R.id.signOut:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -244,18 +247,4 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         intent.putExtra("id", id);
         startActivity(intent);
     }
-
-    //print my friends from database ...testing
-//    private void printAccounts(){
-//        DatabaseHandler dbFr = new DatabaseHandler(this);
-//        List<Friend> myFr = dbFr.getFriendsFromDatabase();
-//
-//        TextView printer = (TextView) findViewById(R.id.printer);
-//        StringBuilder s = new StringBuilder();
-//        for (int i = 0; i < myFr.size(); i++) {
-//            s.append(myFr.get(i).getFirstName());
-//            s.append("\n");
-//        }
-//        printer.setText(s);
-//    }
 }

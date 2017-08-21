@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.android.gms.common.data.Freezable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,12 +18,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.FriendAdapter;
-import sk.dominika.dluhy.databases.DatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Friend;
-import sk.dominika.dluhy.databases_objects.Relationship;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.Friend;
+import sk.dominika.dluhy.database_models.Relationship;
 import sk.dominika.dluhy.decorations.DividerDecoration;
-import sk.dominika.dluhy.decorations.DividerItemDecoration;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**

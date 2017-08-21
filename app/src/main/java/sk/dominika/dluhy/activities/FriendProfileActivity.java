@@ -2,7 +2,6 @@ package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,8 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.User;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 
 public class FriendProfileActivity extends AppCompatActivity {

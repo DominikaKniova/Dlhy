@@ -1,4 +1,4 @@
-package sk.dominika.dluhy.databases_objects;
+package sk.dominika.dluhy.database_models;
 
 public class CurrentUser {
     public static class UserCurrent{

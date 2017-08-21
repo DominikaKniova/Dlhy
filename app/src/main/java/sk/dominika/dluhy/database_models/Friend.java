@@ -1,4 +1,4 @@
-package sk.dominika.dluhy.databases_objects;
+package sk.dominika.dluhy.database_models;
 
 import android.support.design.widget.TextInputEditText;
 

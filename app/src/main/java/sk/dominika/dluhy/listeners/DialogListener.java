@@ -1,9 +1,5 @@
 package sk.dominika.dluhy.listeners;
 
-import android.view.View;
-
-import sk.dominika.dluhy.databases_objects.Friend;
-
 
 public interface DialogListener {
 

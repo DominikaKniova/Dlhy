@@ -17,9 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.AllDebtAdapter;
-import sk.dominika.dluhy.databases.DatabaseHandler;
-import sk.dominika.dluhy.databases_objects.CurrentUser;
-import sk.dominika.dluhy.databases_objects.Debt;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.decorations.DividerDecoration;
 
 /**

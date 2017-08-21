@@ -11,8 +11,8 @@ import android.provider.BaseColumns;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.dominika.dluhy.databases_objects.Debt;
-import sk.dominika.dluhy.databases_objects.Friend;
+import sk.dominika.dluhy.database_models.Debt;
+import sk.dominika.dluhy.database_models.Friend;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 

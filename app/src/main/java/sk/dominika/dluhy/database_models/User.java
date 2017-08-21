@@ -1,6 +1,4 @@
-package sk.dominika.dluhy.databases_objects;
-
-import android.support.design.widget.TextInputEditText;
+package sk.dominika.dluhy.database_models;
 
 import java.util.ArrayList;
 import java.util.List;
