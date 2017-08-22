@@ -33,6 +33,9 @@ public class FriendProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_profile);
+
+        setTitle(CurrentUser.UserCurrent.firstName);
+
     }
 
     @Override
@@ -43,18 +46,15 @@ public class FriendProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id_friend = intent.getStringExtra("id");
 
-        //if id friend == null
-        setTitle(CurrentUser.UserCurrent.firstName);
-
         /**
-         * find friend (user) in database based on the friend's id
+         * Find friend (user) in database based on the friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         // get reference to 'users' node and child with the id
         DatabaseReference ref = mDatabase.getReference("users").child(id_friend);
 
-        // get data (name of friend) from firebase database and set views
+        // get data (name of friend) from database and set views
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,13 +65,11 @@ public class FriendProfileActivity extends AppCompatActivity {
                 TextView profile_name = (TextView) findViewById(R.id.profile_name);
                 profile_name.setText(value.getFirstname() + " " + value.getLastname());
                 //TODO: email, sum, pic ....
-
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                //TODO
             }
         });
 
@@ -116,7 +114,6 @@ public class FriendProfileActivity extends AppCompatActivity {
             case R.id.close_profile:
                 newActivity_main();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -129,7 +126,6 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     /**
      * Starts dialog- list of debts shared with the friend.
-     *
      * @param id ID of friend.
      */
     private void showDialog_ourDebts(String id) {
@@ -138,13 +134,11 @@ public class FriendProfileActivity extends AppCompatActivity {
         args.putString("id", id);
         newDialog.setArguments(args);
         newDialog.show(getFragmentManager(), "debts");
-        //TODO
-
     }
 
     /**
      * Add new debt from friend's profile.
-     * Send id as extra through intent.
+     * Send id through intent.
      */
     private void newDebtActivityWithName() {
         Intent intent = new Intent(this, NewDebtActivity.class);
@@ -152,5 +146,3 @@ public class FriendProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 }
-
-

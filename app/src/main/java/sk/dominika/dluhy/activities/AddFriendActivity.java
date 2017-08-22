@@ -20,10 +20,10 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
-import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 
 public class AddFriendActivity extends AppCompatActivity {
-    private TextInputEditText firstName, lastName, email;
+
+    private TextInputEditText email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,55 +32,9 @@ public class AddFriendActivity extends AppCompatActivity {
 
         setTitle("Add Friend");
 
-        //get data from inputs
-        firstName = (TextInputEditText) findViewById(R.id.textInput_add_person_firstname);
-        lastName = (TextInputEditText) findViewById(R.id.textInput_add_person_lastname);
+        //get entered email
         email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
-
-        firstName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (firstName.getText().toString().equals("")){
-                    firstName.setError("First name is required");
-                }
-                else {
-                    firstName.setError(null);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        lastName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (lastName.getText().toString().equals("")){
-                    lastName.setError("Last name is required");
-                }
-                else {
-                    lastName.setError(null);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
+        //add text listener to check if input is correct
         email.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,7 +56,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     @Override
@@ -118,66 +71,66 @@ public class AddFriendActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
 
-            //if user hasn't completed any field
-            if (firstName.getText().toString().equals("")
-                    || lastName.getText().toString().equals("")
-                    || email.getText().toString().equals("")){
-                ShowAlertDialogNeutral.showAlertDialog("You must complete input fields", AddFriendActivity.this);
+            //if user hasn't completed email text field
+            if (email.getText().toString().equals("")){
+                Toast.makeText(AddFriendActivity.this, R.string.uncompleted_fields, Toast.LENGTH_SHORT).show();
                 item.setEnabled(true);
                 email.setError("Email is required");
-                lastName.setError("Last name is required");
-                firstName.setError("First name is required");
             }
-            //if all fields are completed then add new friend
+            //if email was completed
             else {
-                //get instance to database
-                final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                // get reference to 'users' node and to 'friends' node
-                final DatabaseReference refUsers = mDatabase.getReference("users");
 
+                //check if user is not adding himself
+                if (!email.getText().toString().equals(CurrentUser.UserCurrent.email)) {
+                    //get instance to database
+                    final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                    // get reference to 'users' node and to 'friends' node
+                    final DatabaseReference refUsers = mDatabase.getReference("users");
 
-                /**
-                 * check if new friend is user
-                 * Yes - create AB, BA friendship in database "friends"
-                 * No - make toast that user doesn't exist
-                 */
-                refUsers.orderByChild("email").equalTo(email.getText().toString()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //user exists
-                        if (dataSnapshot.hasChildren()) {
-                            User user = new User();
-                            //user = dataSnapshot.getValue(User.class);
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                user = snapshot.getValue(User.class);
+                    /**
+                     * check if new friend is user
+                     * Yes - create AB, BA friendship in database "friends"
+                     * No - make toast that user doesn't exist
+                     */
+                    refUsers.orderByChild("email").equalTo(email.getText().toString()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //user exists
+                            if (dataSnapshot.hasChildren()) {
+                                User user = new User();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    user = snapshot.getValue(User.class);
+                                }
+
+                                /**
+                                 * Firstly check whether the relationship doesn't already exist.
+                                 * if not then add new relationship
+                                 */
+                                FirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
+                                finish();
+                                item.setEnabled(true);
                             }
-
-                            /**
-                             * Firstly check whether the relationship doesn't already exist.
-                             * if not then add new relationship
-                             */
-                            FirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
-                            finish();
-                            item.setEnabled(true);
+                            //user does not exist
+                            else {
+                                Toast.makeText(AddFriendActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
+                                item.setEnabled(true);
+                                email.setText("");
+                                email.setError("Invalid email");
+                            }
                         }
-                        //user does not exist
-                        else {
-//                            DatabaseReference friends = mDatabase.getReference("friends");
-//                            String id = friends.push().getKey();
-//                            Relationship r = new Relationship(CurrentUser.UserCurrent.id, id, firstName.getText().toString());
-//                            friends.child(id).setValue(r);
-                            Toast.makeText(AddFriendActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
-                            item.setEnabled(true);
-                            email.setText("");
-                            email.setError("Invalid email");
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
+                else {
+                    //Current user entered his email
+                    Toast.makeText(AddFriendActivity.this, R.string.adding_curUsers_email, Toast.LENGTH_SHORT).show();
+                    item.setEnabled(true);
+                    email.setText("");
+                    email.setError("Invalid email");
+                }
             }
         }
         return super.onOptionsItemSelected(item);

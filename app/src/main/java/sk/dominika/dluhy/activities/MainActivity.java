@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     private final String TAG = "signed/logged";
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,49 +73,40 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         // FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
 
-        //method tracking whenever the user signs in or out
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-                //set views of logged user
-                if(user != null) {
-                    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                    String id = user.getUid();
+        //set views of logged user
+        if(currentUser != null) {
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference ref = mDatabase.getReference("users").child(currentUser.getUid());
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                        CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+                        CurrentUser.setId(user.getId());
 
-                    DatabaseReference ref = mDatabase.getReference("users").child(id);
-                    ref.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (user!= null) { //TODO toto uprav ked to budes mat spravne
-                                CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-                                CurrentUser.setId(user.getId());
+                        //set views
+                        TextView name = (TextView) findViewById(R.id.profile_name);
+                        name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
 
-                                //set views
-                                TextView name = (TextView) findViewById(R.id.profile_name);
-                                name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
-
-                                TextView sum = (TextView) findViewById(R.id.my_profile_sum);
-                                FirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT);
-
-                        }
-                    });
-
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                        TextView sum = (TextView) findViewById(R.id.my_profile_sum);
+                        FirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
                 }
-            }
-        };
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT);
+
+                }
+            });
+
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
+        } else {
+            // User is signed out
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+        }
+
 
 
 
@@ -125,50 +115,11 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     @Override
     protected void onStart() {
         super.onStart();
-
-        mAuth.addAuthStateListener(mAuthListener);
-
-        //TODO bude asi v log in activity
-        /**
-         * set current user
-         */
-//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-//        FirebaseUser loggedUser = mAuth.getCurrentUser();
-//        if (loggedUser != null) {
-//            String id = loggedUser.getUid();
-//
-//
-//            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-//
-//            DatabaseReference ref = mDatabase.getReference("users").child(id);
-//            ref.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    User user = dataSnapshot.getValue(User.class);
-//                    CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-//                    CurrentUser.setId(user.getId());
-//
-//                    //set views
-//                    TextView name = (TextView) findViewById(R.id.profile_name);
-//                    name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//        }
     }
-
-
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
         TextView name = (TextView)findViewById(R.id.profile_name);
         name.setText("");
     }
@@ -201,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     private void showDialog_debts(View view){
         DialogFragment newDialog = new DialogAllDebts();
         newDialog.show(getFragmentManager(), "debts");
-
     }
 
     //Start activities from Menu
@@ -213,15 +163,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 newActivity_addFriend(item);
                 break;
             case R.id.listNames:
-                //newActivity_ListFriends(item);
-                //printAccounts();
-                //newDialog_friends(item);
-                //showDialog_debts(item);
                 newDialog_friends(item);
                 break;
             case R.id.calendar:
-//                MyAlarmManager.scheduleNotification(MainActivity.this, 10000, 45);
-//                MyAlarmManager.scheduleNotification(MainActivity.this, 20000, 32);
                 break;
             case R.id.signOut:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -232,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         return super.onOptionsItemSelected(item);
     }
 
-    //Menu handler
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
