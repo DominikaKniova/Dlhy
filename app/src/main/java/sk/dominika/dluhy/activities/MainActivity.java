@@ -30,6 +30,7 @@ import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
+import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 
 public class MainActivity extends AppCompatActivity implements DialogListener {
@@ -73,10 +74,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         //set views of logged user
-        if(currentUser != null) {
+        if (currentUser != null) {
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
             DatabaseReference ref = mDatabase.getReference("users").child(currentUser.getUid());
-            ref.addValueEventListener(new ValueEventListener() {
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
@@ -98,33 +99,33 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 }
             });
         } else {
-            //newActivity_signOut();
+            newActivity_signOut();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        TextView name = (TextView)findViewById(R.id.profile_name);
+        TextView name = (TextView) findViewById(R.id.profile_name);
         name.setText("");
     }
 
     //Start activity New Debt
-    private void newActivity_addDebt(View v){
-        Intent intent_debt = new Intent(this,NewDebtActivity.class);
+    private void newActivity_addDebt(View v) {
+        Intent intent_debt = new Intent(this, NewDebtActivity.class);
         startActivity(intent_debt);
     }
 
     //Start activity Add Friend
-    private void newActivity_addFriend(MenuItem item){
-        Intent intent_person = new Intent(this,AddFriendActivity.class);
+    private void newActivity_addFriend(MenuItem item) {
+        Intent intent_person = new Intent(this, AddFriendActivity.class);
         startActivity(intent_person);
     }
 
     //Start activity Log In
-    private void newActivity_signOut(){
+    private void newActivity_signOut() {
         CurrentUser.cleanUser();
-        Intent intent_person = new Intent(this,LogInActivity.class);
+        Intent intent_person = new Intent(this, LogInActivity.class);
         startActivity(intent_person);
     }
 
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     }
 
     //Start dialog list of my debts
-    private void showDialog_debts(View view){
+    private void showDialog_debts(View view) {
         DialogFragment newDialog = new DialogAllDebts();
         newDialog.show(getFragmentManager(), "debts");
     }
@@ -151,10 +152,11 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 newDialog_friends(item);
                 break;
             case R.id.calendar:
+                MyAlarmManager.cancelAllNotifications(getBaseContext());
                 break;
             case R.id.signOut:
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                mAuth.signOut();
+                MyAlarmManager.cancelAllNotifications(getBaseContext());
+                FirebaseAuth.getInstance().signOut();
                 newActivity_signOut();
                 break;
         }

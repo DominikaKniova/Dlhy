@@ -39,9 +39,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         TextInputEditText inputDate = (TextInputEditText) getActivity().findViewById(R.id.inputDate);
         inputDate.setText(formattedDate);
 
-        //return date to NewDebtActivity
-        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
-        activity.onReturnValueDate(c);
+//        //return date to NewDebtActivity
+//        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
+//        activity.onReturnValueDate(c);
 
     }
 }

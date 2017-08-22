@@ -31,6 +31,8 @@ import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 public class MyFirebaseDatabaseHandler {
+    private  static Context context;
+
     public static String TAG = "MyFirebaseHandler";
 
     /**
@@ -76,53 +78,71 @@ public class MyFirebaseDatabaseHandler {
     };
 
     /**
+     * Listener for looping through all my debts and creating notifications.
+     */
+    public static ValueEventListener listenerNotifications = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            int id_notification = 0;
+
+            //look through all my debts
+            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                Debt value = snapshot.getValue(Debt.class);
+                //add only my debts from database
+                if ( value.getId_who().equals(CurrentUser.UserCurrent.id)
+                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                    //check if debt has notification, if yes then add it
+                    if ( !(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))){
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        try {
+                            Date date = dateFormat.parse(value.getDateOfAlert());
+                            Date time = timeFormat.parse(value.getTimeOfAlert());
+
+                            Calendar calendarDate = Calendar.getInstance();
+                            calendarDate.setTime(date);
+                            Calendar calendarTime = Calendar.getInstance();
+                            calendarTime.setTime(time);
+
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+                            calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+                            calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+                            calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+                            calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
+
+                            //add notification
+                            MyAlarmManager.scheduleNotification(
+                                    context,
+                                    calendar,
+                                    id_notification,
+                                    value.getName_who() + "->" + value.getName_toWhom(),
+                                    value.getSum() + ", " + value.getNote());
+
+                            id_notification += 1;
+                        }
+                        catch (ParseException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                    }
+
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+        }
+    };
+
+    /**
      * Create notifications from my debts.
      * @param context
      */
     public static void getAndCreateNotifications(Context context) {
-        Debt.myDebts.clear();
+        MyFirebaseDatabaseHandler.context = context;
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
-
-        int id_notification = 0;
-
-        //look through all my debts
-        for (Debt debt : Debt.myDebts) {
-            //check if debt has notification, if yes then add it
-            if ( !(debt.getDateOfAlert().equals("") || debt.getTimeOfAlert().equals(""))){
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                try {
-                    Date date = dateFormat.parse(debt.getDateOfAlert());
-                    Date time = timeFormat.parse(debt.getTimeOfAlert());
-
-                    Calendar calendarDate = Calendar.getInstance();
-                    calendarDate.setTime(date);
-                    Calendar calendarTime = Calendar.getInstance();
-                    calendarTime.setTime(time);
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
-                    calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
-                    calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
-                    calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
-                    calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
-
-                    //add notification
-                    MyAlarmManager.scheduleNotification(
-                            context,
-                            calendar,
-                            id_notification,
-                            debt.getName_who() + "->" + debt.getName_toWhom(),
-                            debt.getSum() + ", " + debt.getNote());
-
-                    id_notification += 1;
-                }
-                catch (ParseException e) {
-                    Log.d(TAG, e.getMessage());
-                }
-            }
-        }
+        ref.addListenerForSingleValueEvent(MyFirebaseDatabaseHandler.listenerNotifications);
     }
 
     /**
@@ -245,10 +265,11 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Delete friend with all debts created with them.
+     * Delete friend with all debts created with them and synchronize notifications.
      * @param id ID of friend to be deleted.
+     * @param context1
      */
-    public static void deleteFriendAndDebts(final String id) {
+    public static void deleteFriendAndDebts(final String id, final Context context1) {
 
         final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
@@ -264,6 +285,7 @@ public class MyFirebaseDatabaseHandler {
                         refDebts.child(value.getId_debt()).removeValue();
                     }
                 }
+                MyAlarmManager.syncNotifications(context1);
             }
 
             @Override
@@ -291,9 +313,7 @@ public class MyFirebaseDatabaseHandler {
 
             }
         });
-
     }
-
     /**
      * Check if new adding relationship doesn't already exist.
      * If not then add new relationship.

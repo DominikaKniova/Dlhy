@@ -1,6 +1,7 @@
 package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,7 +37,7 @@ import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
-public class NewDebtActivity extends AppCompatActivity implements DialogListener, ReturnValueFragment {
+public class NewDebtActivity extends AppCompatActivity implements DialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,11 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         expButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //hide soft keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                //expand
                 expandableButtonAlerts(view);
             }
         });
@@ -168,7 +175,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         heOwesMe = true;
                     }
 
-
                     /**
                      * Add debt d to Firebase database.
                      */
@@ -212,20 +218,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         ref.child(id).setValue(debt);
                     }
 
-                    //handle alert
+                    //if alert is added then sync new notification with old ones
                     if (!(tDateAlert.getText().toString().equals("") && tTimeAlert.getText().toString().equals(""))) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.HOUR_OF_DAY, hour);
-                        calendar.set(Calendar.MINUTE, minute);
-                        calendar.set(Calendar.DAY_OF_MONTH, day);
-                        calendar.set(Calendar.MONTH, month);
-                        MyAlarmManager.scheduleNotification(
-                                getBaseContext(),
-                                calendar,
-                                4,
-                                tName.getText().toString(),
-                                tSum.getText().toString() + ", " + tNote.getText().toString());
+                        MyAlarmManager.syncNotifications(getBaseContext());
                     }
                     finish();
                     item.setEnabled(true);
@@ -256,42 +251,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     private void showDialog_friends(View v) {
         DialogFragment newDialog = new DialogFriends();
         newDialog.show(getFragmentManager(), "friends");
-    }
-
-    private void createReminder() {
-        TextView viewNote = (TextView) findViewById(R.id.textInput_note);
-        TextView viewSum = (TextView) findViewById(R.id.textInput_money);
-        TextView viewName = (TextView) findViewById(R.id.friendsPic);
-
-        if (viewName.getText().toString().equals("")) {
-            ShowAlertDialogNeutral.showAlertDialog("Before creating reminder choose friend", NewDebtActivity.this);
-        } else if (viewNote.getText().toString().equals("") || viewSum.getText().toString().equals("")) {
-            ShowAlertDialogNeutral.showAlertDialog("Before creating reminder enter note and sum", NewDebtActivity.this);
-        } else {
-            String desctiption;
-            //find out if I owe friend money or other way round
-            boolean theyOwesMe;
-            ImageView arrow = (ImageView) findViewById(R.id.arrow);
-            String imageTag = (String) arrow.getTag();
-            if (imageTag.equals("arrForward")) {
-                theyOwesMe = false;
-            } else {
-                theyOwesMe = true;
-            }
-            //I owe
-            if (!theyOwesMe) {
-                desctiption = "-" + viewSum.getText().toString() + ", " + viewNote.getText().toString();
-            } else {
-                //they owe
-                desctiption = "+" + viewSum.getText().toString() + ", " + viewNote.getText().toString();
-            }
-            Intent intent = new Intent(Intent.ACTION_INSERT)
-                    .setData(CalendarContract.Events.CONTENT_URI)
-                    .putExtra(CalendarContract.Events.TITLE, viewName.getText().toString())
-                    .putExtra(CalendarContract.Events.DESCRIPTION, desctiption);
-
-            startActivity(intent);
-        }
     }
 
     /**
@@ -330,7 +289,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                //TODO
             }
         });
     }
@@ -338,19 +296,19 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     /**
      * get returned values from date and time pickers
      */
-    private int year, month, day, hour, minute;
-
-    @Override
-    public void onReturnValueDate(Calendar calendar) {
-        this.year = calendar.get(Calendar.YEAR);
-        this.month = calendar.get(Calendar.MONTH);
-        this.day = calendar.get(Calendar.DAY_OF_MONTH);
-
-    }
-
-    @Override
-    public void onReturnValueTime(Calendar calendar) {
-        this.hour = calendar.get(Calendar.HOUR_OF_DAY);
-        this.minute = calendar.get(Calendar.MINUTE);
-    }
+//    private int year, month, day, hour, minute;
+//
+//    @Override
+//    public void onReturnValueDate(Calendar calendar) {
+//        this.year = calendar.get(Calendar.YEAR);
+//        this.month = calendar.get(Calendar.MONTH);
+//        this.day = calendar.get(Calendar.DAY_OF_MONTH);
+//
+//    }
+//
+//    @Override
+//    public void onReturnValueTime(Calendar calendar) {
+//        this.hour = calendar.get(Calendar.HOUR_OF_DAY);
+//        this.minute = calendar.get(Calendar.MINUTE);
+//    }
 }

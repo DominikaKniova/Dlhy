@@ -42,9 +42,9 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         TextInputEditText inputTime = (TextInputEditText)getActivity().findViewById(R.id.inputTime);
         inputTime.setText(formattedTime);
 
-        //return selcted time to NewDebtActivity
-        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
-        activity.onReturnValueTime(c);
+//        //return selcted time to NewDebtActivity
+//        ReturnValueFragment activity = (ReturnValueFragment) getActivity();
+//        activity.onReturnValueTime(c);
 
     }
 }
