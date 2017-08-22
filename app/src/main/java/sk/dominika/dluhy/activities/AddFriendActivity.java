@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 
@@ -106,7 +106,7 @@ public class AddFriendActivity extends AppCompatActivity {
                                  * Firstly check whether the relationship doesn't already exist.
                                  * if not then add new relationship
                                  */
-                                FirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
+                                MyFirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
                                 finish();
                                 item.setEnabled(true);
                             }

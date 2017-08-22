@@ -3,11 +3,9 @@ package sk.dominika.dluhy.activities;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,21 +23,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 
-import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
-import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 
 public class MainActivity extends AppCompatActivity implements DialogListener {
 
     private final String TAG = "signed/logged";
-
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +45,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
         setTitle("My profile");
 
-        TextView name = (TextView) findViewById(R.id.profile_name);
-
-        //On click listener: Adding new debt_all
+        //On click listener: Adding new debt from my profile
         FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_add);
         floatingButton_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,9 +62,13 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 showDialog_debts(v);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         // FirebaseAuth instance
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -83,38 +80,26 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                        CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-                        CurrentUser.setId(user.getId());
+                    CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+                    CurrentUser.setId(user.getId());
 
-                        //set views
-                        TextView name = (TextView) findViewById(R.id.profile_name);
-                        name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
+                    //set views
+                    TextView name = (TextView) findViewById(R.id.profile_name);
+                    name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
 
-                        TextView sum = (TextView) findViewById(R.id.my_profile_sum);
-                        FirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
+                    TextView sum = (TextView) findViewById(R.id.my_profile_sum);
+                    MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT);
+                    Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
 
                 }
             });
-
-            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
         } else {
-            // User is signed out
-            Log.d(TAG, "onAuthStateChanged:signed_out");
+            //newActivity_signOut();
         }
-
-
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -137,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     }
 
     //Start activity Log In
-    private void newActivity_signOut(MenuItem item){
+    private void newActivity_signOut(){
         CurrentUser.cleanUser();
         Intent intent_person = new Intent(this,LogInActivity.class);
         startActivity(intent_person);
@@ -170,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
             case R.id.signOut:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 mAuth.signOut();
-                newActivity_signOut(item);
+                newActivity_signOut();
                 break;
         }
         return super.onOptionsItemSelected(item);

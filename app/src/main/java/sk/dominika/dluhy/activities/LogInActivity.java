@@ -16,9 +16,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
+import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 
 public class LogInActivity extends AppCompatActivity {
@@ -139,6 +142,10 @@ public class LogInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if(task.isSuccessful()){
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            CurrentUser.setId(user.getUid());
+                            //create all user's notifications
+                            MyAlarmManager.createNotifications(getBaseContext());
                             newAcitivity_main();
                         }
                         else {

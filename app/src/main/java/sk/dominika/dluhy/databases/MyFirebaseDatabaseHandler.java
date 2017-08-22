@@ -2,7 +2,10 @@ package sk.dominika.dluhy.databases;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,13 +15,139 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.activities.MainActivity;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
+import sk.dominika.dluhy.database_models.Friend;
 import sk.dominika.dluhy.database_models.Relationship;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.notifications.MyAlarmManager;
 
-public class FirebaseDatabaseHandler {
+public class MyFirebaseDatabaseHandler {
+    public static String TAG = "MyFirebaseHandler";
+
+    /**
+     * Listener for getting all my debts from firebase database and store them in arraylist Debt.myDebts.
+     */
+    public static ValueEventListener listenerAllMyDebts = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            //loop through all debts in the database
+            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                Debt value = snapshot.getValue(Debt.class);
+                //add only my debts from database
+                if ( value.getId_who().equals(CurrentUser.UserCurrent.id)
+                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                    Debt.myDebts.add(value);
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.e("The read failed: " ,databaseError.getMessage());
+        }
+    };
+
+    /**
+     * Listener for looping through all friends in firebase database and adding them to arraylist Friend.myFriends.
+     */
+    public static ValueEventListener listenerLoopThroughFriends = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                Relationship value = snapshot.getValue(Relationship.class);
+                Friend friend = new Friend(value.getToUserName(), value.getToUserId());
+                Friend.myFriends.add(friend);
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.e("The read failed: " ,databaseError.getMessage());
+        }
+    };
+
+    /**
+     * Create notifications from my debts.
+     * @param context
+     */
+    public static void getAndCreateNotifications(Context context) {
+        Debt.myDebts.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
+
+        int id_notification = 0;
+
+        //look through all my debts
+        for (Debt debt : Debt.myDebts) {
+            //check if debt has notification, if yes then add it
+            if ( !(debt.getDateOfAlert().equals("") || debt.getTimeOfAlert().equals(""))){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                try {
+                    Date date = dateFormat.parse(debt.getDateOfAlert());
+                    Date time = timeFormat.parse(debt.getTimeOfAlert());
+
+                    Calendar calendarDate = Calendar.getInstance();
+                    calendarDate.setTime(date);
+                    Calendar calendarTime = Calendar.getInstance();
+                    calendarTime.setTime(time);
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+                    calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+                    calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+                    calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+                    calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
+
+                    //add notification
+                    MyAlarmManager.scheduleNotification(
+                            context,
+                            calendar,
+                            id_notification,
+                            debt.getName_who() + "->" + debt.getName_toWhom(),
+                            debt.getSum() + ", " + debt.getNote());
+
+                    id_notification += 1;
+                }
+                catch (ParseException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Get only debts created with the friend of id_friend.
+     * @param id_friend
+     */
+    public static void getOurDebts(final String id_friend){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    Debt debt = snapshot.getValue(Debt.class);
+                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
+                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        Debt.myDebts.add(debt);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
     /**
      * Calculate overall sum of my debts or my debts with concrete friend.

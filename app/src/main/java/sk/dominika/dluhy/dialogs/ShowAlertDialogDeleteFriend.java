@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
-import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 
 public class ShowAlertDialogDeleteFriend {
 
@@ -29,7 +29,7 @@ public class ShowAlertDialogDeleteFriend {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FirebaseDatabaseHandler.deleteFriendAndDebts(id_friend);
+                        MyFirebaseDatabaseHandler.deleteFriendAndDebts(id_friend);
                     }
                 });
         alertDialog.show();

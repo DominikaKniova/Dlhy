@@ -1,14 +1,11 @@
 package sk.dominika.dluhy.notifications;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.RingtoneManager;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.Calendar;
@@ -16,6 +13,7 @@ import java.util.Date;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.activities.MainActivity;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 
 public class MyAlarmManager {
 
@@ -43,5 +41,17 @@ public class MyAlarmManager {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertCalculatedMillis, pendingIntent);
+    }
+
+    public static void createNotifications(Context context) {
+        MyFirebaseDatabaseHandler.getAndCreateNotifications(context);
+    }
+
+    public static void deleteNotifications() {
+
+    }
+
+    public static void syncNotifications() {
+
     }
 }

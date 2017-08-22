@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.databases.FirebaseDatabaseHandler;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
@@ -74,7 +74,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         });
 
         TextView sum = (TextView) findViewById(R.id.friend_profile_sum);
-        FirebaseDatabaseHandler.getOverallSum(id_friend, sum);
+        MyFirebaseDatabaseHandler.getOverallSum(id_friend, sum);
 
         //On click listener: Showing all our debts
         final Button our_debts = (Button) findViewById(R.id.our_debts);
