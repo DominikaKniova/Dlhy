@@ -76,7 +76,7 @@ public class MyAlarmManager {
      * Synchronize notifications.
      * Method will delete all notifications and then create them again from database.
      * Method is called when user adds, edits or deletes new debt with alert, or when user deletes
-     * his friend.
+     * his item_friend.
      * @param context where the notification is created
      */
     public static void syncNotifications(Context context) {

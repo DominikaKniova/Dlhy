@@ -31,7 +31,7 @@ import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 public class MyFirebaseDatabaseHandler {
-    private  static Context context;
+    private static Context context;
 
     public static String TAG = "MyFirebaseHandler";
 
@@ -42,10 +42,10 @@ public class MyFirebaseDatabaseHandler {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             //loop through all debts in the database
-            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 Debt value = snapshot.getValue(Debt.class);
                 //add only my debts from database
-                if ( value.getId_who().equals(CurrentUser.UserCurrent.id)
+                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
                         || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
                     Debt.myDebts.add(value);
                 }
@@ -54,7 +54,7 @@ public class MyFirebaseDatabaseHandler {
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            Log.e("The read failed: " ,databaseError.getMessage());
+            Log.e("The read failed: ", databaseError.getMessage());
         }
     };
 
@@ -64,7 +64,7 @@ public class MyFirebaseDatabaseHandler {
     public static ValueEventListener listenerLoopThroughFriends = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 Relationship value = snapshot.getValue(Relationship.class);
                 Friend friend = new Friend(value.getToUserName(), value.getToUserId());
                 Friend.myFriends.add(friend);
@@ -73,26 +73,26 @@ public class MyFirebaseDatabaseHandler {
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            Log.e("The read failed: " ,databaseError.getMessage());
+            Log.e("The read failed: ", databaseError.getMessage());
         }
     };
 
     /**
-     * Listener for looping through all my debts and creating notifications.
+     * Listener for looping through all my debts and creating future notifications.
      */
-    public static ValueEventListener listenerNotifications = new ValueEventListener() {
+    private static ValueEventListener listenerNotifications = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             int id_notification = 0;
 
             //look through all my debts
-            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 Debt value = snapshot.getValue(Debt.class);
                 //add only my debts from database
-                if ( value.getId_who().equals(CurrentUser.UserCurrent.id)
+                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
                         || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
                     //check if debt has notification, if yes then add it
-                    if ( !(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))){
+                    if (!(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))) {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                         try {
@@ -111,17 +111,19 @@ public class MyFirebaseDatabaseHandler {
                             calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
                             calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
 
-                            //add notification
-                            MyAlarmManager.scheduleNotification(
-                                    context,
-                                    calendar,
-                                    id_notification,
-                                    value.getName_who() + "->" + value.getName_toWhom(),
-                                    value.getSum() + ", " + value.getNote());
+                            //do not add notifications from past
+                            if ((calendar.getTime().getTime() - System.currentTimeMillis() > 0)){
+                                //add notification
+                                MyAlarmManager.scheduleNotification(
+                                        context,
+                                        calendar,
+                                        id_notification,
+                                        value.getName_who() + "->" + value.getName_toWhom(),
+                                        value.getSum() + ", " + value.getNote());
 
-                            id_notification += 1;
-                        }
-                        catch (ParseException e) {
+                                id_notification += 1;
+                            }
+                        } catch (ParseException e) {
                             Log.d(TAG, e.getMessage());
                         }
                     }
@@ -137,6 +139,7 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Create notifications from my debts.
+     *
      * @param context
      */
     public static void getAndCreateNotifications(Context context) {
@@ -146,15 +149,16 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Get only debts created with the friend of id_friend.
+     * Get only debts created with the item_friend of id_friend.
+     *
      * @param id_friend
      */
-    public static void getOurDebts(final String id_friend){
+    public static void getOurDebts(final String id_friend) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Debt debt = snapshot.getValue(Debt.class);
                     if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
                             || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
@@ -170,10 +174,10 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Calculate overall sum of my debts or my debts with concrete friend.
+     * Calculate overall sum of my debts or my debts with concrete item_friend.
      * Set sum view in profile.
      *
-     * @param id ID of me or ID of the friend.
+     * @param id       ID of me or ID of the item_friend.
      * @param textView Sum textview in profile.
      */
     public static void getOverallSum(final String id, final TextView textView) {
@@ -206,11 +210,10 @@ public class MyFirebaseDatabaseHandler {
                         }
                     }
                     textView.setText(String.valueOf(sum));
-                    if (sum <0) {
+                    if (sum < 0) {
                         //red
                         textView.setTextColor(Color.parseColor("#df2d00"));
-                    }
-                    else {
+                    } else {
                         //green
                         textView.setTextColor(Color.parseColor("#52df00"));
                     }
@@ -222,8 +225,8 @@ public class MyFirebaseDatabaseHandler {
                 }
             });
         } else {
-            //calling method from friend's profile
-            //id is friend's
+            //calling method from item_friend's profile
+            //id is item_friend's
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -231,7 +234,7 @@ public class MyFirebaseDatabaseHandler {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Debt value = snapshot.getValue(Debt.class);
 
-                        //calculate only my debts with the friend from database
+                        //calculate only my debts with the item_friend from database
                         if ((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
                                 || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
 
@@ -246,11 +249,10 @@ public class MyFirebaseDatabaseHandler {
                         }
                     }
                     textView.setText(String.valueOf(sum));
-                    if (sum <0) {
+                    if (sum < 0) {
                         //red
                         textView.setTextColor(Color.parseColor("#df2d00"));
-                    }
-                    else {
+                    } else {
                         //green
                         textView.setTextColor(Color.parseColor("#52df00"));
                     }
@@ -265,8 +267,9 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Delete friend with all debts created with them and synchronize notifications.
-     * @param id ID of friend to be deleted.
+     * Delete item_friend with all debts created with them and synchronize notifications.
+     *
+     * @param id       ID of item_friend to be deleted.
      * @param context1
      */
     public static void deleteFriendAndDebts(final String id, final Context context1) {
@@ -280,7 +283,7 @@ public class MyFirebaseDatabaseHandler {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Debt value = snapshot.getValue(Debt.class);
-                    if((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
+                    if ((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
                             || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
                         refDebts.child(value.getId_debt()).removeValue();
                     }
@@ -301,8 +304,8 @@ public class MyFirebaseDatabaseHandler {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Relationship value = snapshot.getValue(Relationship.class);
-                    if( (value.getFromUserId().equals(CurrentUser.UserCurrent.id) && value.getToUserId().equals(id))
-                            || (value.getFromUserId().equals(id) && value.getToUserId().equals(CurrentUser.UserCurrent.id)) ) {
+                    if ((value.getFromUserId().equals(CurrentUser.UserCurrent.id) && value.getToUserId().equals(id))
+                            || (value.getFromUserId().equals(id) && value.getToUserId().equals(CurrentUser.UserCurrent.id))) {
                         refFriends.child(snapshot.getKey()).removeValue();
                     }
                 }
@@ -314,12 +317,14 @@ public class MyFirebaseDatabaseHandler {
             }
         });
     }
+
     /**
      * Check if new adding relationship doesn't already exist.
      * If not then add new relationship.
      * Show result toast in activity
+     *
      * @param fromUser
-     * @param toUser the user I am adding relationship with
+     * @param toUser   the user I am adding relationship with
      * @param activity
      */
     public static void checkIfRelationshipExists(String fromUser, final User toUser, final Activity activity) {
@@ -330,14 +335,14 @@ public class MyFirebaseDatabaseHandler {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean result = false;
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Relationship relationship = snapshot.getValue(Relationship.class);
-                    if (relationship.getToUserId().equals(toUser.getId())){
+                    if (relationship.getToUserId().equals(toUser.getId())) {
                         //relationship exists
                         result = true;
                     }
                 }
-                if(!result) {
+                if (!result) {
                     //relationship doesn't exist
                     Relationship r = new Relationship(CurrentUser.UserCurrent.id, toUser.getId(), toUser.getFirstname());
                     DatabaseReference friends = mDatabase.getReference("friends");
@@ -348,8 +353,7 @@ public class MyFirebaseDatabaseHandler {
                     id = friends.push().getKey();
                     friends.child(id).setValue(r2);
                     Toast.makeText(activity, R.string.friend_added, Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Toast.makeText(activity, R.string.friend_not_added, Toast.LENGTH_SHORT).show();
 
                 }

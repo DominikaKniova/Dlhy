@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 

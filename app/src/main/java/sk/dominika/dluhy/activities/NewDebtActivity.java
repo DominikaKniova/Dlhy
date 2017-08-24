@@ -33,7 +33,6 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
-import sk.dominika.dluhy.interfaces.ReturnValueFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
@@ -51,7 +50,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     protected void onResume() {
         super.onResume();
         /**
-         * Check if there exists data (id of friend) from previous activity
+         * Check if there exists data (id of item_friend) from previous activity
          * YES - NewDebtActivity is called from FriendProfileActivity
          * NO - NewDebtActivity is called from MainActivity
          */
@@ -100,7 +99,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         TextView myName = (TextView) findViewById(R.id.myPic);
         myName.setText(CurrentUser.UserCurrent.firstName);
 
-        //choose friend
+        //choose item_friend
         TextView firendPic = (TextView) findViewById(R.id.friendsPic);
         firendPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,9 +152,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextInputEditText tDateAlert = (TextInputEditText) findViewById(R.id.inputDate);
             TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
 
-            //if user hasn't chosen friend
+            //if user hasn't chosen item_friend
             if (tName.getText().toString().equals("")) {
-                ShowAlertDialogNeutral.showAlertDialog("You must choose friend", NewDebtActivity.this);
+                ShowAlertDialogNeutral.showAlertDialog("You must choose item_friend", NewDebtActivity.this);
                 item.setEnabled(true);
             } else {
 
@@ -165,7 +164,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 } else {
                     //id of new debt
                     String id;
-                    //find out if I owe friend money or other way round
+                    //find out if I owe item_friend money or other way round
                     boolean heOwesMe;
                     ImageView arrow = (ImageView) findViewById(R.id.arrow);
                     String imageTag = (String) arrow.getTag();
@@ -254,8 +253,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     }
 
     /**
-     * Makes access to friend's id through DialogFriends.
-     * Sets the text (name of friend) of TextView friendsPic.
+     * Makes access to item_friend's id through DialogFriends.
+     * Sets the text (name of item_friend) of TextView friendsPic.
      */
     private String id_of_friend;
 
@@ -266,14 +265,14 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         //tvName.setText(database.getNameFromDatabase(friend_id));
 
         /**
-         * find friend in database based on the friend's id
+         * find item_friend in database based on the item_friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         // get reference to 'users' node and child with the id
         DatabaseReference ref = mDatabase.getReference("users").child(friend_id);
 
-        // get data (name of friend) from firebase database and set view
+        // get data (name of item_friend) from firebase database and set view
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

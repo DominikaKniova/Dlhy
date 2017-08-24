@@ -84,9 +84,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         /**
-         * Adds friend (Friend object) to database from AddFriendActivity.
+         * Adds item_friend (Friend object) to database from AddFriendActivity.
          * @param friend The object to add.
-         * @return ID of friend.
+         * @return ID of item_friend.
          */
         public long addFriendToDatabase(Friend friend) {
 
@@ -134,9 +134,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
 
         /**
-         * Adds debt_all (Debt object) to database from NewDebtActivity
+         * Adds item_debt_all (Debt object) to database from NewDebtActivity
          * @param debt Object to be added.
-         * @return ID of debt_all.
+         * @return ID of item_debt_all.
          */
         public long addDebtToDatabase(Debt debt) {
                 // Gets the data repository in write mode
@@ -192,9 +192,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
 
             /**
-             * Finds the friend through ID in database.
+             * Finds the item_friend through ID in database.
              * @param friend_id
-             * @return Firstname of friend.
+             * @return Firstname of item_friend.
              */
             public String getNameFromDatabase(long friend_id) {
                 String name = "";
@@ -216,9 +216,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
 
     /**
-     * Finds friend based ib id.
+     * Finds item_friend based ib id.
      * @param id
-     * @return Bundle object containing name, email of friend and the overall sum of our debts.
+     * @return Bundle object containing name, email of item_friend and the overall sum of our debts.
      */
     public Bundle getFriend(long id) {
         Bundle bundle = new Bundle();
@@ -246,9 +246,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets only the debts created with the friend
+     * Gets only the debts created with the item_friend
      * @param friend_id
-     * @return list of debts shared with the friend
+     * @return list of debts shared with the item_friend
      */
     public List<Debt> getOurDebtsWithFriend(long friend_id) {
         List<Debt> list_debts = new ArrayList<Debt>();

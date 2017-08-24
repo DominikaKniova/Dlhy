@@ -6,4 +6,8 @@
     <color name="red_sum">#df2d00</color>
     <color name="green_sum">#52df00</color>
     <color name="divider">#9c9c9c</color>
+    <color name="light_red_background">#fadbd4</color>
+    <color name="light_green_background">#e6ffd7</color>
+
+
 </resources>
