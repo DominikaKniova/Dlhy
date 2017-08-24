@@ -12,19 +12,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.adapters.AllDebtAdapter;
+import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.decorations.DividerDecoration;
 
 /**
- * Dialog for showing recycleview.
+ * Dialog for showing recycleview of all my debts.
  */
 public class DialogAllDebts extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_all_debts, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_debts, container, false);
 
         /**
          * Get debts from firebase database and store them in arraylist Debt.myDebts.
@@ -34,7 +34,7 @@ public class DialogAllDebts extends DialogFragment {
         ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
 
         RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewDebts);
-        AllDebtAdapter adapter = new AllDebtAdapter(view.getContext(), Debt.myDebts);
+        DebtAdapter adapter = new DebtAdapter(view.getContext(), Debt.myDebts);
         recycler_viewDebts.addItemDecoration(new DividerDecoration(view.getContext()));
         recycler_viewDebts.setAdapter(adapter);
         recycler_viewDebts.setLayoutManager(new LinearLayoutManager(view.getContext()));

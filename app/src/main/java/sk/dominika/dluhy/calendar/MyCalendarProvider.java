@@ -77,7 +77,7 @@ public class MyCalendarProvider extends AppCompatActivity {
         } catch (SecurityException e) {
             requestCalendarReadWritePermission(activity);
 
-            Toast.makeText(activity, "You are not allowed to add reminder", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "You are not allowed to add reminderTextView", Toast.LENGTH_SHORT).show();
         }
 
         return eventID;

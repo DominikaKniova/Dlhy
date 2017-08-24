@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.adapters.FriendDebtAdapter;
+import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.decorations.DividerDecoration;
 
 /**
- * Dialog for showing recycleview.
+ * Dialog for showing recycleview of all my debts with concrete friend.
  */
 public class DialogFriendDebts extends DialogFragment{
     //sent id from FriendProfileActivity
@@ -30,7 +30,7 @@ public class DialogFriendDebts extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_list_friend_debts, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_debts, container, false);
 
         /**
          * Get only debts created with the item_friend of id_friend.
@@ -38,8 +38,8 @@ public class DialogFriendDebts extends DialogFragment{
         Debt.myDebts.clear();
         MyFirebaseDatabaseHandler.getOurDebts(id_friend);
 
-        RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewFriendDebts);
-        FriendDebtAdapter adapter = new FriendDebtAdapter(view.getContext(), Debt.myDebts);
+        RecyclerView recycler_viewDebts = (RecyclerView) view.findViewById(R.id.recycler_viewDebts);
+        DebtAdapter adapter = new DebtAdapter(view.getContext(), Debt.myDebts);
         recycler_viewDebts.addItemDecoration(new DividerDecoration(view.getContext()));
         recycler_viewDebts.setAdapter(adapter);
         recycler_viewDebts.setLayoutManager(new LinearLayoutManager(view.getContext()));
