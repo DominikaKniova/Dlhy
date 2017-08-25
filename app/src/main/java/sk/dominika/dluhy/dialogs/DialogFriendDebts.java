@@ -33,7 +33,7 @@ public class DialogFriendDebts extends DialogFragment{
         View view = inflater.inflate(R.layout.fragment_list_debts, container, false);
 
         /**
-         * Get only debts created with the item_friend of id_friend.
+         * Get only debts created with the friend of id_friend.
          */
         Debt.myDebts.clear();
         MyFirebaseDatabaseHandler.getOurDebts(id_friend);

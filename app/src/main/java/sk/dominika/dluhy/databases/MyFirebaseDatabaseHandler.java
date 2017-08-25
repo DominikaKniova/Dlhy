@@ -149,7 +149,7 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Get only debts created with the item_friend of id_friend.
+     * Get only debts created with the friend of id_friend.
      *
      * @param id_friend
      */
@@ -174,10 +174,10 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Calculate overall sum of my debts or my debts with concrete item_friend.
+     * Calculate overall sum of only my debts or my debts with concrete friend.
      * Set sum view in profile.
      *
-     * @param id       ID of me or ID of the item_friend.
+     * @param id       ID of me or ID of the friend.
      * @param textView Sum textview in profile.
      */
     public static void getOverallSum(final String id, final TextView textView) {
@@ -195,17 +195,20 @@ public class MyFirebaseDatabaseHandler {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Debt value = snapshot.getValue(Debt.class);
 
-                        //calculate only my debts from database
-                        if (value.getId_who().equals(id)
-                                || value.getId_toWhom().equals(id)) {
+                        //do not include debts that are paid
+                        if (value.getIsPaid().equals("false")) {
+                            //calculate only my debts from database
+                            if (value.getId_who().equals(id)
+                                    || value.getId_toWhom().equals(id)) {
 
-                            //validate if + or -
-                            if (value.getId_who().equals(id)) {
-                                //I owe => -
-                                sum -= value.getSum();
-                            } else {
-                                //they owe me => +
-                                sum += value.getSum();
+                                //validate if + or -
+                                if (value.getId_who().equals(id)) {
+                                    //I owe => -
+                                    sum -= value.getSum();
+                                } else {
+                                    //they owe me => +
+                                    sum += value.getSum();
+                                }
                             }
                         }
                     }
@@ -225,8 +228,8 @@ public class MyFirebaseDatabaseHandler {
                 }
             });
         } else {
-            //calling method from item_friend's profile
-            //id is item_friend's
+            //calling method from friend's profile
+            //id is friend's
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -234,17 +237,20 @@ public class MyFirebaseDatabaseHandler {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Debt value = snapshot.getValue(Debt.class);
 
-                        //calculate only my debts with the item_friend from database
-                        if ((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
-                                || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        //do not include debts that are paid
+                        if (value.getIsPaid().equals("false")) {
+                            //calculate only my debts with the friend from database
+                            if ((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
+                                    || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
 
-                            //validate if + or -
-                            if (value.getId_who().equals(id)) {
-                                //they owe me => +
-                                sum += value.getSum();
-                            } else {
-                                //I owe => -
-                                sum -= value.getSum();
+                                //validate if + or -
+                                if (value.getId_who().equals(id)) {
+                                    //they owe me => +
+                                    sum += value.getSum();
+                                } else {
+                                    //I owe => -
+                                    sum -= value.getSum();
+                                }
                             }
                         }
                     }
@@ -267,16 +273,15 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Delete item_friend with all debts created with them and synchronize notifications.
-     *
-     * @param id       ID of item_friend to be deleted.
+     * Delete friendship and all debts created with the friend from database and synchronize notifications.
+     * @param id       ID of friend to be deleted.
      * @param context1
      */
     public static void deleteFriendAndDebts(final String id, final Context context1) {
 
         final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-        //delete debts
+        //delete debts from database
         final DatabaseReference refDebts = mDatabase.getReference("debts");
         refDebts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -364,5 +369,28 @@ public class MyFirebaseDatabaseHandler {
 
             }
         });
+    }
+
+    /**
+     * Delete debt with id id_debt from database.
+     *
+     * @param id_debt
+     */
+    public static void deleteDebt(String id_debt) {
+        FirebaseDatabase.getInstance().getReference("debts").child(id_debt).removeValue();
+    }
+
+    public static void editDebt(String id_debt) {
+
+    }
+
+    /**
+     * Overwrite debt state in database whether debt is paid or not.
+     *
+     * @param id_debt id of debt
+     * @param isPaid  new state
+     */
+    public static void updateIsPaid(String id_debt, String isPaid) {
+        FirebaseDatabase.getInstance().getReference("debts").child(id_debt).child("isPaid").setValue(isPaid);
     }
 }

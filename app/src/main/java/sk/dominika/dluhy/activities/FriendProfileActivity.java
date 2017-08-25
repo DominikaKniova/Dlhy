@@ -47,7 +47,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         id_friend = intent.getStringExtra("id");
 
         /**
-         * Find item_friend (user) in database based on the item_friend's id
+         * Find friend (user) in database based on the friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();

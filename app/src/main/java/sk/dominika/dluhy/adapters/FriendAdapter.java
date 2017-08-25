@@ -85,9 +85,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
 //        //test
 //        TextView textView1 = holder.idTextView;
-//        textView1.setText(item_friend.getId());
+//        textView1.setText(friend.getId());
 
-        //icon imageview leads to item_friend's profile
+        //icon imageview leads to friend's profile
         ImageView profileIcon = holder.icon;
         profileIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +113,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     /**
      * Starts FriendProfileActivity
-     * @param id ID of item_friend to be shown.
+     * @param id ID of friend to be shown.
      */
     private void newActivity_profileFriend(String id) {
         Intent intent = new Intent(memberContext, FriendProfileActivity.class);
