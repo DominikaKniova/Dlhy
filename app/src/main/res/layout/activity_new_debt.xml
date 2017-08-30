@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="sk.dominika.dluhy.activities.NewDebtActivity">
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
+        android:id="@+id/lin_layout_new_debt"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/fab_margin"
@@ -26,8 +21,8 @@
                 android:id="@+id/myPic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableTop="@mipmap/ic_launcher"
-                android:layout_marginRight="@dimen/pic_margin"
+                android:drawableTop="@drawable/ic_person_big"
+                android:layout_marginEnd="@dimen/pic_margin"
                 android:text="@string/name"
                 android:gravity="center"/>
 
@@ -40,8 +35,8 @@
                 android:id="@+id/friendsPic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/pic_margin"
-                android:drawableTop="@mipmap/ic_launcher"
+                android:layout_marginStart="@dimen/pic_margin"
+                android:drawableTop="@drawable/ic_person_big"
                 android:gravity="center"
                 android:text=""/>
         </LinearLayout>
@@ -88,8 +83,8 @@
                 android:background="#5baaaaaa"
                 android:paddingRight="8dp"
                 android:text="@string/set_alert"
-                android:drawableLeft="@drawable/ic_add_alert"
-                android:drawableRight="@drawable/ic_arrow_drop_down"
+                android:drawableStart="@drawable/ic_add_alert"
+                android:drawableEnd="@drawable/ic_arrow_drop_down"
                 android:paddingLeft="8dp"
                 android:textColor="#fff" />
 
@@ -134,10 +129,5 @@
 
                 </android.support.design.widget.TextInputLayout>
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
-
-
         </RelativeLayout>
-
     </LinearLayout>
-
-</ScrollView>

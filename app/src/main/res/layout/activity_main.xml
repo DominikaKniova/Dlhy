@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,7 +7,34 @@
     android:fitsSystemWindows="true"
     tools:context="sk.dominika.dluhy.activities.MainActivity">
 
-    <include layout="@layout/user_profile" />
+    <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:titleTextColor="#ffffff" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/name_size" />
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,13 +43,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/my_debts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/my_debts"
-            android:textColor="#ffffff"/>
-
         <TextView
             android:id="@+id/my_profile_sum"
             android:layout_width="wrap_content"
@@ -31,6 +50,13 @@
             android:text="@string/sum"
             android:textSize="@dimen/sum_size"
             android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/my_debts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/my_debts"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

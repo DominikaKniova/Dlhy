@@ -27,6 +27,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
+import sk.dominika.dluhy.utilities.Utility;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -145,6 +146,9 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_signup), SignUpActivity.this);
 
         final Button newAccountCreated = (Button) findViewById(R.id.button_signUp);
         newAccountCreated.setOnClickListener(new View.OnClickListener(){

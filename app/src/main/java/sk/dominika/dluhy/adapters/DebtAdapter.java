@@ -2,6 +2,7 @@ package sk.dominika.dluhy.adapters;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -66,8 +67,9 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
         // Get the data model based on position
         final Debt debt = memberDebts.get(position);
         TextView tNames = holder.namesTextView;
-        tNames.setText(debt.getName_who() + "->" +debt.getName_toWhom());
         TextView tSumNote = holder.sum_noteTextView;
+        TextView tReminder = holder.reminderTextView;
+        tNames.setText(debt.getName_who() + "->" + debt.getName_toWhom());
 
         //I owe
         if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
@@ -80,16 +82,15 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
             tNames.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
         }
         if (!debt.getDateOfAlert().equals("")) {
-            TextView tReminder = holder.reminderTextView;
             tReminder.setVisibility(View.VISIBLE);
             tReminder.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());
         }
 
-        //check if debt is paid
+        //check if debt is paid. YES = strike through text
         if (debt.getIsPaid().equals("true")) {
-            tNames.setText("PAID " + debt.getName_who() + "->" + debt.getName_toWhom());
-        } else {
-            tNames.setText(debt.getName_who() + "->" + debt.getName_toWhom());
+            tNames.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            tSumNote.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            tReminder.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
         holder.menuImageView.setOnClickListener(new View.OnClickListener() {
@@ -115,8 +116,6 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
                                 } else {
                                     MyFirebaseDatabaseHandler.updateIsPaid(debt.getId_debt(), "true");
                                 }
-                                break;
-                            case R.id.edit_debt:
                                 break;
                             case R.id.delete_debt:
                                 MyFirebaseDatabaseHandler.deleteDebt(debt.getId_debt());

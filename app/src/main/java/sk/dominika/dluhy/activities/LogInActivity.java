@@ -22,6 +22,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
+import sk.dominika.dluhy.utilities.Utility;
 
 
 public class LogInActivity extends AppCompatActivity {
@@ -113,6 +114,8 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
 
+        //Set up touch listener for non-text box views to hide keyboard.
+        Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_login), LogInActivity.this);
     }
 
     @Override
@@ -177,5 +180,9 @@ public class LogInActivity extends AppCompatActivity {
     private void newAcitivity_main(){
         Intent mainActivity = new Intent(this,MainActivity.class);
         startActivity(mainActivity);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

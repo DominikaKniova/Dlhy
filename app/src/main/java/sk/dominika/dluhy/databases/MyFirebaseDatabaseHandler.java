@@ -88,46 +88,48 @@ public class MyFirebaseDatabaseHandler {
             //look through all my debts
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 Debt value = snapshot.getValue(Debt.class);
-                //add only my debts from database
-                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
-                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
-                    //check if debt has notification, if yes then add it
-                    if (!(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                        try {
-                            Date date = dateFormat.parse(value.getDateOfAlert());
-                            Date time = timeFormat.parse(value.getTimeOfAlert());
+                //add only unpaid debts
+                if (value.getIsPaid().equals("false")) {
+                    //add only my debts from database
+                    if (value.getId_who().equals(CurrentUser.UserCurrent.id)
+                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                        //check if debt has notification, if yes then add it
+                        if (!(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                            try {
+                                Date date = dateFormat.parse(value.getDateOfAlert());
+                                Date time = timeFormat.parse(value.getTimeOfAlert());
 
-                            Calendar calendarDate = Calendar.getInstance();
-                            calendarDate.setTime(date);
-                            Calendar calendarTime = Calendar.getInstance();
-                            calendarTime.setTime(time);
+                                Calendar calendarDate = Calendar.getInstance();
+                                calendarDate.setTime(date);
+                                Calendar calendarTime = Calendar.getInstance();
+                                calendarTime.setTime(time);
 
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
-                            calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
-                            calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
-                            calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
-                            calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+                                calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+                                calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+                                calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+                                calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
 
-                            //do not add notifications from past
-                            if ((calendar.getTime().getTime() - System.currentTimeMillis() > 0)){
-                                //add notification
-                                MyAlarmManager.scheduleNotification(
-                                        context,
-                                        calendar,
-                                        id_notification,
-                                        value.getName_who() + "->" + value.getName_toWhom(),
-                                        value.getSum() + ", " + value.getNote());
+                                //do not add notifications from past
+                                if ((calendar.getTime().getTime() - System.currentTimeMillis() > 0)) {
+                                    //add notification
+                                    MyAlarmManager.scheduleNotification(
+                                            context,
+                                            calendar,
+                                            id_notification,
+                                            value.getName_who() + "->" + value.getName_toWhom(),
+                                            value.getSum() + ", " + value.getNote());
 
-                                id_notification += 1;
+                                    id_notification += 1;
+                                }
+                            } catch (ParseException e) {
+                                Log.d(TAG, e.getMessage());
                             }
-                        } catch (ParseException e) {
-                            Log.d(TAG, e.getMessage());
                         }
                     }
-
                 }
             }
         }
@@ -349,12 +351,19 @@ public class MyFirebaseDatabaseHandler {
                 }
                 if (!result) {
                     //relationship doesn't exist
-                    Relationship r = new Relationship(CurrentUser.UserCurrent.id, toUser.getId(), toUser.getFirstname());
+                    Relationship r = new Relationship(
+                            CurrentUser.UserCurrent.id,
+                            CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName,
+                            toUser.getId(),
+                            toUser.getFirstname() + " " + toUser.getLastname());
                     DatabaseReference friends = mDatabase.getReference("friends");
                     String id = friends.push().getKey();
                     friends.child(id).setValue(r);
 
-                    Relationship r2 = new Relationship(toUser.getId(), CurrentUser.UserCurrent.id, CurrentUser.UserCurrent.firstName);
+                    Relationship r2 = new Relationship(toUser.getId(),
+                            toUser.getFirstname() + " " + toUser.getLastname(),
+                            CurrentUser.UserCurrent.id,
+                            CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
                     id = friends.push().getKey();
                     friends.child(id).setValue(r2);
                     Toast.makeText(activity, R.string.friend_added, Toast.LENGTH_SHORT).show();
@@ -378,10 +387,6 @@ public class MyFirebaseDatabaseHandler {
      */
     public static void deleteDebt(String id_debt) {
         FirebaseDatabase.getInstance().getReference("debts").child(id_debt).removeValue();
-    }
-
-    public static void editDebt(String id_debt) {
-
     }
 
     /**

@@ -33,9 +33,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_profile);
-
-        setTitle(CurrentUser.UserCurrent.firstName);
-
     }
 
     @Override
@@ -61,10 +58,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 User value = dataSnapshot.getValue(User.class);
-
-                TextView profile_name = (TextView) findViewById(R.id.profile_name);
-                profile_name.setText(value.getFirstname() + " " + value.getLastname());
-                //TODO: email, sum, pic ....
+                setTitle(value.getFirstname() + " " + value.getLastname());
             }
 
             @Override

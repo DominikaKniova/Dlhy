@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
-
                 }
             });
         } else {
@@ -151,9 +150,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
             case R.id.listNames:
                 newDialog_friends(item);
                 break;
-            case R.id.calendar:
-                MyAlarmManager.cancelAllNotifications(getBaseContext());
-                break;
             case R.id.signOut:
                 MyAlarmManager.cancelAllNotifications(getBaseContext());
                 FirebaseAuth.getInstance().signOut();
@@ -176,5 +172,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         //add data to intent
         intent.putExtra("id", id);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

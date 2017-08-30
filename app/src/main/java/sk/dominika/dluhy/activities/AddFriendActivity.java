@@ -20,6 +20,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.utilities.Utility;
 
 public class AddFriendActivity extends AppCompatActivity {
 
@@ -56,6 +57,9 @@ public class AddFriendActivity extends AppCompatActivity {
 
             }
         });
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_add_friend), AddFriendActivity.this);
     }
 
     @Override

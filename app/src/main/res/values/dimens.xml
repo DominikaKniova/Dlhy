@@ -6,4 +6,5 @@
     <dimen name="sum_note_size">16sp</dimen>
     <dimen name="reminder_size">16sp</dimen>
     <dimen name="sum_size">24sp</dimen>
+    <dimen name="new_debt_person_icon">50dp</dimen>
 </resources>

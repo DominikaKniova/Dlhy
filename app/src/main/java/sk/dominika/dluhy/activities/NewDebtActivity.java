@@ -4,7 +4,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -23,8 +22,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
-
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.User;
@@ -35,6 +32,7 @@ import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
+import sk.dominika.dluhy.utilities.Utility;
 
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
 
@@ -42,8 +40,10 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_debt);
-
         setTitle("New Debt");
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_new_debt), NewDebtActivity.this);
     }
 
     @Override
@@ -64,9 +64,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         expButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //hide soft keyboard
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                //hide soft keyboard
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
                 //expand
                 expandableButtonAlerts(view);

@@ -58,24 +58,20 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         memberContext = context;
         memberListener = listener;
         dialogFriends = dFriends;
-
     }
 
     @Override
     public FriendAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View friendView = inflater.inflate(R.layout.item_friend, parent, false);
-
         ViewHolder viewHolder = new ViewHolder(friendView);
-
         return viewHolder;
     }
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(final FriendAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final FriendAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         final Friend friend = memberFriends.get(position);
 
@@ -83,23 +79,21 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         TextView textView = holder.nameTextView;
         textView.setText(friend.getFirstName());
 
-//        //test
-//        TextView textView1 = holder.idTextView;
-//        textView1.setText(friend.getId());
-
         //icon imageview leads to friend's profile
         ImageView profileIcon = holder.icon;
         profileIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 newActivity_profileFriend(friend.getId());
+                dialogFriends.dismiss();
             }
         });
 
+        //name textview clicker for chosing friend in new debt
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                memberListener.onClick(memberFriends.get(position).getId());
+                memberListener.onClick(memberFriends.get(holder.getAdapterPosition()).getId());
                 dialogFriends.dismiss();
             }
         });
