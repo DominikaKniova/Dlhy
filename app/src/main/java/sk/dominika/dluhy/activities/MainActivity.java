@@ -3,8 +3,11 @@ package sk.dominika.dluhy.activities;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,9 +26,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 
+import sk.dominika.dluhy.adapters.DebtAdapter;
+import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
@@ -36,15 +42,15 @@ import sk.dominika.dluhy.notifications.MyAlarmManager;
 public class MainActivity extends AppCompatActivity implements DialogListener {
 
     private final String TAG = "signed/logged";
+    private CollapsingToolbarLayout collTlbarLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-
-        setTitle("My profile");
 
         //On click listener: Adding new debt from my profile
         FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_add);
@@ -56,18 +62,21 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         });
 
         //On click listener: My debts
-        Button myDebts = (Button) findViewById(R.id.my_debts);
-        myDebts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog_debts(v);
-            }
-        });
+//        Button myDebts = (Button) findViewById(R.id.my_debts);
+//        myDebts.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDialog_debts(v);
+//            }
+//        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        collTlbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout_main);
+
         // FirebaseAuth instance
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -85,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
                     CurrentUser.setId(user.getId());
 
                     //set views
-                    TextView name = (TextView) findViewById(R.id.profile_name);
-                    name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
-
-                    TextView sum = (TextView) findViewById(R.id.my_profile_sum);
-                    MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
+//                    TextView name = (TextView) findViewById(R.id.profile_name);
+//                    name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
+                    collTlbarLayout.setTitle(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
+//                    TextView sum = (TextView) findViewById(R.id.my_profile_sum);
+//                    MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
                 }
 
                 @Override
@@ -100,13 +109,15 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         } else {
             newActivity_signOut();
         }
+
+        showRecycleViewAllDebts();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        TextView name = (TextView) findViewById(R.id.profile_name);
-        name.setText("");
+//        TextView name = (TextView) findViewById(R.id.profile_name);
+//        name.setText("");
     }
 
     //Start activity New Debt
@@ -172,6 +183,21 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         //add data to intent
         intent.putExtra("id", id);
         startActivity(intent);
+    }
+
+    private void showRecycleViewAllDebts() {
+        /**
+         * Get debts from firebase database and store them in arraylist Debt.myDebts.
+         */
+        Debt.myDebts.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
+
+        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        DebtAdapter adapter = new DebtAdapter(getBaseContext(), Debt.myDebts);
+        recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
+        recycler_viewDebts.setAdapter(adapter);
+        recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
     }
 
     @Override

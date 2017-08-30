@@ -3,15 +3,19 @@ package sk.dominika.dluhy.activities;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
+import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,20 +23,26 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.adapters.DebtAdapter;
+import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
-import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 public class FriendProfileActivity extends AppCompatActivity {
 
     private String id_friend;
+    private CollapsingToolbarLayout collTlbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_profile);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_friend);
+        setSupportActionBar(toolbar);
+        collTlbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
     }
 
     @Override
@@ -58,7 +68,8 @@ public class FriendProfileActivity extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 User value = dataSnapshot.getValue(User.class);
-                setTitle(value.getFirstname() + " " + value.getLastname());
+//                setTitle(value.getFirstname() + " " + value.getLastname());
+                collTlbarLayout.setTitle(value.getFirstname() + " " + value.getLastname());
             }
 
             @Override
@@ -67,26 +78,31 @@ public class FriendProfileActivity extends AppCompatActivity {
             }
         });
 
-        TextView sum = (TextView) findViewById(R.id.friend_profile_sum);
-        MyFirebaseDatabaseHandler.getOverallSum(id_friend, sum);
-
-        //On click listener: Showing all our debts
-        final Button our_debts = (Button) findViewById(R.id.our_debts);
-        our_debts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog_ourDebts(id_friend);
-            }
-        });
+//        TextView sum = (TextView) findViewById(R.id.friend_profile_sum);
+//        MyFirebaseDatabaseHandler.getOverallSum(id_friend, sum);
 
         //On click listener: Adding new debt(_all) from friend profile
-        FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.new_debt_from_friend);
+        final FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.new_debt_from_friend);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 newDebtActivityWithName();
             }
         });
+
+        showRecycleView();
+
+        //On click listener: Showing all our debts
+//        final Button our_debts = (Button) findViewById(R.id.our_debts);
+//        our_debts.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                showDialog_ourDebts(id_friend);
+//                expandableButtonRecycleView(v);
+//                showRecycleView();
+////                floatingButton.setVisibility(View.GONE);
+//            }
+//        });
     }
 
     //Menu handler
@@ -138,5 +154,28 @@ public class FriendProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewDebtActivity.class);
         intent.putExtra("id", id_friend);
         startActivity(intent);
+    }
+
+    ExpandableRelativeLayout expandableLayout;
+
+    private void expandableButtonRecycleView(View v) {
+//        expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutRecycleView);
+//        expandableLayout.toggle(); // toggle expand and collapse
+    }
+
+    private void showRecycleView() {
+        /**
+         * Get debts from firebase database and store them in arraylist Debt.myDebts.
+         */
+        Debt.myDebts.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
+
+        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        DebtAdapter adapter = new DebtAdapter(getBaseContext(), Debt.myDebts);
+        recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
+        recycler_viewDebts.setAdapter(adapter);
+        recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+
     }
 }
