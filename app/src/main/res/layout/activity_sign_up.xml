@@ -5,10 +5,10 @@
     android:id="@+id/lin_layout_signup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="sk.dominika.dluhy.activities.SignUpActivity"
-    android:orientation="vertical"
     android:layout_gravity="center"
-    android:padding="@dimen/fab_margin">
+    android:orientation="vertical"
+    android:padding="@dimen/fab_margin"
+    tools:context="sk.dominika.dluhy.activities.SignUpActivity">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:id="@+id/text_input_signUp_firstname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences"/>
+            android:inputType="textCapSentences" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -34,7 +34,7 @@
             android:id="@+id/text_input_signUp_lastname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences"/>
+            android:inputType="textCapSentences" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -62,7 +62,7 @@
             android:id="@+id/text_input_signUp_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -71,6 +71,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sign_in"
-        android:textColor="#929292"/>
+        android:textColor="#929292" />
 
 </LinearLayout>
+
+

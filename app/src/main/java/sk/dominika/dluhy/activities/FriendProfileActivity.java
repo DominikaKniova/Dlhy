@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.DebtAdapter;
+import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.User;
@@ -39,15 +41,30 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_friend);
+        setContentView(R.layout.profile);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        collTlbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView profile = (TextView) findViewById(R.id.profile);
+        profile.setText("");
+
+        //On click listener: Adding new debt(_all) from friend profile
+        final FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.floatingButton_add);
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newDebtActivityWithName();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        showRecycleView();
 
         //Get data (id of friend) from previous activity and set correct profile
         Intent intent = getIntent();
@@ -67,9 +84,12 @@ public class FriendProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
+
                 User value = dataSnapshot.getValue(User.class);
-//                setTitle(value.getFirstname() + " " + value.getLastname());
-                collTlbarLayout.setTitle(value.getFirstname() + " " + value.getLastname());
+                TextView name = (TextView) findViewById(R.id.profile_name);
+                name.setText(value.getFirstname() + " " + value.getLastname());
+                TextView sum = (TextView) findViewById(R.id.profile_sum);
+                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
             }
 
             @Override
@@ -77,32 +97,6 @@ public class FriendProfileActivity extends AppCompatActivity {
                 // Failed to read value
             }
         });
-
-//        TextView sum = (TextView) findViewById(R.id.friend_profile_sum);
-//        MyFirebaseDatabaseHandler.getOverallSum(id_friend, sum);
-
-        //On click listener: Adding new debt(_all) from friend profile
-        final FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.new_debt_from_friend);
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newDebtActivityWithName();
-            }
-        });
-
-        showRecycleView();
-
-        //On click listener: Showing all our debts
-//        final Button our_debts = (Button) findViewById(R.id.our_debts);
-//        our_debts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                showDialog_ourDebts(id_friend);
-//                expandableButtonRecycleView(v);
-//                showRecycleView();
-////                floatingButton.setVisibility(View.GONE);
-//            }
-//        });
     }
 
     //Menu handler
