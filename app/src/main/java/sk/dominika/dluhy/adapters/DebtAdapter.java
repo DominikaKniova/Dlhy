@@ -4,7 +4,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.PopupMenu;
+import android.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,7 +19,6 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
-import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 /**
  * Adapter for showing list of debts.
@@ -63,7 +62,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
 
     // Involves populating data into the item through holder
     @Override
-    public void onBindViewHolder(final DebtAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final DebtAdapter.ViewHolder holder, final int position) {
         // Get the data model based on position
         final Debt debt = memberDebts.get(position);
         TextView tNames = holder.namesTextView;
@@ -113,18 +112,34 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
                             case R.id.pay_debt:
                                 if (debt.getIsPaid().equals("true")) {
                                     MyFirebaseDatabaseHandler.updateIsPaid(debt.getId_debt(), "false");
+                                    Debt debt1 = memberDebts.get(position);
+                                    debt1.setIsPaid("false");
+                                    memberDebts.remove(position);
+                                    notifyItemRemoved(position);
+                                    memberDebts.add(position, debt1);
+                                    notifyItemInserted(position);
+
                                 } else {
                                     MyFirebaseDatabaseHandler.updateIsPaid(debt.getId_debt(), "true");
+                                    Debt debt1 = memberDebts.get(position);
+                                    debt1.setIsPaid("true");
+                                    memberDebts.remove(position);
+                                    notifyItemRemoved(position);
+                                    memberDebts.add(position, debt1);
+                                    notifyItemInserted(position);
                                 }
                                 break;
                             case R.id.delete_debt:
                                 MyFirebaseDatabaseHandler.deleteDebt(debt.getId_debt());
+                                memberDebts.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, memberDebts.size());
                                 break;
                         }
                         return false;
                     }
                 });
-                //displaying the popup
+                //displaying the popup menu
                 popup.show();
 
             }
