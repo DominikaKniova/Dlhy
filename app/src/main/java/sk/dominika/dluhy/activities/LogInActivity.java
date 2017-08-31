@@ -136,7 +136,6 @@ public class LogInActivity extends AppCompatActivity {
      * @param email
      * @param password
      */
-    //TODO nefunguje pri no wifi
     private void logIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {

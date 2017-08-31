@@ -112,21 +112,12 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
                             case R.id.pay_debt:
                                 if (debt.getIsPaid().equals("true")) {
                                     MyFirebaseDatabaseHandler.updateIsPaid(debt.getId_debt(), "false");
-                                    Debt debt1 = memberDebts.get(position);
-                                    debt1.setIsPaid("false");
-                                    memberDebts.remove(position);
-                                    notifyItemRemoved(position);
-                                    memberDebts.add(position, debt1);
-                                    notifyItemInserted(position);
-
+                                    memberDebts.get(position).setIsPaid("false");
+                                    notifyItemChanged(position);
                                 } else {
                                     MyFirebaseDatabaseHandler.updateIsPaid(debt.getId_debt(), "true");
-                                    Debt debt1 = memberDebts.get(position);
-                                    debt1.setIsPaid("true");
-                                    memberDebts.remove(position);
-                                    notifyItemRemoved(position);
-                                    memberDebts.add(position, debt1);
-                                    notifyItemInserted(position);
+                                    memberDebts.get(position).setIsPaid("true");
+                                    notifyItemChanged(position);
                                 }
                                 break;
                             case R.id.delete_debt:

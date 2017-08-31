@@ -1,11 +1,9 @@
 package sk.dominika.dluhy.activities;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,12 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.DebtAdapter;
-import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.decorations.DividerDecoration;
-import sk.dominika.dluhy.dialogs.DialogFriendDebts;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 public class FriendProfileActivity extends AppCompatActivity {
@@ -129,18 +125,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Starts dialog- list of debts shared with the friend.
-     * @param id ID of friend.
-     */
-    private void showDialog_ourDebts(String id) {
-        DialogFragment newDialog = new DialogFriendDebts();
-        Bundle args = new Bundle();
-        args.putString("id", id);
-        newDialog.setArguments(args);
-        newDialog.show(getFragmentManager(), "debts");
-    }
-
-    /**
      * Add new debt from friend's profile.
      * Send id through intent.
      */
@@ -162,8 +146,7 @@ public class FriendProfileActivity extends AppCompatActivity {
          * Get debts from firebase database and store them in arraylist Debt.myDebts.
          */
         Debt.myDebts.clear();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
+        MyFirebaseDatabaseHandler.getOurDebts(id_friend);
 
         RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
         DebtAdapter adapter = new DebtAdapter(getBaseContext(), Debt.myDebts);

@@ -3,19 +3,15 @@ package sk.dominika.dluhy.activities;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuInflater;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +30,6 @@ import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.decorations.DividerDecoration;
-import sk.dominika.dluhy.dialogs.DialogAllDebts;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
@@ -133,12 +128,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     private void newDialog_friends(MenuItem item) {
         DialogFragment newDialog = new DialogFriends();
         newDialog.show(getFragmentManager(), "friends");
-    }
-
-    //Start dialog list of my debts
-    private void showDialog_debts(View view) {
-        DialogFragment newDialog = new DialogAllDebts();
-        newDialog.show(getFragmentManager(), "debts");
     }
 
     //Start activities from Menu

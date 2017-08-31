@@ -25,7 +25,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             public static final String COLUMN_FIRSTNAME = "firstname";
             public static final String COLUMN_LASTNAME = "lastname";
             public static final String COLUMN_EMAIL = "email";
-            //TODO: pridat overal sumu
 
         }
 
@@ -236,7 +235,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             bundle.putString("lastname", cursor.getString(cursor.getColumnIndex(TableFriends.COLUMN_LASTNAME)));
 //            bundle.putString("email", cursor.getString(cursor.getColumnIndex("email")));
 //            bundle.putString("sum", cursor.getString(cursor.getColumnIndex("overall_sum")));
-            //TODO: suma
         }
 
         cursor.close();
