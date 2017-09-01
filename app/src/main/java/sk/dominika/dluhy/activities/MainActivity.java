@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuInflater;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.Debt;
@@ -71,13 +75,12 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         //set views of logged user
         if (currentUser != null) {
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference ref = mDatabase.getReference("users").child(currentUser.getUid());
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            CurrentUser.setId(currentUser.getUid());
+            mDatabase.getReference("users").child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-                    CurrentUser.setId(user.getId());
 
                     //set views
                     TextView name = (TextView) findViewById(R.id.profile_name);
@@ -169,15 +172,36 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         /**
          * Get debts from firebase database and store them in arraylist Debt.myDebts.
          */
-        Debt.myDebts.clear();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-        ref.addValueEventListener(MyFirebaseDatabaseHandler.listenerAllMyDebts);
+        final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
+        spinner.setVisibility(View.VISIBLE);
 
-        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
-        DebtAdapter adapter = new DebtAdapter(getBaseContext(), Debt.myDebts);
-        recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
-        recycler_viewDebts.setAdapter(adapter);
-        recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //loop through all debts in the database
+                List<Debt> listDebts = new ArrayList<Debt>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt value = snapshot.getValue(Debt.class);
+                    //add only my debts from database
+                    if (value.getId_who().equals(CurrentUser.UserCurrent.id)
+                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                        listDebts.add(value);
+                    }
+                }
+                RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+                DebtAdapter adapter = new DebtAdapter(getBaseContext(), listDebts);
+                recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
+                recycler_viewDebts.setAdapter(adapter);
+                recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+                spinner.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

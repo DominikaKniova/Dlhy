@@ -1,9 +1,12 @@
 package sk.dominika.dluhy.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
@@ -21,8 +25,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.adapters.DebtAdapter;
+import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.User;
@@ -134,25 +142,39 @@ public class FriendProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    ExpandableRelativeLayout expandableLayout;
-
-    private void expandableButtonRecycleView(View v) {
-//        expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutRecycleView);
-//        expandableLayout.toggle(); // toggle expand and collapse
-    }
-
     private void showRecycleView() {
         /**
          * Get debts from firebase database and store them in arraylist Debt.myDebts.
          */
-        Debt.myDebts.clear();
-        MyFirebaseDatabaseHandler.getOurDebts(id_friend);
 
-        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
-        DebtAdapter adapter = new DebtAdapter(getBaseContext(), Debt.myDebts);
-        recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
-        recycler_viewDebts.setAdapter(adapter);
-        recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
+        spinner.setVisibility(View.VISIBLE);
+
+        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Debt> listDebts = new ArrayList<Debt>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt debt = snapshot.getValue(Debt.class);
+                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
+                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        listDebts.add(debt);
+                    }
+                }
+                RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+                DebtAdapter adapter = new DebtAdapter(getBaseContext(), listDebts);
+                spinner.setVisibility(View.GONE);
+                recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
+                recycler_viewDebts.setAdapter(adapter);
+                recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
 
     }
 }

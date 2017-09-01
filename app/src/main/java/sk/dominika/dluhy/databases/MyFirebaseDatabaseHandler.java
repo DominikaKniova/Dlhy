@@ -38,25 +38,25 @@ public class MyFirebaseDatabaseHandler {
     /**
      * Listener for getting all my debts from firebase database and store them in arraylist Debt.myDebts.
      */
-    public static ValueEventListener listenerAllMyDebts = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            //loop through all debts in the database
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Debt value = snapshot.getValue(Debt.class);
-                //add only my debts from database
-                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
-                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
-                    Debt.myDebts.add(value);
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            Log.e("The read failed: ", databaseError.getMessage());
-        }
-    };
+//    public static ValueEventListener listenerAllMyDebts = new ValueEventListener() {
+//        @Override
+//        public void onDataChange(DataSnapshot dataSnapshot) {
+//            //loop through all debts in the database
+//            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                Debt value = snapshot.getValue(Debt.class);
+//                //add only my debts from database
+//                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
+//                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+//                    Debt.myDebts.add(value);
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onCancelled(DatabaseError databaseError) {
+//            Log.e("The read failed: ", databaseError.getMessage());
+//        }
+//    };
 
     /**
      * Listener for looping through all friends in firebase database and adding them to arraylist Friend.myFriends.
@@ -155,25 +155,24 @@ public class MyFirebaseDatabaseHandler {
      *
      * @param id_friend
      */
-    public static void getOurDebts(final String id_friend) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Debt debt = snapshot.getValue(Debt.class);
-                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
-                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
-                        Debt.myDebts.add(debt);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
+//    public static void getOurDebts(final String id_friend) {
+//        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Debt debt = snapshot.getValue(Debt.class);
+//                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
+//                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+//                        Debt.myDebts.add(debt);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//    }
 
     /**
      * Calculate overall sum of only my debts or my debts with concrete friend.

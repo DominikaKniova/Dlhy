@@ -74,6 +74,4 @@ public class Debt {
     public void setIsPaid(String isPaid) {
         this.isPaid = isPaid;
     }
-
-    public static List<Debt> myDebts = new ArrayList<Debt>();
 }

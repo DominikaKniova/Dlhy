@@ -65,31 +65,28 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
     public void onBindViewHolder(final DebtAdapter.ViewHolder holder, final int position) {
         // Get the data model based on position
         final Debt debt = memberDebts.get(position);
-        TextView tNames = holder.namesTextView;
-        TextView tSumNote = holder.sum_noteTextView;
-        TextView tReminder = holder.reminderTextView;
-        tNames.setText(debt.getName_who() + "->" + debt.getName_toWhom());
+        holder.namesTextView.setText(debt.getName_who() + "->" + debt.getName_toWhom());
 
         //I owe
         if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
-            tSumNote.setText("-" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
-            tNames.setTextColor(ContextCompat.getColor(memberContext, R.color.red_sum));
+            holder.sum_noteTextView.setText("-" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
+            holder.namesTextView.setTextColor(ContextCompat.getColor(memberContext, R.color.red_sum));
         }
         //they owe me
         else {
-            tSumNote.setText("+" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
-            tNames.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
+            holder.sum_noteTextView.setText("+" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
+            holder.namesTextView.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
         }
         if (!debt.getDateOfAlert().equals("")) {
-            tReminder.setVisibility(View.VISIBLE);
-            tReminder.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());
+            holder.reminderTextView.setVisibility(View.VISIBLE);
+            holder.reminderTextView.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());
         }
 
         //check if debt is paid. YES = strike through text
         if (debt.getIsPaid().equals("true")) {
-            tNames.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            tSumNote.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            tReminder.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.namesTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.sum_noteTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.reminderTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
         holder.menuImageView.setOnClickListener(new View.OnClickListener() {
