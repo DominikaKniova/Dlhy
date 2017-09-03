@@ -17,13 +17,14 @@ import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.utilities.Utility;
 
 /**
- * Activity for adding new friends. Activity consist of only one
+ * The AddFriendActivity for adding new friends. Activity consist of only one
  * text field for entering friend's email. Only friends that are
  * also users of the app can be added.
- * Activity controls user's input whether the email is valid or entered by a text listener and any errors
+ * The activity controls user's input whether the email is valid or entered by a text listener and any errors
  * notifies by a toast.
  * It also connects to firebase database and checks if the added person is a user. If not, the activity
  * warns the current user that addition can not be done by a toast.
+ * The activity has menu in toolbar containing of a button to add a friend.
  */
 public class AddFriendActivity extends AppCompatActivity {
 
@@ -75,7 +76,8 @@ public class AddFriendActivity extends AppCompatActivity {
         return true;
     }
     /**
-     * Menu handler. When user selects menu item to add friend.
+     * Menu handler. Menu contains of button for adding a new friend.
+     * @param item Button clicked.
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {

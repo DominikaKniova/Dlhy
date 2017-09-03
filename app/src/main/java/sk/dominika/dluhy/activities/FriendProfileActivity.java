@@ -33,31 +33,40 @@ import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
+/**
+ * The FriendProfileActivity is showing profile of concrete friend based on his id that is sent through
+ * Intent from previous activity, from which this activity is called.
+ * After the activity has started views, the friend with the id is found in database and
+ * views are initialized with his name and overall sum of all debts created with him.
+ * There is a floating button which starts the NewDebtActivity and simultaneously sends the id of the
+ * friend through Intent to initialize the chosen friend for creating a debt in that activity.
+ * The activity has menu in toolbar containing of button for deleting the friend with all the debts
+ * created with him, and a button for closing the activity and returning to MyProfileActivity.
+ */
 public class FriendProfileActivity extends AppCompatActivity {
 
     private String id_friend;
-    private CollapsingToolbarLayout collTlbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile);
 
+        //set XML layout the activity will be using
+        setContentView(R.layout.profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-
+        //no title when collapsing toolbar is down
         TextView profile = (TextView) findViewById(R.id.profile);
         profile.setText("");
 
-        //On click listener: Adding new debt(_all) from friend profile
-        final FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.floatingButton_add);
-        floatingButton.setOnClickListener(new View.OnClickListener() {
+        //set action for floating button which adds new debt
+        FloatingActionButton buttonAddDebt = (FloatingActionButton) findViewById(R.id.floatingButton_add);
+        buttonAddDebt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newDebtActivityWithName();
+                toNewDebtActivityWithName();
             }
         });
     }
@@ -65,38 +74,34 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        showRecycleView();
-
-        //Get data (id of friend) from previous activity and set correct profile
+        //get data (id of friend) from previous activity and set correct profile views for the person
         Intent intent = getIntent();
         id_friend = intent.getStringExtra("id");
 
+        getDebtsAndShowRecycleView();
+
+        //get reference to views and initialize them
+        final TextView name = (TextView) findViewById(R.id.profile_name);
+        final TextView sum = (TextView) findViewById(R.id.profile_sum);
         final CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         /**
-         * Find friend (user) in database based on the friend's id
+         * Find the friend in database based on his id and initialize views with his data.
          */
-        //get instance to database
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'users' node and child with the id and get data and set views
+        // get reference to 'users' node and child with the id
         FirebaseDatabase.getInstance().getReference("users").child(id_friend).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-
                 final User value = dataSnapshot.getValue(User.class);
-                TextView name = (TextView) findViewById(R.id.profile_name);
-                name.setText(value.getFirstname() + " " + value.getLastname());
-                TextView sum = (TextView) findViewById(R.id.profile_sum);
-                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
 
+                name.setText(value.getFirstname() + " " + value.getLastname());
+                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
+                //animation for toolbar title when collapsing
                 appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                     boolean isShow = false;
                     int scrollRange = -1;
-
                     @Override
                     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                         if (scrollRange == -1) {
@@ -112,7 +117,6 @@ public class FriendProfileActivity extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
@@ -120,7 +124,9 @@ public class FriendProfileActivity extends AppCompatActivity {
         });
     }
 
-    //Menu handler
+    /**
+     * Create menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -128,45 +134,55 @@ public class FriendProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    //Start activities from Menu
+    /**
+     * Menu handler. Menu contains of button for deleting the friend
+     * and button for closing the profile (returning to MyProfileActivity).
+     *
+     * @param item Button clicked.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.delete_friend:
-                ShowAlertDialogDeleteFriend.showAlertDialog(getBaseContext().getString(R.string.alert_dialog_delete_friend), FriendProfileActivity.this, id_friend);
+                ShowAlertDialogDeleteFriend.showAlertDialog(
+                        getBaseContext().getString(R.string.alert_dialog_delete_friend),
+                        FriendProfileActivity.this, id_friend);
                 break;
             case R.id.close_profile:
-                newActivity_main();
+                toMyProfileActivity();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    //Start activity Main
-    private void newActivity_main(){
+    /**
+     * Start MyProfileActivity.
+     */
+    private void toMyProfileActivity(){
         Intent intent_debt = new Intent(this, MyProfileActivity.class);
         startActivity(intent_debt);
     }
 
     /**
      * Add new debt from friend's profile.
-     * Send id through intent.
+     * Method starts NewDebtActivity and sends to it the id of the friend.
      */
-    private void newDebtActivityWithName() {
+    private void toNewDebtActivityWithName() {
         Intent intent = new Intent(this, NewDebtActivity.class);
         intent.putExtra("id", id_friend);
         startActivity(intent);
     }
 
-    private void showRecycleView() {
-        /**
-         * Get debts from firebase database and store them in arraylist Debt.myDebts.
-         */
-
+    /**
+     * Get debts from firebase database, store them in an arraylist and then show them in recycleview.
+     * While data from database are loading, show loading spinner.
+     */
+    private void getDebtsAndShowRecycleView() {
+        //get reference to loading spinner and set it visible while data is loading
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
 
+        //get only the debts created with friend from database
         FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -178,20 +194,19 @@ public class FriendProfileActivity extends AppCompatActivity {
                         listDebts.add(debt);
                     }
                 }
+                //set up recycle view from the arraylist of the debts, and its adapter
                 RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
                 DebtAdapter adapter = new DebtAdapter(getBaseContext(), listDebts);
+                //data is loaded, so the loading spinner can be hidden
                 spinner.setVisibility(View.GONE);
                 recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
                 recycler_viewDebts.setAdapter(adapter);
                 recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
                 adapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-
     }
 }

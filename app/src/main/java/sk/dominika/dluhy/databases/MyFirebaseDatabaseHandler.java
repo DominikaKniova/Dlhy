@@ -331,7 +331,7 @@ public class MyFirebaseDatabaseHandler {
      * Yes - create AB, BA friendship in database "friends".
      * No - make toast that user doesn't exist*.
      *
-     * @param item     Item from menu
+     * @param item     Button from menu
      * @param email    Email of friend which is about to be added.
      * @param activity Activity from which the method is called.
      */
