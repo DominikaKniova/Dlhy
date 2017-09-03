@@ -74,54 +74,20 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //get data (id of friend) from previous activity and set correct profile views for the person
+        //get data (id of friend) from previous activity
         Intent intent = getIntent();
         id_friend = intent.getStringExtra("id");
 
         getDebtsAndShowRecycleView();
 
-        //get reference to views and initialize them
+        //get reference to views
         final TextView name = (TextView) findViewById(R.id.profile_name);
         final TextView sum = (TextView) findViewById(R.id.profile_sum);
-        final CollapsingToolbarLayout collapsingToolbar =
+        final CollapsingToolbarLayout collToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-
-        /**
-         * Find the friend in database based on his id and initialize views with his data.
-         */
-        // get reference to 'users' node and child with the id
-        FirebaseDatabase.getInstance().getReference("users").child(id_friend).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final User value = dataSnapshot.getValue(User.class);
-
-                name.setText(value.getFirstname() + " " + value.getLastname());
-                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
-                //animation for toolbar title when collapsing
-                appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                    boolean isShow = false;
-                    int scrollRange = -1;
-                    @Override
-                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                        if (scrollRange == -1) {
-                            scrollRange = appBarLayout.getTotalScrollRange();
-                        }
-                        if (scrollRange + verticalOffset == 0) {
-                            collapsingToolbar.setTitle(value.getFirstname() + " " + value.getLastname());
-                            isShow = true;
-                        } else if (isShow) {
-                            collapsingToolbar.setTitle("");
-                            isShow = false;
-                        }
-                    }
-                });
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-            }
-        });
+        //set correct profile views for the person
+        MyFirebaseDatabaseHandler.setFriendsProfileViews(id_friend, name, sum, collToolbar, appBarLayout);
     }
 
     /**
@@ -137,7 +103,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     /**
      * Menu handler. Menu contains of button for deleting the friend
      * and button for closing the profile (returning to MyProfileActivity).
-     *
      * @param item Button clicked.
      */
     @Override
@@ -181,32 +146,9 @@ public class FriendProfileActivity extends AppCompatActivity {
         //get reference to loading spinner and set it visible while data is loading
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        MyFirebaseDatabaseHandler.loadDebtsWithFriendRecycleView(id_friend, spinner,
+                recyclerView, FriendProfileActivity.this);
 
-        //get only the debts created with friend from database
-        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Debt> listDebts = new ArrayList<Debt>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Debt debt = snapshot.getValue(Debt.class);
-                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
-                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
-                        listDebts.add(debt);
-                    }
-                }
-                //set up recycle view from the arraylist of the debts, and its adapter
-                RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
-                DebtAdapter adapter = new DebtAdapter(getBaseContext(), listDebts);
-                //data is loaded, so the loading spinner can be hidden
-                spinner.setVisibility(View.GONE);
-                recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
-                recycler_viewDebts.setAdapter(adapter);
-                recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                adapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 }

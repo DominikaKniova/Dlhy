@@ -5,9 +5,15 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,17 +25,21 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.activities.AddFriendActivity;
+import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.Friend;
 import sk.dominika.dluhy.database_models.Relationship;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 public class MyFirebaseDatabaseHandler {
@@ -177,6 +187,52 @@ public class MyFirebaseDatabaseHandler {
 //    }
 
     /**
+     * Find the friend in database based on his id and initialize views with his data.
+     * @param id_friend ID of friend.
+     * @param name Reference to his name textview.
+     * @param sum Reference to his sum textview.
+     */
+    public static void setFriendsProfileViews(String id_friend, final TextView name, final TextView sum,
+                                              final CollapsingToolbarLayout cToolbar, final AppBarLayout appbar) {
+        // get reference to 'users' node and child with the id
+        FirebaseDatabase.getInstance().getReference("users").child(id_friend).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //get the object
+                final User value = dataSnapshot.getValue(User.class);
+                //set name view
+                name.setText(value.getFirstname() + " " + value.getLastname());
+                //get overall sum and set sum view
+                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
+                //animation for toolbar title when collapsing
+                appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                    boolean isShow = false;
+                    int scrollRange = -1;
+
+                    @Override
+                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                        if (scrollRange == -1) {
+                            scrollRange = appBarLayout.getTotalScrollRange();
+                        }
+                        if (scrollRange + verticalOffset == 0) {
+                            cToolbar.setTitle(value.getFirstname() + " " + value.getLastname());
+                            isShow = true;
+                        } else if (isShow) {
+                            cToolbar.setTitle("");
+                            isShow = false;
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+    }
+
+    /**
      * Calculate overall sum of only my debts or my debts with concrete friend.
      * Set sum view in profile.
      *
@@ -273,6 +329,38 @@ public class MyFirebaseDatabaseHandler {
                 }
             });
         }
+    }
+
+    public static void loadDebtsWithFriendRecycleView(final String id_friend,
+                                                      final ProgressBar spinner,
+                                                      final RecyclerView recycleView,
+                                                      final Activity activity) {
+        //get only the debts created with friend from database
+        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Debt> listDebts = new ArrayList<Debt>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt debt = snapshot.getValue(Debt.class);
+                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
+                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
+                        listDebts.add(debt);
+                    }
+                }
+                //set up recycle view from the arraylist of the debts, and its adapter
+                DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
+                //data is loaded, so the loading spinner can be hidden
+                spinner.setVisibility(View.GONE);
+                recycleView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
+                recycleView.setAdapter(adapter);
+                recycleView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     /**
