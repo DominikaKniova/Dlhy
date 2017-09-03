@@ -23,6 +23,15 @@ import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.utilities.Utility;
 
+/**
+ * Activity for adding new friends. Activity consist of only one
+ * text field for entering friend's email. Only friends that are
+ * also users of the app can be added.
+ * Activity controls user's input whether the email is valid or entered by a text listener and any errors
+ * notifies by a toast.
+ * It also connects to firebase database and checks if the added person is a user. If not, the activity
+ * warns the current user that addition can not be done by a toast.
+ */
 public class AddFriendActivity extends AppCompatActivity {
 
     private TextInputEditText email;
@@ -31,20 +40,20 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+
+        //add toolbar and title
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
         setTitle("Add Friend");
 
-        //get entered email
+        //get reference to email textview
         email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
+
         //add text listener to check if input is correct
         email.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (email.getText().toString().equals("")){
@@ -54,17 +63,19 @@ public class AddFriendActivity extends AppCompatActivity {
                     email.setError(null);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
 
-        //Set up touch listener for non-text box views to hide keyboard.
+        //set up touch listener for non-text views to hide keyboard when touched outside a textview
         Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_add_friend), AddFriendActivity.this);
     }
 
+    /**
+     * Create a menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -72,9 +83,11 @@ public class AddFriendActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Menu handler. When user selects menu item to add friend.
+     */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        //add friend
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
 
@@ -86,13 +99,10 @@ public class AddFriendActivity extends AppCompatActivity {
             }
             //if email was completed
             else {
-
                 //check if user is not adding himself
                 if (!email.getText().toString().equals(CurrentUser.UserCurrent.email)) {
-                    //get instance to database
-                    final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                    // get reference to 'users' node and to 'friends' node
-                    final DatabaseReference refUsers = mDatabase.getReference("users");
+                    // get reference to database and to 'users' node
+                    final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference("users");
 
                     /**
                      * check if new friend is user
@@ -102,30 +112,28 @@ public class AddFriendActivity extends AppCompatActivity {
                     refUsers.orderByChild("email").equalTo(email.getText().toString()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            //user exists
                             if (dataSnapshot.hasChildren()) {
+                                //user exists
                                 User user = new User();
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     user = snapshot.getValue(User.class);
                                 }
-
                                 /**
                                  * Firstly check whether the relationship doesn't already exist.
                                  * if not then add new relationship
                                  */
-                                MyFirebaseDatabaseHandler.checkIfRelationshipExists(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
+                                MyFirebaseDatabaseHandler.checkIfRelationshipExistsAndAdd(CurrentUser.UserCurrent.id, user, AddFriendActivity.this);
                                 finish();
                                 item.setEnabled(true);
                             }
-                            //user does not exist
                             else {
+                                //user does not exist
                                 Toast.makeText(AddFriendActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
                                 item.setEnabled(true);
                                 email.setText("");
                                 email.setError("Invalid email");
                             }
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                         }
@@ -143,6 +151,9 @@ public class AddFriendActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * When back button pressed then return to MyProfileActivity
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();

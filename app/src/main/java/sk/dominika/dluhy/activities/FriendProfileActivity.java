@@ -1,12 +1,10 @@
 package sk.dominika.dluhy.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +16,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -52,6 +48,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+
         TextView profile = (TextView) findViewById(R.id.profile);
         profile.setText("");
 
@@ -74,26 +71,46 @@ public class FriendProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id_friend = intent.getStringExtra("id");
 
+        final CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+        final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+
         /**
          * Find friend (user) in database based on the friend's id
          */
         //get instance to database
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'users' node and child with the id
-        DatabaseReference ref = mDatabase.getReference("users").child(id_friend);
-
-        // get data (name of friend) from database and set views
-        ref.addValueEventListener(new ValueEventListener() {
+        // get reference to 'users' node and child with the id and get data and set views
+        FirebaseDatabase.getInstance().getReference("users").child(id_friend).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
-                User value = dataSnapshot.getValue(User.class);
+                final User value = dataSnapshot.getValue(User.class);
                 TextView name = (TextView) findViewById(R.id.profile_name);
                 name.setText(value.getFirstname() + " " + value.getLastname());
                 TextView sum = (TextView) findViewById(R.id.profile_sum);
                 MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
+
+                appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                    boolean isShow = false;
+                    int scrollRange = -1;
+
+                    @Override
+                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                        if (scrollRange == -1) {
+                            scrollRange = appBarLayout.getTotalScrollRange();
+                        }
+                        if (scrollRange + verticalOffset == 0) {
+                            collapsingToolbar.setTitle(value.getFirstname() + " " + value.getLastname());
+                            isShow = true;
+                        } else if (isShow) {
+                            collapsingToolbar.setTitle("");
+                            isShow = false;
+                        }
+                    }
+                });
             }
 
             @Override
@@ -128,7 +145,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     //Start activity Main
     private void newActivity_main(){
-        Intent intent_debt = new Intent(this,MainActivity.class);
+        Intent intent_debt = new Intent(this, MyProfileActivity.class);
         startActivity(intent_debt);
     }
 

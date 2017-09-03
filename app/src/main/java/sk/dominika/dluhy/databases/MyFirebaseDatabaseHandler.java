@@ -4,7 +4,6 @@ package sk.dominika.dluhy.databases;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +21,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.MainActivity;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.Friend;
@@ -326,18 +324,17 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Check if new adding relationship doesn't already exist.
-     * If not then add new relationship.
+     * If not then add new AB BA relationship to database.
      * Show result toast in activity
      *
      * @param fromUser
      * @param toUser   the user I am adding relationship with
      * @param activity
      */
-    public static void checkIfRelationshipExists(String fromUser, final User toUser, final Activity activity) {
-
-        final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference ref = mDatabase.getReference("friends");
-        ref.orderByChild("fromUserId").equalTo(fromUser).addListenerForSingleValueEvent(new ValueEventListener() {
+    public static void checkIfRelationshipExistsAndAdd(String fromUser, final User toUser, final Activity activity) {
+        FirebaseDatabase.getInstance().getReference("friends")
+                .orderByChild("fromUserId").equalTo(fromUser)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean result = false;
@@ -350,22 +347,29 @@ public class MyFirebaseDatabaseHandler {
                 }
                 if (!result) {
                     //relationship doesn't exist
+                    //create AB relationship
                     Relationship r = new Relationship(
                             CurrentUser.UserCurrent.id,
                             CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName,
                             toUser.getId(),
                             toUser.getFirstname() + " " + toUser.getLastname());
-                    DatabaseReference friends = mDatabase.getReference("friends");
+                    //add AB relationship to database "friends"
+                    DatabaseReference friends = FirebaseDatabase.getInstance().getReference("friends");
+                    //id of new item in database
                     String id = friends.push().getKey();
                     friends.child(id).setValue(r);
 
+                    //create BA relationship
                     Relationship r2 = new Relationship(toUser.getId(),
                             toUser.getFirstname() + " " + toUser.getLastname(),
                             CurrentUser.UserCurrent.id,
                             CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
+                    //add BA relationship to database "friends"
+                    //id of new item in database
                     id = friends.push().getKey();
                     friends.child(id).setValue(r2);
                     Toast.makeText(activity, R.string.friend_added, Toast.LENGTH_SHORT).show();
+
                 } else {
                     Toast.makeText(activity, R.string.friend_not_added, Toast.LENGTH_SHORT).show();
 

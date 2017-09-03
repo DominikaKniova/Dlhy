@@ -55,7 +55,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         /**
          * Check if there exists data (id of friend) from previous activity
          * YES - NewDebtActivity is called from FriendProfileActivity
-         * NO - NewDebtActivity is called from MainActivity
+         * NO - NewDebtActivity is called from MyProfileActivity
          */
         Intent intent = getIntent();
         if (intent.getStringExtra("id") != null) {

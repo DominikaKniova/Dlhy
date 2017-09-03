@@ -177,7 +177,7 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void newAcitivity_main(){
-        Intent mainActivity = new Intent(this,MainActivity.class);
+        Intent mainActivity = new Intent(this, MyProfileActivity.class);
         startActivity(mainActivity);
     }
 

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -249,7 +248,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void newAcitivity_main(){
-        Intent mainActivity = new Intent(this,MainActivity.class);
+        Intent mainActivity = new Intent(this, MyProfileActivity.class);
         startActivity(mainActivity);
     }
 }

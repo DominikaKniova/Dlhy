@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.MainActivity;
+import sk.dominika.dluhy.activities.MyProfileActivity;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 
 public class MyAlarmManager {
@@ -34,7 +34,7 @@ public class MyAlarmManager {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, MyProfileActivity.class);
         PendingIntent activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(activity);
 

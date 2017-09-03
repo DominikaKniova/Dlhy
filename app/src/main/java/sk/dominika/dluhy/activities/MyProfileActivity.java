@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -40,7 +39,7 @@ import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
 
-public class MainActivity extends AppCompatActivity implements DialogListener {
+public class MyProfileActivity extends AppCompatActivity implements DialogListener {
 
     private final String TAG = "signed/logged";
 
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(MainActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyProfileActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
