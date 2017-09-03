@@ -2,9 +2,12 @@ package sk.dominika.dluhy.databases;
 
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.design.widget.TextInputEditText;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.activities.AddFriendActivity;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.Friend;
@@ -318,6 +322,47 @@ public class MyFirebaseDatabaseHandler {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    /**
+     * Check if new friend is user.
+     * Yes - create AB, BA friendship in database "friends".
+     * No - make toast that user doesn't exist*.
+     *
+     * @param item     Item from menu
+     * @param email    Email of friend which is about to be added.
+     * @param activity Activity from which the method is called.
+     */
+    public static void checkIfUserAndAdd(final MenuItem item, final TextInputEditText email, final Activity activity) {
+        // get reference to database and to 'users' node
+        final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference("users");
+        refUsers.orderByChild("email").equalTo(email.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    //user exists
+                    User user = new User();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        user = snapshot.getValue(User.class);
+                    }
+                    /*Firstly check whether the relationship doesn't already exist.
+                    if not then add new relationship*/
+                    checkIfRelationshipExistsAndAdd(CurrentUser.UserCurrent.id, user, activity);
+                    activity.finish();
+                    item.setEnabled(true);
+                } else {
+                    //user does not exist
+                    Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
+                    item.setEnabled(true);
+                    email.setText("");
+                    email.setError("Invalid email");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
