@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.activities.MyProfileActivity;
 import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
@@ -182,6 +183,37 @@ public class MyFirebaseDatabaseHandler {
 //            }
 //        });
 //    }
+
+    /**
+     * Find current user of id_user in database and initialize views with his data.
+     *
+     * @param id_user  ID of user.
+     * @param name     Reference to name textview.
+     * @param sum      Reference to sum textview.
+     * @param activity Actvity from which the method is called.
+     */
+    public static void setCurrentUserViews(String id_user, final TextView name,
+                                           final TextView sum, final Activity activity) {
+        //find the user in database to get his data
+        FirebaseDatabase.getInstance().getReference("users").child(id_user)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        //set CurrentUser.UserCurrent static class with current user's data
+                        CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+                        //set views
+                        name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
+                        MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //if user with the id does not exist
+                        Toast.makeText(activity, "User doesn't exist", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     /**
      * Find the friend in database based on his id and initialize views with his data.

@@ -78,28 +78,12 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         //decide whether to stay in this activity or go to LogInActivity
         if (currentUser != null) {
             //set id of user in CurrentUser.UserCurrent static class
-            CurrentUser.setId(currentUser.getUid());
-            //find the user in database to get his data
-            FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    //set CurrentUser.UserCurrent static class with current user's data
-                    CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-                    //set views
-                    TextView name = (TextView) findViewById(R.id.profile_name);
-                    name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
-                    TextView sum = (TextView) findViewById(R.id.profile_sum);
-                    MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    //if user with the id does not exist
-                    Toast.makeText(MyProfileActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
-                }
-            });
+            String curUserID = currentUser.getUid();
+            CurrentUser.setId(curUserID);
+            //set his views
+            TextView name = (TextView) findViewById(R.id.profile_name);
+            TextView sum = (TextView) findViewById(R.id.profile_sum);
+            MyFirebaseDatabaseHandler.setCurrentUserViews(curUserID, name, sum, MyProfileActivity.this);
         } else {
             toLogInActivity();
         }
