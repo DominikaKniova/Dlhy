@@ -77,6 +77,8 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
 
         //decide whether to stay in this activity or go to LogInActivity
         if (currentUser != null) {
+            //set id of user in CurrentUser.UserCurrent static class
+            CurrentUser.setId(currentUser.getUid());
             //find the user in database to get his data
             FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,7 +86,6 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     //set CurrentUser.UserCurrent static class with current user's data
-                    //id of user is already set in CurrentUser.UserCurrent class from LogInActivity
                     CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
                     //set views
                     TextView name = (TextView) findViewById(R.id.profile_name);
