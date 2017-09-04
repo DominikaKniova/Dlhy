@@ -45,7 +45,7 @@ import sk.dominika.dluhy.notifications.MyAlarmManager;
 public class MyFirebaseDatabaseHandler {
     private static Context context;
 
-    public static String TAG = "MyFirebaseHandler";
+    private static String TAG = "MyFirebaseHandler";
 
     /**
      * Listener for getting all my debts from firebase database and store them in arraylist Debt.myDebts.
@@ -193,7 +193,8 @@ public class MyFirebaseDatabaseHandler {
      * @param sum Reference to his sum textview.
      */
     public static void setFriendsProfileViews(String id_friend, final TextView name, final TextView sum,
-                                              final CollapsingToolbarLayout cToolbar, final AppBarLayout appbar) {
+                                              final CollapsingToolbarLayout cToolbar, final AppBarLayout appbar,
+                                              final Activity activity) {
         // get reference to 'users' node and child with the id
         FirebaseDatabase.getInstance().getReference("users").child(id_friend).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -227,7 +228,9 @@ public class MyFirebaseDatabaseHandler {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
+                /*If an user was deleted in database but the current user still has him in list of
+                friends a clicks on him.*/
+                Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -331,11 +334,19 @@ public class MyFirebaseDatabaseHandler {
         }
     }
 
+    /**
+     * Connect to firebase and load only my debts created with the friend of id to recyclerView.
+     *
+     * @param id_friend    ID of friend with whom the method is looking for debts in database.
+     * @param spinner      (View) loading spinner.
+     * @param recyclerView View for showing list of debts.
+     * @param activity     An activity where the recyclerView is shown.
+     */
     public static void loadDebtsWithFriendRecycleView(final String id_friend,
                                                       final ProgressBar spinner,
-                                                      final RecyclerView recycleView,
+                                                      final RecyclerView recyclerView,
                                                       final Activity activity) {
-        //get only the debts created with friend from database
+        //get only the debts created with the friend from database
         FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -351,9 +362,10 @@ public class MyFirebaseDatabaseHandler {
                 DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
                 //data is loaded, so the loading spinner can be hidden
                 spinner.setVisibility(View.GONE);
-                recycleView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
-                recycleView.setAdapter(adapter);
-                recycleView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
+                //recyclerview is set up
+                recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
                 adapter.notifyDataSetChanged();
             }
 

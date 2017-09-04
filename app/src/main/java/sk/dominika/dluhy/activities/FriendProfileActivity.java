@@ -87,7 +87,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         //set correct profile views for the person
-        MyFirebaseDatabaseHandler.setFriendsProfileViews(id_friend, name, sum, collToolbar, appBarLayout);
+        MyFirebaseDatabaseHandler.setFriendsProfileViews(id_friend, name, sum, collToolbar, appBarLayout, FriendProfileActivity.this);
     }
 
     /**
@@ -147,8 +147,8 @@ public class FriendProfileActivity extends AppCompatActivity {
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        //load
         MyFirebaseDatabaseHandler.loadDebtsWithFriendRecycleView(id_friend, spinner,
                 recyclerView, FriendProfileActivity.this);
-
     }
 }
