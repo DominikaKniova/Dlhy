@@ -24,7 +24,12 @@ import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 import sk.dominika.dluhy.utilities.Utility;
 
-
+/**
+ * In the LogInActivity user can log in to the application by authentication in firebase.
+ * Authentication gives him the privilege to read and write do firebase database.
+ * Authentication is successful only when user entered the valid email and password, which he
+ * has chosen when registering to the app. Any invalid inputs will be notified.
+ */
 public class LogInActivity extends AppCompatActivity {
 
     public final String TAG = "firebase_log";
@@ -36,8 +41,8 @@ public class LogInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set XML layout the activity will be using
         setContentView(R.layout.activity_log_in);
-
         setTitle("Log in");
 
         /**
@@ -46,9 +51,9 @@ public class LogInActivity extends AppCompatActivity {
         // FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
 
-        emailInput = (TextInputEditText) findViewById(R.id.text_input_logIn_email);
-        passwordInput = (TextInputEditText) findViewById(R.id.text_input_logIn_password);
-
+        //reference to views
+        emailInput = (TextInputEditText) findViewById(R.id.textinput_logIn_email);
+        passwordInput = (TextInputEditText) findViewById(R.id.textinput_logIn_password);
         emailInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -67,7 +72,6 @@ public class LogInActivity extends AppCompatActivity {
 
             }
         });
-
         passwordInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -86,35 +90,38 @@ public class LogInActivity extends AppCompatActivity {
 
             }
         });
-
+        //button for signing up/registration
         Button signIn = (Button) findViewById(R.id.button_signUp);
         signIn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                newAcitivity_signIn(view);
+                toSignUpActivity();
             }
         });
-
-        final Button toMain = (Button) findViewById(R.id.button_logIn);
-        toMain.setOnClickListener(new View.OnClickListener(){
+        //button for login in. Starts MyProfileActivity if authentication was successful
+        final Button toMyProfile = (Button) findViewById(R.id.button_logIn);
+        toMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toMain.setEnabled(false);
+                toMyProfile.setEnabled(false);
                 if (emailInput.getText().toString().equals("") || passwordInput.getText().toString().equals("")){
+                    //inputs were completed incorrectly
                     ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", LogInActivity.this);
-                    toMain.setEnabled(true);
+                    toMyProfile.setEnabled(true);
                     emailInput.setError("Email is required");
                     passwordInput.setError("Password is required");
                 }
                 else {
+                    //correctly completed inputs
+                    //Log in
                     logIn(emailInput.getText().toString(), passwordInput.getText().toString());
-                    toMain.setEnabled(true);
+                    toMyProfile.setEnabled(true);
                 }
 
             }
         });
 
-        //Set up touch listener for non-text box views to hide keyboard.
+        //set up touch listener for non-text views to hide keyboard when touched outside a textview
         Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_login), LogInActivity.this);
     }
 
@@ -123,8 +130,6 @@ public class LogInActivity extends AppCompatActivity {
         super.onStart();
     }
 
-
-
     @Override
     public void onStop() {
         super.onStop();
@@ -132,9 +137,10 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates emailInput and passwordInput and logs in an existing user
-     * @param email
-     * @param password
+     * Validates email and password and if the authentication is successful, then log the user in
+     * and start MyProfileActivity.
+     * @param email Entered email in textview.
+     * @param password Entered password in textview.
      */
     private void logIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -144,26 +150,26 @@ public class LogInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if(task.isSuccessful()){
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            CurrentUser.setId(user.getUid());
+                            //set id of current user in static class CurrentUser.UserCurrent
+                            CurrentUser.setId(mAuth.getCurrentUser().getUid());
                             //create all user's notifications
                             MyAlarmManager.createNotifications(getBaseContext());
-                            newAcitivity_main();
+                            toMyProfileActivity();
                         }
                         else {
+                            //authentication not successful
                             try {
                                 throw task.getException();
                             } catch(FirebaseAuthInvalidCredentialsException e) {
                                 Log.e(TAG, e.getMessage());
                                 emailInput.setText("");
                                 passwordInput.setText("");
-
                                 ShowAlertDialogNeutral.showAlertDialog("Email or password not valid.", LogInActivity.this);
+
                             } catch(Exception e) {
                                 Log.e(TAG, e.getMessage());
                                 emailInput.setText("");
                                 passwordInput.setText("");
-
                                 ShowAlertDialogNeutral.showAlertDialog("Enter email and password again.", LogInActivity.this);
                             }
                         }
@@ -171,16 +177,23 @@ public class LogInActivity extends AppCompatActivity {
                 });
     }
 
-    private void newAcitivity_signIn(View view){
+    /**
+     * Start SignUpActivity.
+     */
+    private void toSignUpActivity() {
         Intent SignInActivity = new Intent(this, SignUpActivity.class);
         startActivity(SignInActivity);
     }
 
-    private void newAcitivity_main(){
+    /**
+     * Start MyProfileActivity.
+     */
+    private void toMyProfileActivity() {
         Intent mainActivity = new Intent(this, MyProfileActivity.class);
         startActivity(mainActivity);
     }
 
+    //When back button pressed, do nothing.
     @Override
     public void onBackPressed() {
     }

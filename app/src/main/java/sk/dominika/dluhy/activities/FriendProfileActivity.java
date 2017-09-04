@@ -34,10 +34,11 @@ import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 /**
- * The FriendProfileActivity is showing profile of concrete friend based on his id that is sent through
+ * The FriendProfileActivity is showing profile of a concrete friend based on his id that is sent through
  * Intent from previous activity, from which this activity is called.
- * After the activity has started views, the friend with the id is found in database and
- * views are initialized with his name and overall sum of all debts created with him.
+ * After the activity has started, the friend with the id is found in database and
+ * views are initialized with his name, overall sum of all debts created with him and the recyclerview,
+ * which is a list of the debts, is set up.
  * There is a floating button which starts the NewDebtActivity and simultaneously sends the id of the
  * friend through Intent to initialize the chosen friend for creating a debt in that activity.
  * The activity has menu in toolbar containing of button for deleting the friend with all the debts
