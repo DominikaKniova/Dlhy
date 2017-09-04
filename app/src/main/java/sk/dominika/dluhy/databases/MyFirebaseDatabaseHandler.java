@@ -2,7 +2,6 @@ package sk.dominika.dluhy.databases;
 
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.AddFriendActivity;
 import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
@@ -164,7 +162,6 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Get only debts created with the friend of id_friend.
-     *
      * @param id_friend
      */
 //    public static void getOurDebts(final String id_friend) {
@@ -342,10 +339,10 @@ public class MyFirebaseDatabaseHandler {
      * @param recyclerView View for showing list of debts.
      * @param activity     An activity where the recyclerView is shown.
      */
-    public static void loadDebtsWithFriendRecycleView(final String id_friend,
-                                                      final ProgressBar spinner,
-                                                      final RecyclerView recyclerView,
-                                                      final Activity activity) {
+    public static void loadDebtsWithFriendRecyclerView(final String id_friend,
+                                                       final ProgressBar spinner,
+                                                       final RecyclerView recyclerView,
+                                                       final Activity activity) {
         //get only the debts created with the friend from database
         FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -366,6 +363,46 @@ public class MyFirebaseDatabaseHandler {
                 recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    /**
+     * Connect to firebase and load all my debts created to recyclerView.
+     *
+     * @param spinner      (View) loading spinner.
+     * @param recyclerView View for showing list of debts.
+     * @param activity     An activity where the recyclerView is shown.
+     */
+    public static void loadMyDebtsRecyclerView(final ProgressBar spinner,
+                                               final RecyclerView recyclerView,
+                                               final Activity activity) {
+        //get debts from database
+        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //loop through all debts in the database
+                List<Debt> listDebts = new ArrayList<Debt>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Debt value = snapshot.getValue(Debt.class);
+                    //add only my debts from database
+                    if (value.getId_who().equals(CurrentUser.UserCurrent.id)
+                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                        listDebts.add(value);
+                    }
+                }
+                //set up recycle view from the arraylist of the debts, and its adapter
+                DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
+                //recyclerview is set up
+                recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
+                spinner.setVisibility(View.GONE);
                 adapter.notifyDataSetChanged();
             }
 

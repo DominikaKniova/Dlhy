@@ -6,7 +6,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,21 +15,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.adapters.DebtAdapter;
-import sk.dominika.dluhy.database_models.CurrentUser;
-import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
-import sk.dominika.dluhy.database_models.User;
-import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 
 /**
@@ -63,7 +49,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         profile.setText("");
 
         //set action for floating button which adds new debt
-        FloatingActionButton buttonAddDebt = (FloatingActionButton) findViewById(R.id.floatingButton_add);
+        FloatingActionButton buttonAddDebt = (FloatingActionButton) findViewById(R.id.floatingButton_newDebt);
         buttonAddDebt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +135,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_viewDebts);
         //load
-        MyFirebaseDatabaseHandler.loadDebtsWithFriendRecycleView(id_friend, spinner,
+        MyFirebaseDatabaseHandler.loadDebtsWithFriendRecyclerView(id_friend, spinner,
                 recyclerView, FriendProfileActivity.this);
     }
 }

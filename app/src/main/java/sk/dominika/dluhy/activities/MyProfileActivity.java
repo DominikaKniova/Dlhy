@@ -38,7 +38,12 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 
-
+/**
+ * The MyProfileActivity has the same function as the FriendProfileActivity. After the activity
+ * has started, the static class CurrentUser.UserCurrent is updated with user's data from database.
+ * If the app was started, this activity decides whether the app stays in this activity or it
+ * goes to LogInActivity based on if getCurrentUser == null (currently authenticated user by firebase).
+ */
 public class MyProfileActivity extends AppCompatActivity implements DialogListener {
 
     private final String TAG = "signed/logged";
@@ -46,19 +51,19 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile);
 
+        //set XML layout the activity will be using
+        setContentView(R.layout.profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //On click listener: Adding new debt from my profile
-        FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_add);
+        //a floating button for adding new debt from my profile
+        FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_newDebt);
         floatingButton_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newActivity_addDebt(view);
+                toNewDebtActivity();
             }
         });
     }
@@ -66,92 +71,109 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     @Override
     protected void onResume() {
         super.onResume();
-        // FirebaseAuth instance
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        // get currently logged user
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        //set views of logged user
+        //decide whether to stay in this activity or go to LogInActivity
         if (currentUser != null) {
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-            CurrentUser.setId(currentUser.getUid());
-            mDatabase.getReference("users").child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            //find the user in database to get his data
+            FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
+                    //set CurrentUser.UserCurrent static class with current user's data
+                    //id of user is already set in CurrentUser.UserCurrent class from LogInActivity
                     CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-
                     //set views
                     TextView name = (TextView) findViewById(R.id.profile_name);
                     name.setText(CurrentUser.UserCurrent.firstName + " " + CurrentUser.UserCurrent.lastName);
                     TextView sum = (TextView) findViewById(R.id.profile_sum);
                     MyFirebaseDatabaseHandler.getOverallSum(CurrentUser.UserCurrent.id, sum);
-
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    //if user with the id does not exist
                     Toast.makeText(MyProfileActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
-            newActivity_signOut();
+            toLogInActivity();
         }
+        getDebtsAndSetRecyclerView();
 
-        showRecycleViewAllDebts();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        TextView name = (TextView) findViewById(R.id.profile_name);
-        name.setText("");
+//        TextView name = (TextView) findViewById(R.id.profile_name);
+//        name.setText("");
     }
 
-    //Start activity New Debt
-    private void newActivity_addDebt(View v) {
+    /**
+     * Start NewDebtActivity.
+     */
+    private void toNewDebtActivity() {
         Intent intent_debt = new Intent(this, NewDebtActivity.class);
         startActivity(intent_debt);
     }
 
-    //Start activity Add Friend
-    private void newActivity_addFriend(MenuItem item) {
+    /**
+     * Start AddFriendActivity.
+     */
+    private void toAddFriendActivity() {
         Intent intent_person = new Intent(this, AddFriendActivity.class);
         startActivity(intent_person);
     }
 
-    //Start activity Log In
-    private void newActivity_signOut() {
+    /**
+     * Start LogInActivity.
+     */
+    private void toLogInActivity() {
         CurrentUser.cleanUser();
         Intent intent_person = new Intent(this, LogInActivity.class);
         startActivity(intent_person);
     }
 
-    private void newDialog_friends(MenuItem item) {
+    /**
+     * Show dialog window with list of user's friends.
+     */
+    private void showDialogFriends() {
         DialogFragment newDialog = new DialogFriends();
         newDialog.show(getFragmentManager(), "friends");
     }
 
-    //Start activities from Menu
+    /**
+     * Menu handler. Each item in menu starts an activity.
+     *
+     * @param item Item that was pressed in menu.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.addPerson:
-                newActivity_addFriend(item);
+                toAddFriendActivity();
                 break;
             case R.id.listNames:
-                newDialog_friends(item);
+                showDialogFriends();
                 break;
             case R.id.signOut:
+                /*When user signs out, cancel all notification so that they are not
+                triggered when user is not logged in.*/
                 MyAlarmManager.cancelAllNotifications(getBaseContext());
                 FirebaseAuth.getInstance().signOut();
-                newActivity_signOut();
+                toLogInActivity();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Create menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -159,6 +181,11 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         return true;
     }
 
+    /**
+     * When clicked on a friend in friends dialog, send id through intent to FriendProfileActivity
+     * and start it.
+     * @param id Id of friend.
+     */
     @Override
     public void onClick(String id) {
         Intent intent = new Intent(this, FriendProfileActivity.class);
@@ -167,42 +194,23 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         startActivity(intent);
     }
 
-    private void showRecycleViewAllDebts() {
-        /**
-         * Get debts from firebase database and store them in arraylist Debt.myDebts.
-         */
+    /**
+     * Get debts from firebase database, store them in an arraylist and then show them in recycleview.
+     * While data from database are loading, show loading spinner.
+     */
+    private void getDebtsAndSetRecyclerView() {
+        //get reference to loading spinner and set it visible while data is loading
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
-
-        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //loop through all debts in the database
-                List<Debt> listDebts = new ArrayList<Debt>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Debt value = snapshot.getValue(Debt.class);
-                    //add only my debts from database
-                    if (value.getId_who().equals(CurrentUser.UserCurrent.id)
-                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
-                        listDebts.add(value);
-                    }
-                }
-                RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
-                DebtAdapter adapter = new DebtAdapter(getBaseContext(), listDebts);
-                recycler_viewDebts.addItemDecoration(new DividerDecoration(getBaseContext()));
-                recycler_viewDebts.setAdapter(adapter);
-                recycler_viewDebts.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                spinner.setVisibility(View.GONE);
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        //load
+        MyFirebaseDatabaseHandler.loadMyDebtsRecyclerView(spinner, recycler_viewDebts,
+                MyProfileActivity.this);
     }
 
+    /**
+     * When back button pressed, do nothing.
+     */
     @Override
     public void onBackPressed() {
     }

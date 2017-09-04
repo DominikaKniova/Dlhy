@@ -1,5 +1,6 @@
 package sk.dominika.dluhy.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,7 +17,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
@@ -26,9 +26,10 @@ import sk.dominika.dluhy.utilities.Utility;
 
 /**
  * In the LogInActivity user can log in to the application by authentication in firebase.
- * Authentication gives him the privilege to read and write do firebase database.
+ * Authentication gives him the permission to read and write do firebase database.
  * Authentication is successful only when user entered the valid email and password, which he
  * has chosen when registering to the app. Any invalid inputs will be notified.
+ * After the user is successfully logged in, the MyProfileActivity is started.
  */
 public class LogInActivity extends AppCompatActivity {
 
@@ -114,8 +115,8 @@ public class LogInActivity extends AppCompatActivity {
                 else {
                     //correctly completed inputs
                     //Log in
-                    logIn(emailInput.getText().toString(), passwordInput.getText().toString());
                     toMyProfile.setEnabled(true);
+                    logIn(emailInput.getText().toString(), passwordInput.getText().toString());
                 }
 
             }
@@ -143,7 +144,7 @@ public class LogInActivity extends AppCompatActivity {
      * @param password Entered password in textview.
      */
     private void logIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
 
                     @Override
@@ -151,9 +152,10 @@ public class LogInActivity extends AppCompatActivity {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if(task.isSuccessful()){
                             //set id of current user in static class CurrentUser.UserCurrent
-                            CurrentUser.setId(mAuth.getCurrentUser().getUid());
+                            CurrentUser.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             //create all user's notifications
                             MyAlarmManager.createNotifications(getBaseContext());
+                            //user is logged in, go to his profile
                             toMyProfileActivity();
                         }
                         else {
@@ -189,8 +191,8 @@ public class LogInActivity extends AppCompatActivity {
      * Start MyProfileActivity.
      */
     private void toMyProfileActivity() {
-        Intent mainActivity = new Intent(this, MyProfileActivity.class);
-        startActivity(mainActivity);
+        Intent myProfileActivity = new Intent(this, MyProfileActivity.class);
+        startActivity(myProfileActivity);
     }
 
     //When back button pressed, do nothing.
