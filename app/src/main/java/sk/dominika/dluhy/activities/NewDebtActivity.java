@@ -1,7 +1,6 @@
 package sk.dominika.dluhy.activities;
 
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -11,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,11 +21,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
-import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
@@ -35,17 +33,24 @@ import sk.dominika.dluhy.listeners.DialogListener;
 import sk.dominika.dluhy.notifications.MyAlarmManager;
 import sk.dominika.dluhy.utilities.Utility;
 
+/**
+ * The NewDebtActivity gives an user interface between the app and the database for creating
+ * new debts. The user must complete all textviews but texviews for chosing date and time of
+ * notification. And also a friend with whom the debt is created must be chosen. Any input errors
+ * are notified by Alert Dialog.
+ */
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set XML layout the activity will be using
         setContentView(R.layout.activity_new_debt);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         setTitle("New Debt");
 
-        //Set up touch listener for non-text box views to hide keyboard.
+        //set up touch listener for non-text views to hide keyboard when touched outside a textview
         Utility.handleSoftKeyboard(findViewById(R.id.lin_layout_new_debt), NewDebtActivity.this);
     }
 
@@ -296,23 +301,4 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             }
         });
     }
-
-    /**
-     * get returned values from date and time pickers
-     */
-//    private int year, month, day, hour, minute;
-//
-//    @Override
-//    public void onReturnValueDate(Calendar calendar) {
-//        this.year = calendar.get(Calendar.YEAR);
-//        this.month = calendar.get(Calendar.MONTH);
-//        this.day = calendar.get(Calendar.DAY_OF_MONTH);
-//
-//    }
-//
-//    @Override
-//    public void onReturnValueTime(Calendar calendar) {
-//        this.hour = calendar.get(Calendar.HOUR_OF_DAY);
-//        this.minute = calendar.get(Calendar.MINUTE);
-//    }
 }
