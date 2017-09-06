@@ -37,7 +37,7 @@ import sk.dominika.dluhy.utilities.Utility;
  * The NewDebtActivity gives an user interface between the app and the database for creating
  * new debts. The user must complete all textviews but texviews for chosing date and time of
  * notification. And also a friend with whom the debt is created must be chosen. Any input errors
- * are notified by Alert Dialog.
+ * are notified by Alert Dialog. In the activity's toolbar there is a button for adding the debt.
  */
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
 
@@ -57,11 +57,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     protected void onResume() {
         super.onResume();
-        /**
-         * Check if there exists data (id of friend) from previous activity
-         * YES - NewDebtActivity is called from FriendProfileActivity
-         * NO - NewDebtActivity is called from MyProfileActivity
-         */
+         /*Check if there exists data (id of friend) from previous activity
+         YES - NewDebtActivity is called from FriendProfileActivity
+         NO - NewDebtActivity is called from MyProfileActivity*/
         Intent intent = getIntent();
         if (intent.getStringExtra("id") != null) {
             onClick(intent.getStringExtra("id"));
@@ -75,7 +73,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 //                //hide soft keyboard
 //                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 //                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
                 //expand
                 expandableButtonAlerts(view);
             }
@@ -83,7 +80,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
         //date picker
         TextInputEditText dateEditText = (TextInputEditText) findViewById(R.id.inputDate);
-        //disable input/keyboard
+        //disable input/keyboard for date textview
         dateEditText.setFocusable(false);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,10 +88,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 showDatePickerDialog(v);
             }
         });
-
         //time picker
         TextInputEditText timeEditText = (TextInputEditText) findViewById(R.id.inputTime);
-        //disable input/keyboard
+        //disable input/keyboard for time textview
         timeEditText.setFocusable(false);
         timeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,15 +104,15 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         myName.setText(CurrentUser.UserCurrent.firstName);
 
         //choose friend
-        TextView firendPic = (TextView) findViewById(R.id.friendsPic);
-        firendPic.setOnClickListener(new View.OnClickListener() {
+        TextView friendPic = (TextView) findViewById(R.id.friendsPic);
+        friendPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog_friends(v);
             }
         });
 
-        //change arrow
+        //change arrow when clicking
         final ImageView arrow = (ImageView) findViewById(R.id.arrow);
         arrow.setImageResource(R.drawable.ic_arrow_forward);
         arrow.setTag("arrForward");
@@ -135,12 +131,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
+    /**
+     * Create menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -148,31 +141,36 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         return true;
     }
 
+    /**
+     * Menu for creating debt. It checks whether the user completed all needed textfields.
+     * Any errors are notified. If the check is succeeded, the debt is added to the database
+     * and then if the debt has notification then all notifications are synced, that means
+     * that all are deleted and created again with the new notification from the already
+     * created debt.
+     **/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
-
-            //get data from inputs
+            //get reference to textviews
             TextView tName = (TextView) findViewById(R.id.friendsPic);
             TextInputEditText tNote = (TextInputEditText) findViewById(R.id.textInput_note);
             TextInputEditText tSum = (TextInputEditText) findViewById(R.id.textInput_money);
             TextInputEditText tDateAlert = (TextInputEditText) findViewById(R.id.inputDate);
             TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
 
-            //if user hasn't chosen friend
             if (tName.getText().toString().equals("")) {
+                //if user hasn't chosen friend
                 ShowAlertDialogNeutral.showAlertDialog("You must choose friend", NewDebtActivity.this);
                 item.setEnabled(true);
             } else {
 
                 if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")) {
+                    //if user hasn't completed note and sum textfields
                     ShowAlertDialogNeutral.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
                 } else {
-                    //id of new debt
-                    String id;
-                    //find out if I owe friend money or other way round
+                    //find out if I owe friend money or the other way round
                     boolean heOwesMe;
                     ImageView arrow = (ImageView) findViewById(R.id.arrow);
                     String imageTag = (String) arrow.getTag();
@@ -182,19 +180,15 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         heOwesMe = true;
                     }
 
-                    /**
-                     * Add debt d to Firebase database.
-                     */
-                    //get instance to database
-                    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                    // get reference to 'debts' node
-                    DatabaseReference ref = mDatabase.getReference("debts");
-
+                    // get instance to database and reference to 'debts' node
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+                    //get id of a new node
+                    String id = ref.push().getKey();
+                    Debt debt;
                     //I owe
                     if (!heOwesMe) {
-                        //get id of new node
-                        id = ref.push().getKey();
-                        Debt debt = new Debt(
+                        //create a debt object
+                        debt = new Debt(
                                 id,
                                 CurrentUser.UserCurrent.id,
                                 id_of_friend,
@@ -205,14 +199,13 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                                 tDateAlert.getText().toString(),
                                 tTimeAlert.getText().toString(),
                                 "false");
-                        //get a reference to location id and set the data at this location to the given value
+                        //get a reference to location id and add the new debt to this location
                         ref.child(id).setValue(debt);
                     }
                     //they owe
                     else {
                         //get id of new node
-                        id = ref.push().getKey();
-                        Debt debt = new Debt(
+                        debt = new Debt(
                                 id,
                                 id_of_friend,
                                 CurrentUser.UserCurrent.id,
@@ -223,7 +216,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                                 tDateAlert.getText().toString(),
                                 tTimeAlert.getText().toString(),
                                 "false");
-                        //get a reference to location id and set the data at this location to the given value
+                        //get a reference to location id and add the new debt to this location
                         ref.child(id).setValue(debt);
                     }
 
@@ -300,5 +293,11 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                 // Failed to read value
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

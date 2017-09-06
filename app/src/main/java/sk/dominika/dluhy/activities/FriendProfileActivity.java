@@ -27,7 +27,7 @@ import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
  * which is a list of the debts, is set up.
  * There is a floating button which starts the NewDebtActivity and simultaneously sends the id of the
  * friend through Intent to initialize the chosen friend for creating a debt in that activity.
- * The activity has menu in toolbar containing of button for deleting the friend with all the debts
+ * The activity has menu in toolbar containing of a button for deleting the friend with all the debts
  * created with him, and a button for closing the activity and returning to MyProfileActivity.
  */
 public class FriendProfileActivity extends AppCompatActivity {

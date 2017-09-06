@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,25 +13,13 @@ import android.view.View;
 import android.view.MenuInflater;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import sk.dominika.dluhy.adapters.DebtAdapter;
-import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
-import sk.dominika.dluhy.database_models.User;
-import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
@@ -43,6 +30,8 @@ import sk.dominika.dluhy.notifications.MyAlarmManager;
  * has started, the static class CurrentUser.UserCurrent is updated with user's data from database.
  * If the app was started, this activity decides whether the app stays in this activity or it
  * goes to LogInActivity based on if getCurrentUser == null (currently authenticated user by firebase).
+ * The activity has menu in toolbar containing of a button for adding new friend, a button for
+ * showing the list of his friends and a button for signing out.
  */
 public class MyProfileActivity extends AppCompatActivity implements DialogListener {
 
@@ -162,7 +151,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_my_profile, menu);
         return true;
     }
 
