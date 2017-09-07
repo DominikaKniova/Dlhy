@@ -1,6 +1,5 @@
 package sk.dominika.dluhy.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
-import sk.dominika.dluhy.notifications.MyAlarmManager;
+import sk.dominika.dluhy.notifications.MyNotificationManager;
 import sk.dominika.dluhy.utilities.Utility;
 
 /**
@@ -150,7 +149,7 @@ public class LogInActivity extends AppCompatActivity {
                             //set id of current user in static class CurrentUser.UserCurrent
                             CurrentUser.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             //create all user's notifications
-                            MyAlarmManager.createNotifications(getBaseContext());
+                            MyNotificationManager.createNotifications(getBaseContext());
                             //user is logged in, go to his profile
                             toMyProfileActivity();
                         }

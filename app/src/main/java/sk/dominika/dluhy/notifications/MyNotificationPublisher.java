@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * Class needed for MyNotificationManager.
+ */
 public class MyNotificationPublisher  extends BroadcastReceiver {
 
     public static String NOTIFICATION_ID = "notification_id";

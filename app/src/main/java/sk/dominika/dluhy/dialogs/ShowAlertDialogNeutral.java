@@ -3,15 +3,15 @@ package sk.dominika.dluhy.dialogs;
 import android.app.Activity;
 import android.content.DialogInterface;
 
-import sk.dominika.dluhy.activities.LogInActivity;
-
-
+/**
+ * Class for handling alert dialogs.
+ */
 public class ShowAlertDialogNeutral {
     /**
      * Show alert dialog with a message in an activity.
      * Dialog has only one neutral button.
-     * @param message
-     * @param activity
+     * @param message Message shown in the AlertDialog.
+     * @param activity Where the AlertDialog is shown.
      */
     public static void showAlertDialog(String message, Activity activity) {
         android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(activity).create();

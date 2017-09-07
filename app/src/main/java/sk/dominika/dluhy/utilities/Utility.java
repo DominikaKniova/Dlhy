@@ -8,9 +8,8 @@ import android.widget.EditText;
 
 public class Utility {
     /**
-     * Hide soft keyboard after clicking outside of edittext in the activity.
-     *
-     * @param activity
+     * Hide soft keyboard after clicking outside of EditText in the activity.
+     * @param activity Activity from which the method is called.
      */
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
@@ -22,7 +21,6 @@ public class Utility {
 
     /**
      * Set up touch listener for non-text box views to hide keyboard.
-     *
      * @param view     layout in which set up listener
      * @param activity activity in which set up listener
      */

@@ -32,166 +32,94 @@ import java.util.List;
 import java.util.Locale;
 
 import sk.dominika.dluhy.R;
-import sk.dominika.dluhy.activities.MyProfileActivity;
-import sk.dominika.dluhy.activities.NewDebtActivity;
 import sk.dominika.dluhy.adapters.DebtAdapter;
+import sk.dominika.dluhy.adapters.FriendAdapter;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.Friend;
 import sk.dominika.dluhy.database_models.Relationship;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.decorations.DividerDecoration;
-import sk.dominika.dluhy.notifications.MyAlarmManager;
+import sk.dominika.dluhy.dialogs.DialogFriends;
+import sk.dominika.dluhy.listeners.DialogListener;
+import sk.dominika.dluhy.notifications.MyNotificationManager;
 
 public class MyFirebaseDatabaseHandler {
-    private static Context context;
 
     private static String TAG = "MyFirebaseHandler";
 
     /**
-     * Listener for getting all my debts from firebase database and store them in arraylist Debt.myDebts.
+     * Create notifications from my debts.
      */
-//    public static ValueEventListener listenerAllMyDebts = new ValueEventListener() {
-//        @Override
-//        public void onDataChange(DataSnapshot dataSnapshot) {
-//            //loop through all debts in the database
-//            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                Debt value = snapshot.getValue(Debt.class);
-//                //add only my debts from database
-//                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
-//                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
-//                    Debt.myDebts.add(value);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void onCancelled(DatabaseError databaseError) {
-//            Log.e("The read failed: ", databaseError.getMessage());
-//        }
-//    };
+    public static void getAndCreateNotifications(final Context context) {
+        //Listener for looping through all my debts and creating future notifications.
+        FirebaseDatabase.getInstance().getReference("debts")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int id_notification = 0;
 
-    /**
-     * Listener for looping through all friends in firebase database and adding them to arraylist Friend.myFriends.
-     */
-    public static ValueEventListener listenerLoopThroughFriends = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Relationship value = snapshot.getValue(Relationship.class);
-                Friend friend = new Friend(value.getToUserName(), value.getToUserId());
-                Friend.myFriends.add(friend);
-            }
-        }
+                        //look through all my debts
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Debt value = snapshot.getValue(Debt.class);
+                            //add only unpaid debts
+                            if (value.getIsPaid().equals("false")) {
+                                //add only my debts from database
+                                if (value.getId_who().equals(CurrentUser.UserCurrent.id)
+                                        || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
+                                    //check if debt has notification, if yes then add it
+                                    if (!(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))) {
+                                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                                        try {
+                                            //create date and time
+                                            Date date = dateFormat.parse(value.getDateOfAlert());
+                                            Date time = timeFormat.parse(value.getTimeOfAlert());
 
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            Log.e("The read failed: ", databaseError.getMessage());
-        }
-    };
+                                            Calendar calendarDate = Calendar.getInstance();
+                                            calendarDate.setTime(date);
+                                            Calendar calendarTime = Calendar.getInstance();
+                                            calendarTime.setTime(time);
 
-    /**
-     * Listener for looping through all my debts and creating future notifications.
-     */
-    private static ValueEventListener listenerNotifications = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            int id_notification = 0;
+                                            Calendar calendar = Calendar.getInstance();
+                                            calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+                                            calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+                                            calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+                                            calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+                                            calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
 
-            //look through all my debts
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Debt value = snapshot.getValue(Debt.class);
-                //add only unpaid debts
-                if (value.getIsPaid().equals("false")) {
-                    //add only my debts from database
-                    if (value.getId_who().equals(CurrentUser.UserCurrent.id)
-                            || value.getId_toWhom().equals(CurrentUser.UserCurrent.id)) {
-                        //check if debt has notification, if yes then add it
-                        if (!(value.getDateOfAlert().equals("") || value.getTimeOfAlert().equals(""))) {
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                            try {
-                                Date date = dateFormat.parse(value.getDateOfAlert());
-                                Date time = timeFormat.parse(value.getTimeOfAlert());
+                                            //check if I am not adding notification from the past
+                                            if ((calendar.getTime().getTime() - System.currentTimeMillis() > 0)) {
+                                                //add notification
+                                                MyNotificationManager.scheduleNotification(
+                                                        context,
+                                                        calendar,
+                                                        id_notification,
+                                                        value.getName_who() + "->" + value.getName_toWhom(),
+                                                        value.getSum() + ", " + value.getNote());
 
-                                Calendar calendarDate = Calendar.getInstance();
-                                calendarDate.setTime(date);
-                                Calendar calendarTime = Calendar.getInstance();
-                                calendarTime.setTime(time);
-
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
-                                calendar.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
-                                calendar.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
-                                calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
-                                calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
-
-                                //do not add notifications from past
-                                if ((calendar.getTime().getTime() - System.currentTimeMillis() > 0)) {
-                                    //add notification
-                                    MyAlarmManager.scheduleNotification(
-                                            context,
-                                            calendar,
-                                            id_notification,
-                                            value.getName_who() + "->" + value.getName_toWhom(),
-                                            value.getSum() + ", " + value.getNote());
-
-                                    id_notification += 1;
+                                                id_notification += 1;
+                                            }
+                                        } catch (ParseException e) {
+                                            Log.d(TAG, e.getMessage());
+                                        }
+                                    }
                                 }
-                            } catch (ParseException e) {
-                                Log.d(TAG, e.getMessage());
                             }
                         }
                     }
-                }
-            }
-        }
 
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-        }
-    };
-
-    /**
-     * Create notifications from my debts.
-     *
-     * @param context
-     */
-    public static void getAndCreateNotifications(Context context) {
-        MyFirebaseDatabaseHandler.context = context;
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-        ref.addListenerForSingleValueEvent(MyFirebaseDatabaseHandler.listenerNotifications);
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 
     /**
-     * Get only debts created with the friend of id_friend.
-     * @param id_friend
-     */
-//    public static void getOurDebts(final String id_friend) {
-//        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    Debt debt = snapshot.getValue(Debt.class);
-//                    if ((debt.getId_who().equals(CurrentUser.UserCurrent.id) && debt.getId_toWhom().equals(id_friend))
-//                            || (debt.getId_who().equals(id_friend) && debt.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
-//                        Debt.myDebts.add(debt);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//    }
-
-    /**
      * Find current user of id_user in database and initialize views with his data.
-     *
      * @param id_user  ID of user.
-     * @param name     Reference to name textview.
-     * @param sum      Reference to sum textview.
+     * @param name     Reference to name TextView.
+     * @param sum      Reference to sum TextView.
      * @param activity Activity from which the method is called.
      */
     public static void setCurrentUserViews(String id_user, final TextView name,
@@ -248,8 +176,8 @@ public class MyFirebaseDatabaseHandler {
     /**
      * Find the friend in database based on his id and initialize views with his data.
      * @param id_friend ID of friend.
-     * @param name Reference to his name textview.
-     * @param sum Reference to his sum textview.
+     * @param name Reference to his name TextView.
+     * @param sum Reference to his sum TextView.
      */
     public static void setFriendsProfileViews(String id_friend, final TextView name, final TextView sum,
                                               final CollapsingToolbarLayout cToolbar, final AppBarLayout appbar,
@@ -306,7 +234,6 @@ public class MyFirebaseDatabaseHandler {
      * At first, method decides who owes whom, by looking at the position of arrow ImageView.
      * Then id of the new debt is created and the debt object is created which is added
      * to database. If user picked date and time for notification, all notifications are synced.
-     *
      * @param idFriend If of the friend I am creating a debt with.
      * @param name     First name of the friend.
      * @param note     Reference to note TextView.
@@ -359,34 +286,29 @@ public class MyFirebaseDatabaseHandler {
                     date.getText().toString(),
                     time.getText().toString(),
                     "false");
-            //get a reference to location id and add the new debt to this location
-            ref.child(id).setValue(debt);
         }
         //get a reference to location 'id' and add this new debt to this location
         ref.child(id).setValue(debt);
 
         //if alert is added then sync new notification with old ones
         if (!(date.getText().toString().equals("") && time.getText().toString().equals(""))) {
-            MyAlarmManager.syncNotifications(activity.getBaseContext());
+            MyNotificationManager.syncNotifications(activity.getBaseContext());
         }
     }
 
     /**
-     * Calculate overall sum of only my debts or my debts with concrete friend.
+     * Calculate overall sum of only my debts or my debts with concrete friend based on
+     * whose id I am sending to the method.
      * Set sum view in profile.
-     *
      * @param id       ID of me or ID of the friend.
-     * @param textView Sum textview in profile.
+     * @param textView Sum TextView in profile.
      */
     public static void getOverallSum(final String id, final TextView textView) {
 
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference ref = mDatabase.getReference("debts");
-
         if (id.equals(CurrentUser.UserCurrent.id)) {
-
             //calling method from my profile
-            ref.addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("debts")
+                    .addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     float sum = 0;
@@ -428,7 +350,8 @@ public class MyFirebaseDatabaseHandler {
         } else {
             //calling method from friend's profile
             //id is friend's
-            ref.addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("debts")
+                    .addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     float sum = 0;
@@ -464,7 +387,6 @@ public class MyFirebaseDatabaseHandler {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
         }
@@ -472,7 +394,6 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Connect to firebase and load only my debts created with the friend of id to recyclerView.
-     *
      * @param id_friend    ID of friend with whom the method is looking for debts in database.
      * @param spinner      (View) loading spinner.
      * @param recyclerView View for showing list of debts.
@@ -498,7 +419,6 @@ public class MyFirebaseDatabaseHandler {
                 DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
                 //data is loaded, so the loading spinner can be hidden
                 spinner.setVisibility(View.GONE);
-                //recyclerview is set up
                 recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
@@ -513,7 +433,6 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Connect to firebase and load all my debts created to recyclerView.
-     *
      * @param spinner      (View) loading spinner.
      * @param recyclerView View for showing list of debts.
      * @param activity     An activity where the recyclerView is shown.
@@ -535,9 +454,8 @@ public class MyFirebaseDatabaseHandler {
                         listDebts.add(value);
                     }
                 }
-                //set up recycle view from the arraylist of the debts, and its adapter
+                //set up recycle view from the ArrayList of the debts, and its adapter
                 DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
-                //recyclerview is set up
                 recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
@@ -552,27 +470,57 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
+     * Get my friends from database and load them to recyclerView.
+     */
+    public static void loadFriendsRecyclerView(final RecyclerView recyclerView,
+                                               final DialogListener dialogListener,
+                                               final DialogFriends dialogFriends,
+                                               final View view) {
+        FirebaseDatabase.getInstance().getReference("friends")
+                .orderByChild("fromUserId")
+                .equalTo(CurrentUser.UserCurrent.id)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Friend> listFriends = new ArrayList<Friend>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Relationship value = snapshot.getValue(Relationship.class);
+                            Friend friend = new Friend(value.getToUserName(), value.getToUserId());
+                            listFriends.add(friend);
+                        }
+                        FriendAdapter adapter = new FriendAdapter(view.getContext(), listFriends,
+                                dialogListener, dialogFriends);
+                        recyclerView.addItemDecoration(new DividerDecoration(view.getContext()));
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("The read failed: ", databaseError.getMessage());
+                    }
+                });
+    }
+
+    /**
      * Delete friendship and all debts created with the friend from database and synchronize notifications.
      * @param id       ID of friend to be deleted.
-     * @param context1
      */
     public static void deleteFriendAndDebts(final String id, final Context context1) {
-
-        final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-
         //delete debts from database
-        final DatabaseReference refDebts = mDatabase.getReference("debts");
-        refDebts.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("debts")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Debt value = snapshot.getValue(Debt.class);
                     if ((value.getId_who().equals(CurrentUser.UserCurrent.id) && value.getId_toWhom().equals(id))
                             || (value.getId_who().equals(id) && value.getId_toWhom().equals(CurrentUser.UserCurrent.id))) {
-                        refDebts.child(value.getId_debt()).removeValue();
+                        FirebaseDatabase.getInstance().getReference("debts").child(value.getId_debt()).removeValue();
                     }
                 }
-                MyAlarmManager.syncNotifications(context1);
+                MyNotificationManager.syncNotifications(context1);
             }
 
             @Override
@@ -582,39 +530,37 @@ public class MyFirebaseDatabaseHandler {
         });
 
         //delete friendship
-        final DatabaseReference refFriends = mDatabase.getReference("friends");
-        refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("friends")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Relationship value = snapshot.getValue(Relationship.class);
                     if ((value.getFromUserId().equals(CurrentUser.UserCurrent.id) && value.getToUserId().equals(id))
                             || (value.getFromUserId().equals(id) && value.getToUserId().equals(CurrentUser.UserCurrent.id))) {
-                        refFriends.child(snapshot.getKey()).removeValue();
+                        FirebaseDatabase.getInstance().getReference("friends").child(snapshot.getKey()).removeValue();
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
 
     /**
-     * Check if new friend is user.
+     * Check if the new friend is user.
      * Yes - create AB, BA friendship in database "friends".
      * No - make toast that user doesn't exist*.
-     *
-     * @param item     Button from menu
+     * @param item     Button from menu.
      * @param email    Email of friend which is about to be added.
      * @param activity Activity from which the method is called.
      */
     public static void checkIfUserAndAdd(final MenuItem item, final TextInputEditText email, final Activity activity) {
-        // get reference to database and to 'users' node
-        final DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference("users");
-        refUsers.orderByChild("email").equalTo(email.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("users")
+                .orderByChild("email")
+                .equalTo(email.getText().toString())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
@@ -636,7 +582,6 @@ public class MyFirebaseDatabaseHandler {
                     email.setError("Invalid email");
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -644,13 +589,12 @@ public class MyFirebaseDatabaseHandler {
     }
 
     /**
-     * Check if new adding relationship doesn't already exist.
+     * Check if the new adding relationship doesn't already exist.
      * If not then add new AB BA relationship to database.
-     * Show result toast in activity
-     *
-     * @param fromUser
-     * @param toUser   the user I am adding relationship with
-     * @param activity
+     * Show result toast in activity.
+     * @param fromUser Me.
+     * @param toUser   the user I am adding relationship with.
+     * @param activity Activity from which this method is called.
      */
     public static void checkIfRelationshipExistsAndAdd(String fromUser, final User toUser, final Activity activity) {
         FirebaseDatabase.getInstance().getReference("friends")
@@ -696,26 +640,22 @@ public class MyFirebaseDatabaseHandler {
 
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
 
     /**
-     * Delete debt with id id_debt from database.
-     *
-     * @param id_debt
+     * Delete debt with the id id_debt from database.
      */
     public static void deleteDebt(String id_debt) {
         FirebaseDatabase.getInstance().getReference("debts").child(id_debt).removeValue();
+        //TODO sync notification
     }
 
     /**
-     * Overwrite debt state in database whether debt is paid or not.
-     *
+     * Update debt state in database whether debt is paid or not.
      * @param id_debt id of debt
      * @param isPaid  new state
      */

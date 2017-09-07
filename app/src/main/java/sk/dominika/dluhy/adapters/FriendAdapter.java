@@ -18,7 +18,7 @@ import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**
- * Adapter for dialog showing list of my friends to RecyclerView.
+ * Adapter for showing list of my friends to RecyclerView.
  */
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 

@@ -9,6 +9,10 @@ import android.view.View;
 
 import sk.dominika.dluhy.R;
 
+/**
+ * Class for decorations for RecyclerView. Specifically for drawing a line
+ * between items in RecyclerView.
+ */
 public class DividerDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 

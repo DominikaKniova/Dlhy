@@ -23,7 +23,7 @@ import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.listeners.DialogListener;
-import sk.dominika.dluhy.notifications.MyAlarmManager;
+import sk.dominika.dluhy.notifications.MyNotificationManager;
 
 /**
  * The MyProfileActivity has the same function as the FriendProfileActivity. After the activity
@@ -128,7 +128,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
             case R.id.signOut:
                 /*When user signs out, cancel all notification so that they are not
                 triggered when user is not logged in.*/
-                MyAlarmManager.cancelAllNotifications(getBaseContext());
+                MyNotificationManager.cancelAllNotifications(getBaseContext());
                 FirebaseAuth.getInstance().signOut();
                 toLogInActivity();
                 break;

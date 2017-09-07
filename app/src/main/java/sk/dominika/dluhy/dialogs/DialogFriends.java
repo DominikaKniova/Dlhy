@@ -31,7 +31,7 @@ import sk.dominika.dluhy.decorations.DividerDecoration;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**
- * Dialog for showing recycleview.
+ * Dialog for showing friend RecyclerView.
  */
 public  class DialogFriends extends DialogFragment {
 
@@ -58,40 +58,12 @@ public  class DialogFriends extends DialogFragment {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-
         final View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
 
-        /**
-         * Get my friends from firebase database and store them in arraylist Friend.myFriends.
-         */
-        FirebaseDatabase.getInstance().getReference("friends")
-                .orderByChild("fromUserId")
-                .equalTo(CurrentUser.UserCurrent.id)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<Friend> listFriends = new ArrayList<Friend>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Relationship value = snapshot.getValue(Relationship.class);
-                            Friend friend = new Friend(value.getToUserName(), value.getToUserId());
-                            listFriends.add(friend);
-                        }
-
-                        RecyclerView recycler_viewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-                        FriendAdapter adapter = new FriendAdapter(view.getContext(), listFriends, mListener, DialogFriends.this);
-                        recycler_viewFriends.addItemDecoration(new DividerDecoration(view.getContext()));
-                        recycler_viewFriends.setAdapter(adapter);
-                        recycler_viewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e("The read failed: ", databaseError.getMessage());
-                    }
-                });
+        //get my friends from database and create RecyclerView from them
+        RecyclerView recyclerViewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
+        MyFirebaseDatabaseHandler.loadFriendsRecyclerView(recyclerViewFriends,
+                mListener, DialogFriends.this, view);
         return view;
     }
-
-
 }

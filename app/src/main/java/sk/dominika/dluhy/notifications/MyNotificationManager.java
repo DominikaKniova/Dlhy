@@ -16,15 +16,17 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.activities.MyProfileActivity;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 
-public class MyAlarmManager {
-
+/**
+ * Class for handling notifications.
+ */
+public class MyNotificationManager {
     /**
      * Create and schedule individual notification.
-     * @param context where the notification is created
-     * @param calendar date and time of notification
-     * @param notificationId id of notification
-     * @param title debt information: name of who owes -> name of to who he owes
-     * @param content debt information: sum and note of debt
+     * @param context Where the notification is created.
+     * @param calendar Date and time of notification.
+     * @param notificationId Id of notification.
+     * @param title Debt information: name of who owes -> name of to who he owes.
+     * @param content Debt information: sum and note of debt.
      */
     public static void scheduleNotification(Context context, Calendar calendar, int notificationId, String title, String content) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -53,10 +55,10 @@ public class MyAlarmManager {
     }
 
     /**
-     * Provide information for new notifications by reading all my debts with alerts from database
+     * Provide information for all new notifications by reading all my debts with notifications from database
      * and then creates individual notifications by method scheduleNotification().
      * Method is called when user logs in or when synchronizing notifications.
-     * @param context where the notification is created
+     * @param context Where the notification is createdz
      */
     public static void createNotifications(Context context) {
         MyFirebaseDatabaseHandler.getAndCreateNotifications(context);
@@ -65,7 +67,7 @@ public class MyAlarmManager {
     /**
      * Cancels all notifications created.
      * Method is called when user signs out or when synchronizing notifications.
-     * @param context where the notification is created
+     * @param context Where the notification is created.
      */
     public static void cancelAllNotifications(Context context) {
         NotificationManager notificationMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -75,9 +77,9 @@ public class MyAlarmManager {
     /**
      * Synchronize notifications.
      * Method will delete all notifications and then create them again from database.
-     * Method is called when user adds, edits or deletes new debt with alert, or when user deletes
+     * Method is called when user adds or deletes a debt with a notification, or when user deletes
      * his friend.
-     * @param context where the notification is created
+     * @param context Where the notification is created.
      */
     public static void syncNotifications(Context context) {
         cancelAllNotifications(context);
