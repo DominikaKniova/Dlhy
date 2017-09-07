@@ -1,6 +1,5 @@
 package sk.dominika.dluhy.adapters;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
@@ -21,16 +20,19 @@ import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 
 /**
- * Adapter for showing list of debts.
+ * Adapter for showing list of debts in RecyclerView.
  */
 public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
-    // Provide a direct reference to each of the views within a data item
-    // Used to cache the views within the item layout for fast access
+    /**
+     * Provide a direct reference to each of the views within a data item.
+     * Item is one row in the list of debts. (= one debt)
+     * It is used to cache the views within the item layout for fast access.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView sum_noteTextView;
         public ImageView menuImageView;
         public TextView namesTextView;
-        public TextView reminderTextView;
+        public TextView notificationTextView;
 
 
         public ViewHolder(View itemView) {
@@ -38,7 +40,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
             sum_noteTextView = (TextView) itemView.findViewById(R.id.dialog_debt_sum_note);
             menuImageView = (ImageView) itemView.findViewById(R.id.dialog_debt_menu);
             namesTextView = (TextView) itemView.findViewById(R.id.dialog_debt_name);
-            reminderTextView = (TextView) itemView.findViewById(R.id.reminder_debt);
+            notificationTextView = (TextView) itemView.findViewById(R.id.reminder_debt);
         }
     }
     private List<Debt> memberDebts;
@@ -56,48 +58,57 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(context);
         View debtView = inflater.inflate(R.layout.item_debt, parent, false);
         DebtAdapter.ViewHolder viewHolder = new DebtAdapter.ViewHolder(debtView);
-
         return viewHolder;
     }
 
-    // Involves populating data into the item through holder
+    /**
+     * Populate data into the item through holder.
+     *
+     * @param holder
+     * @param position Position of the clicked item in the ArrayList.
+     */
     @Override
     public void onBindViewHolder(final DebtAdapter.ViewHolder holder, final int position) {
         // Get the data model based on position
         final Debt debt = memberDebts.get(position);
+
+        //set views of the item
         holder.namesTextView.setText(debt.getName_who() + "->" + debt.getName_toWhom());
 
-        //I owe
         if (debt.getId_who().equals(CurrentUser.UserCurrent.id)) {
+            //I owe
             holder.sum_noteTextView.setText("-" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
             holder.namesTextView.setTextColor(ContextCompat.getColor(memberContext, R.color.red_sum));
-        }
-        //they owe me
-        else {
+        } else {
+            //they owe me
             holder.sum_noteTextView.setText("+" + String.valueOf(debt.getSum()) + ", " + debt.getNote());
             holder.namesTextView.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
         }
+
+        //check if debt has a notification, if yes then involve it in the item
         if (!debt.getDateOfAlert().equals("")) {
-            holder.reminderTextView.setVisibility(View.VISIBLE);
-            holder.reminderTextView.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());
+            holder.notificationTextView.setVisibility(View.VISIBLE);
+            holder.notificationTextView.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());
         }
 
         //check if debt is paid. YES = strike through text
         if (debt.getIsPaid().equals("true")) {
             holder.namesTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             holder.sum_noteTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.reminderTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.notificationTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
+        /*create menu for every item in RecyclerView, containing of an option for
+        deleting the debt (item) and an option for paying the debt (item)*/
         holder.menuImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //creating a popup menu
+                //create a popup menu
                 PopupMenu popup = new PopupMenu(memberContext, holder.menuImageView);
-                //inflating menu from xml resource
+                //inflate menu from xml resource
                 popup.inflate(R.menu.menu_dialog_debts);
 
-                //if debt is paid, set menu option's title to Unpay debt"
+                //if the debt is paid, set menu option's title to "Unpay debt"
                 if (debt.getIsPaid().equals("true")) {
                     popup.getMenu().findItem(R.id.pay_debt).setTitle("Unpay debt");
                 }
@@ -127,13 +138,16 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
                         return false;
                     }
                 });
-                //displaying the popup menu
+                //display the popup menu
                 popup.show();
-
             }
         });
     }
-    // Returns the total count of items in the list
+
+    /**
+     * Get the total count of items in the list/
+     * @return Returns the total count of items in the list.
+     */
     @Override
     public int getItemCount() {
         return memberDebts.size();
