@@ -26,6 +26,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.User;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
@@ -158,8 +159,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             TextView tName = (TextView) findViewById(R.id.friendsPic);
             TextInputEditText tNote = (TextInputEditText) findViewById(R.id.textInput_note);
             TextInputEditText tSum = (TextInputEditText) findViewById(R.id.textInput_money);
-            TextInputEditText tDateAlert = (TextInputEditText) findViewById(R.id.inputDate);
-            TextInputEditText tTimeAlert = (TextInputEditText) findViewById(R.id.inputTime);
+            TextInputEditText tDateNotif = (TextInputEditText) findViewById(R.id.inputDate);
+            TextInputEditText tTimeNotif = (TextInputEditText) findViewById(R.id.inputTime);
 
             if (tName.getText().toString().equals("")) {
                 //if user hasn't chosen friend
@@ -172,60 +173,9 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                     ShowAlertDialogNeutral.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
                 } else {
-                    //find out if I owe friend money or the other way round
-                    boolean heOwesMe;
                     ImageView arrow = (ImageView) findViewById(R.id.arrow);
-                    String imageTag = (String) arrow.getTag();
-                    if (imageTag.equals("arrForward")) {
-                        heOwesMe = false;
-                    } else {
-                        heOwesMe = true;
-                    }
-
-                    // get instance to database and reference to 'debts' node
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
-                    //get id of a new node
-                    String id = ref.push().getKey();
-                    Debt debt;
-                    //I owe
-                    if (!heOwesMe) {
-                        //create a debt object
-                        debt = new Debt(
-                                id,
-                                CurrentUser.UserCurrent.id,
-                                idFriend,
-                                CurrentUser.UserCurrent.firstName,
-                                tName.getText().toString(),
-                                Float.parseFloat(tSum.getText().toString()),
-                                tNote.getText().toString(),
-                                tDateAlert.getText().toString(),
-                                tTimeAlert.getText().toString(),
-                                "false");
-                    }
-                    //they owe
-                    else {
-                        //get id of new node
-                        debt = new Debt(
-                                id,
-                                idFriend,
-                                CurrentUser.UserCurrent.id,
-                                tName.getText().toString(),
-                                CurrentUser.UserCurrent.firstName,
-                                Float.parseFloat(tSum.getText().toString()),
-                                tNote.getText().toString(),
-                                tDateAlert.getText().toString(),
-                                tTimeAlert.getText().toString(),
-                                "false");
-                        //get a reference to location id and add the new debt to this location
-                        ref.child(id).setValue(debt);
-                    }
-                    //get a reference to location id and add the new debt to this location
-                    ref.child(id).setValue(debt);
-
-                    //if alert is added then sync new notification with old ones
-                    if (!(tDateAlert.getText().toString().equals("") && tTimeAlert.getText().toString().equals(""))) {
-                        MyAlarmManager.syncNotifications(getBaseContext());
-                    }
+                    MyFirebaseDatabaseHandler.createDebt(idFriend, tName, tNote, tSum,
+                            tDateNotif, tTimeNotif, arrow, NewDebtActivity.this);
                     finish();
                     item.setEnabled(true);
                 }
@@ -278,20 +228,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     public void onClick(String id) {
         idFriend = id;
         // get data (name of friend) from firebase database and set view
-        FirebaseDatabase.getInstance().getReference("users").child(id)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User value = dataSnapshot.getValue(User.class);
-                TextView tvName = (TextView) findViewById(R.id.friendsPic);
-                tvName.setText(value.getFirstname());
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(NewDebtActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
+        TextView tvName = (TextView) findViewById(R.id.friendsPic);
+        MyFirebaseDatabaseHandler.getFriendNameFromDatabase(id, tvName, NewDebtActivity.this);
     }
 
     /**

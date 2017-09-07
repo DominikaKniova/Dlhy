@@ -73,11 +73,10 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
             TextView name = (TextView) findViewById(R.id.profile_name);
             TextView sum = (TextView) findViewById(R.id.profile_sum);
             MyFirebaseDatabaseHandler.setCurrentUserViews(curUserID, name, sum, MyProfileActivity.this);
+            getDebtsAndSetRecyclerView();
         } else {
             toLogInActivity();
         }
-        getDebtsAndSetRecyclerView();
-
     }
 
     @Override
@@ -121,8 +120,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     }
 
     /**
-     * Menu handler. Each item in menu starts an activity.
-     *
+     * Menu handler. Each item in the activity menu starts an activity.
      * @param item Item that was pressed in menu.
      */
     @Override
@@ -156,8 +154,8 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     }
 
     /**
-     * When clicked on a friend in friends dialog, send id through intent to FriendProfileActivity
-     * and start it.
+     * When clicked on a friend in friends dialog, send his id through intent
+     * to FriendProfileActivity and start it.
      * @param id Id of friend.
      */
     @Override

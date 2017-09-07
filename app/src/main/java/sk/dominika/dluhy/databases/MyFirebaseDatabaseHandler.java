@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.activities.MyProfileActivity;
+import sk.dominika.dluhy.activities.NewDebtActivity;
 import sk.dominika.dluhy.adapters.DebtAdapter;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.Debt;
@@ -190,7 +192,7 @@ public class MyFirebaseDatabaseHandler {
      * @param id_user  ID of user.
      * @param name     Reference to name textview.
      * @param sum      Reference to sum textview.
-     * @param activity Actvity from which the method is called.
+     * @param activity Activity from which the method is called.
      */
     public static void setCurrentUserViews(String id_user, final TextView name,
                                            final TextView sum, final Activity activity) {
@@ -211,6 +213,29 @@ public class MyFirebaseDatabaseHandler {
                     public void onCancelled(DatabaseError databaseError) {
                         //if user with the id does not exist
                         Toast.makeText(activity, "User doesn't exist", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Get the name of the friend from the database based on his id and set name TextView.
+     * @param id_friend Id of friend.
+     * @param name Reference to TextView.
+     * @param activity Activity from which the method is called.
+     */
+    public static void getFriendNameFromDatabase(String id_friend, final TextView name, final Activity activity) {
+        FirebaseDatabase.getInstance().getReference("users").child(id_friend)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User value = dataSnapshot.getValue(User.class);
+                        name.setText(value.getFirstname());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT)
+                                .show();
                     }
                 });
     }
@@ -262,6 +287,78 @@ public class MyFirebaseDatabaseHandler {
                 Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Create debt (object) containing of: id of the debt, who to whom owes (ids and names),
+     * sum, note, date and time of notification (if added), and information whether the debt
+     * is paid or not. When a new debt is created, it is always initialized with isPaid = false.
+     * At first, method decides who owes whom, by looking at the position of arrow ImageView.
+     * Then id of the new debt is created and the debt object is created which is added
+     * to database. If user picked date and time for notification, all notifications are synced.
+     *
+     * @param idFriend If of the friend I am creating a debt with.
+     * @param name     First name of the friend.
+     * @param note     Reference to note TextView.
+     * @param sum      Reference to sum TextView.
+     * @param date     Reference to date TextView.
+     * @param time     Reference to time TextView.
+     * @param arrow    Reference to arrow ImageView.
+     * @param activity Activity from which this method is called.
+     */
+    public static void createDebt(String idFriend, TextView name, TextView note, TextView sum,
+                                  TextView date, TextView time, ImageView arrow, Activity activity) {
+        //find out if I owe friend money or the other way round
+        boolean heOwesMe;
+        String imageTag = (String) arrow.getTag();
+        if (imageTag.equals("arrForward")) {
+            heOwesMe = false;
+        } else {
+            heOwesMe = true;
+        }
+        // get instance to database and reference to 'debts' node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("debts");
+        //get id of a new node
+        String id = ref.push().getKey();
+        Debt debt;
+        if (!heOwesMe) {
+            //I owe
+            //create a debt object
+            debt = new Debt(
+                    id,
+                    CurrentUser.UserCurrent.id,
+                    idFriend,
+                    CurrentUser.UserCurrent.firstName,
+                    name.getText().toString(),
+                    Float.parseFloat(sum.getText().toString()),
+                    note.getText().toString(),
+                    date.getText().toString(),
+                    time.getText().toString(),
+                    "false");
+        } else {
+            //he owes
+            //get id of new node
+            debt = new Debt(
+                    id,
+                    idFriend,
+                    CurrentUser.UserCurrent.id,
+                    name.getText().toString(),
+                    CurrentUser.UserCurrent.firstName,
+                    Float.parseFloat(sum.getText().toString()),
+                    note.getText().toString(),
+                    date.getText().toString(),
+                    time.getText().toString(),
+                    "false");
+            //get a reference to location id and add the new debt to this location
+            ref.child(id).setValue(debt);
+        }
+        //get a reference to location 'id' and add this new debt to this location
+        ref.child(id).setValue(debt);
+
+        //if alert is added then sync new notification with old ones
+        if (!(date.getText().toString().equals("") && time.getText().toString().equals(""))) {
+            MyAlarmManager.syncNotifications(activity.getBaseContext());
+        }
     }
 
     /**
