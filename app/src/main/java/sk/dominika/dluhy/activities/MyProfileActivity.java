@@ -113,7 +113,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     }
 
     /**
-     * Show dialog window with list of user's friends.
+     * Show dialog with list of user's friends.
      */
     private void showDialogFriends() {
         DialogFragment newDialog = new DialogFriends();
@@ -176,9 +176,9 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         //get reference to loading spinner and set it visible while data is loading
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
-        RecyclerView recycler_viewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        RecyclerView recyclerViewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
         //load
-        MyFirebaseDatabaseHandler.loadMyDebtsRecyclerView(spinner, recycler_viewDebts,
+        MyFirebaseDatabaseHandler.loadMyDebtsRecyclerView(spinner, recyclerViewDebts,
                 MyProfileActivity.this);
     }
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +41,7 @@ import sk.dominika.dluhy.utilities.Utility;
  * are notified by Alert Dialog. In the activity's toolbar there is a button for adding the debt.
  */
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
+    private String idFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 //                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 //                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 //expand
-                expandableButtonAlerts(view);
+                expandableButtonNotification();
             }
         });
 
@@ -85,7 +87,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(v);
+                showDatePickerDialog();
             }
         });
         //time picker
@@ -95,7 +97,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         timeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTimePickerDialog(v);
+                showTimePickerDialog();
             }
         });
 
@@ -108,7 +110,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         friendPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog_friends(v);
+                showDialogFriends();
             }
         });
 
@@ -191,7 +193,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         debt = new Debt(
                                 id,
                                 CurrentUser.UserCurrent.id,
-                                id_of_friend,
+                                idFriend,
                                 CurrentUser.UserCurrent.firstName,
                                 tName.getText().toString(),
                                 Float.parseFloat(tSum.getText().toString()),
@@ -199,15 +201,13 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                                 tDateAlert.getText().toString(),
                                 tTimeAlert.getText().toString(),
                                 "false");
-                        //get a reference to location id and add the new debt to this location
-                        ref.child(id).setValue(debt);
                     }
                     //they owe
                     else {
                         //get id of new node
                         debt = new Debt(
                                 id,
-                                id_of_friend,
+                                idFriend,
                                 CurrentUser.UserCurrent.id,
                                 tName.getText().toString(),
                                 CurrentUser.UserCurrent.firstName,
@@ -219,6 +219,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
                         //get a reference to location id and add the new debt to this location
                         ref.child(id).setValue(debt);
                     }
+                    //get a reference to location id and add the new debt to this location
+                    ref.child(id).setValue(debt);
 
                     //if alert is added then sync new notification with old ones
                     if (!(tDateAlert.getText().toString().equals("") && tTimeAlert.getText().toString().equals(""))) {
@@ -232,69 +234,69 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         return super.onOptionsItemSelected(item);
     }
 
-    ExpandableRelativeLayout expandableLayout;
-
-    private void expandableButtonAlerts(View v) {
-        expandableLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
-        expandableLayout.toggle(); // toggle expand and collapse
+    /**
+     * Expand expandable layout with date and time input fields.
+     */
+    private void expandableButtonNotification() {
+        // toggle expand and collapse
+        ExpandableRelativeLayout expandableLayout =
+                (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
+        expandableLayout.toggle();
     }
 
-    private void showTimePickerDialog(View v) {
+    /**
+     * Dialog for selecting time of notification.
+     */
+    private void showTimePickerDialog() {
         DialogFragment newFragmentTime = new TimePickerFragment();
         newFragmentTime.show(getFragmentManager(), "timePicker");
 
     }
 
-    private void showDatePickerDialog(View v) {
+    /**
+     * Dialog for selecting date of notification.
+     */
+    private void showDatePickerDialog() {
         DialogFragment newFragmentDate = new DatePickerFragment();
         newFragmentDate.show(getFragmentManager(), "datePicker");
     }
 
-    private void showDialog_friends(View v) {
+    /**
+     * Show dialog with list of user's friends.
+     */
+    private void showDialogFriends() {
         DialogFragment newDialog = new DialogFriends();
         newDialog.show(getFragmentManager(), "friends");
     }
 
     /**
-     * Makes access to friend's id through DialogFriends.
+     * Make access to friend's id through DialogFriends and find friend in the database.
      * Sets the text (name of friend) of TextView friendsPic.
+     * @param id Friend's id that is from FriendAdapter.
      */
-    private String id_of_friend;
-
     @Override
-    public void onClick(String friend_id) {
-        id_of_friend = friend_id;
-        //DatabaseHandler database = new DatabaseHandler(this);
-        //tvName.setText(database.getNameFromDatabase(friend_id));
-
-        /**
-         * find friend in database based on the friend's id
-         */
-        //get instance to database
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        // get reference to 'users' node and child with the id
-        DatabaseReference ref = mDatabase.getReference("users").child(friend_id);
-
+    public void onClick(String id) {
+        idFriend = id;
         // get data (name of friend) from firebase database and set view
-        ref.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("users").child(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
                 User value = dataSnapshot.getValue(User.class);
-
                 TextView tvName = (TextView) findViewById(R.id.friendsPic);
                 tvName.setText(value.getFirstname());
-
             }
-
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
+                Toast.makeText(NewDebtActivity.this, R.string.not_existing_user, Toast.LENGTH_SHORT)
+                        .show();
             }
         });
     }
 
+    /**
+     * When back button pressed, go to MyProfileActivity.
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
