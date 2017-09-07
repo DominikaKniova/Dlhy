@@ -229,9 +229,14 @@ public class MyFirebaseDatabaseHandler {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User value = dataSnapshot.getValue(User.class);
-                        name.setText(value.getFirstname());
+                        if (value != null) {
+                            name.setText(value.getFirstname());
+                        } else {
+                            /*If an user was deleted in database but the current user still has him in list of
+                            friends a clicks on him.*/
+                            Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
+                        }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError error) {
                         Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT)
@@ -250,41 +255,46 @@ public class MyFirebaseDatabaseHandler {
                                               final CollapsingToolbarLayout cToolbar, final AppBarLayout appbar,
                                               final Activity activity) {
         // get reference to 'users' node and child with the id
-        FirebaseDatabase.getInstance().getReference("users").child(id_friend).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("users").child(id_friend)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //get the object
                 final User value = dataSnapshot.getValue(User.class);
-                //set name view
-                name.setText(value.getFirstname() + " " + value.getLastname());
-                //get overall sum and set sum view
-                MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
-                //animation for toolbar title when collapsing
-                appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                    boolean isShow = false;
-                    int scrollRange = -1;
+                if (value != null) {
+                    //set name view
+                    name.setText(value.getFirstname() + " " + value.getLastname());
+                    //get overall sum and set sum view
+                    MyFirebaseDatabaseHandler.getOverallSum(value.getId(), sum);
+                    //animation for toolbar title when collapsing
+                    appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                        boolean isShow = false;
+                        int scrollRange = -1;
 
-                    @Override
-                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                        if (scrollRange == -1) {
-                            scrollRange = appBarLayout.getTotalScrollRange();
+                        @Override
+                        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                            if (scrollRange == -1) {
+                                scrollRange = appBarLayout.getTotalScrollRange();
+                            }
+                            if (scrollRange + verticalOffset == 0) {
+                                cToolbar.setTitle(value.getFirstname() + " " + value.getLastname());
+                                isShow = true;
+                            } else if (isShow) {
+                                cToolbar.setTitle("");
+                                isShow = false;
+                            }
                         }
-                        if (scrollRange + verticalOffset == 0) {
-                            cToolbar.setTitle(value.getFirstname() + " " + value.getLastname());
-                            isShow = true;
-                        } else if (isShow) {
-                            cToolbar.setTitle("");
-                            isShow = false;
-                        }
-                    }
-                });
+                    });
+                } else {
+                    /*If an user was deleted in database but the current user still has him in list of
+                    friends a clicks on him.*/
+                    Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
+                    activity.finish();
+                }
+
             }
-
             @Override
             public void onCancelled(DatabaseError error) {
-                /*If an user was deleted in database but the current user still has him in list of
-                friends a clicks on him.*/
-                Toast.makeText(activity, R.string.not_existing_user, Toast.LENGTH_SHORT).show();
             }
         });
     }

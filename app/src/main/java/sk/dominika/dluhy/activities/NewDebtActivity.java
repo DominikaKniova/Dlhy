@@ -13,26 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
-import sk.dominika.dluhy.database_models.Debt;
-import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.dialogs.DatePickerFragment;
 import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
 import sk.dominika.dluhy.dialogs.TimePickerFragment;
 import sk.dominika.dluhy.listeners.DialogListener;
-import sk.dominika.dluhy.notifications.MyAlarmManager;
 import sk.dominika.dluhy.utilities.Utility;
 
 /**
@@ -145,7 +136,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     }
 
     /**
-     * Menu for creating debt. It checks whether the user completed all needed textfields.
+     * Menu for creating debt. It checks whether the user completed all needed text fields.
      * Any errors are notified. If the check is succeeded, the debt is added to the database
      * and then if the debt has notification then all notifications are synced, that means
      * that all are deleted and created again with the new notification from the already
@@ -169,7 +160,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             } else {
 
                 if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")) {
-                    //if user hasn't completed note and sum textfields
+                    //if user hasn't completed note and sum text fields
                     ShowAlertDialogNeutral.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
                 } else {
@@ -188,7 +179,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
      * Expand expandable layout with date and time input fields.
      */
     private void expandableButtonNotification() {
-        // toggle expand and collapse
         ExpandableRelativeLayout expandableLayout =
                 (ExpandableRelativeLayout) findViewById(R.id.expandableLayoutAlert);
         expandableLayout.toggle();
@@ -200,7 +190,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     private void showTimePickerDialog() {
         DialogFragment newFragmentTime = new TimePickerFragment();
         newFragmentTime.show(getFragmentManager(), "timePicker");
-
     }
 
     /**
@@ -230,14 +219,5 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         // get data (name of friend) from firebase database and set view
         TextView tvName = (TextView) findViewById(R.id.friendsPic);
         MyFirebaseDatabaseHandler.getFriendNameFromDatabase(id, tvName, NewDebtActivity.this);
-    }
-
-    /**
-     * When back button pressed, go to MyProfileActivity.
-     */
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }

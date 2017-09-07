@@ -46,9 +46,6 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
         setTitle("Log in");
 
-        /**
-         * Firebase authentication
-         */
         // FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
 
@@ -146,7 +143,6 @@ public class LogInActivity extends AppCompatActivity {
     private void logIn(String email, String password) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
-
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());

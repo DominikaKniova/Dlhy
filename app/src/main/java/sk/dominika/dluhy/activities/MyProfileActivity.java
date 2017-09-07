@@ -79,13 +79,6 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        TextView name = (TextView) findViewById(R.id.profile_name);
-//        name.setText("");
-    }
-
     /**
      * Start NewDebtActivity.
      */
