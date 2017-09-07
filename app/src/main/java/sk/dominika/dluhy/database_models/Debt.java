@@ -1,10 +1,8 @@
 package sk.dominika.dluhy.database_models;
 
-import android.support.design.widget.TextInputEditText;
-
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Model for a debt.
+ */
 public class Debt {
     private String id_debt;
     private String id_who;
@@ -36,12 +34,6 @@ public class Debt {
     }
 
     public String getId_debt() { return this.id_debt; }
-
-//    public String getId_me() {
-//        return id_me;
-//    }
-
-//    public String getId_friend() {return id_friend;}
 
     public float getSum(){
         return this.sum;

@@ -25,7 +25,7 @@ import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
     /**
      * Provide a direct reference to each of the views within a data item.
-     * Item is one row in the list of debts. (= one debt)
+     * Item is one row in the list of debts. (= one debt).
      * It is used to cache the views within the item layout for fast access.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +63,6 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
 
     /**
      * Populate data into the item through holder.
-     *
      * @param holder
      * @param position Position of the clicked item in the ArrayList.
      */
@@ -145,8 +144,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
     }
 
     /**
-     * Get the total count of items in the list/
-     * @return Returns the total count of items in the list.
+     * Returns the total count of items in the list.
      */
     @Override
     public int getItemCount() {

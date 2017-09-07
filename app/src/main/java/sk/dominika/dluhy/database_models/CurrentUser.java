@@ -1,5 +1,9 @@
 package sk.dominika.dluhy.database_models;
 
+/**
+ * Static class for storing information about the current user, like id, name and email.
+ * Accessible throughout the whole app.
+ */
 public class CurrentUser {
     public static class UserCurrent{
         public static String firstName;
@@ -24,35 +28,4 @@ public class CurrentUser {
         UserCurrent.email = "";
         UserCurrent.id = "";
     }
-//    private static String firstName;
-//    private static String lastName;
-//    private static String email;
-//    private static String id;
-//
-//    public CurrentUser(String first, String last, String mail, String id_user){
-//        firstName = first;
-//        lastName = last;
-//        email = mail;
-//        id = id_user;
-//    }
-//
-//    public static String getFirstName() {
-//        return firstName;
-//    }
-//
-//    public static String getLastName() {
-//        return lastName;
-//    }
-//
-//    public static String getEmail() {
-//        return email;
-//    }
-//
-//    public static String getId() {
-//        return id;
-//    }
-//
-//    public static void setId(String id) {
-//        CurrentUser.id = id;
-//    }
 }

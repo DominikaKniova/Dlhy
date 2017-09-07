@@ -1,24 +1,18 @@
 package sk.dominika.dluhy.database_models;
 
-import android.support.design.widget.TextInputEditText;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model for a friend.
+ */
 public class Friend {
-    //private long id;
     private String firstName;
     private String lastName;
     private String email;
     private String id;
 
     public  Friend() {}
-
-    public Friend(TextInputEditText firstname, TextInputEditText lastname, TextInputEditText email) {
-        this.firstName = firstname.getText().toString();
-        this.lastName = lastname.getText().toString();
-        this.email = email.getText().toString();
-    }
 
     public Friend(String firstname, String lastname, String email) {
         this.firstName = firstname;
@@ -46,12 +40,6 @@ public class Friend {
     }
 
     public String getId() { return this.id; }
-
-//    public void setKey(String key) {
-//        this.key = key;
-//    }
-
-    //public String getKey() { return this.key; }
 
     public static List<Friend> myFriends = new ArrayList<Friend>();
 }

@@ -18,12 +18,15 @@ import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.listeners.DialogListener;
 
 /**
- * Adapter for dialog showing list of my friends.
+ * Adapter for dialog showing list of my friends to RecyclerView.
  */
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
-    // Provide a direct reference to each of the views within a data item
-    // Used to cache the views within the item layout for fast access
+    /**
+     * Provide a direct reference to each of the views within a data item.
+     * Item is one row in the list of friends. (= one friend).
+     * It is used to cache the views within the item layout for fast access.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
         public TextView idTextView;
@@ -44,15 +47,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     private DialogListener memberListener;
 
+    //Reference to dialog DialogFriend, so that can be dismissed.
     private DialogFriends dialogFriends;
 
-    /**
-     *
-     * @param context
-     * @param friends
-     * @param listener
-     * @param dFriends Reference to dialog DialogFriend, so that can be dismissed.
-     */
     public FriendAdapter(Context context, List<Friend> friends, DialogListener listener, DialogFriends dFriends) {
         memberFriends = friends;
         memberContext = context;
@@ -69,17 +66,22 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         return viewHolder;
     }
 
-    // Involves populating data into the item through holder
+    /**
+     * Populate data into the item through holder.
+     *
+     * @param holder
+     * @param position Position of the clicked item (friend) in the ArrayList.
+     */
     @Override
     public void onBindViewHolder(final FriendAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         final Friend friend = memberFriends.get(position);
 
-        //setting names of items (friends)
+        //setting name TextView of the item (friend)
         TextView textView = holder.nameTextView;
         textView.setText(friend.getFirstName());
 
-        //icon imageview leads to friend's profile
+        //icon ImageView leads to friend's profile
         ImageView profileIcon = holder.icon;
         profileIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +91,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             }
         });
 
-        //name textview clicker for chosing friend in new debt
+        //name TextView clicker for choosing friend in the NewDebtActivity
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +101,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         });
     }
 
-    // Returns the total count of items in the list
+    /**
+     * Returns the total count of items in the list.
+     */
     @Override
     public int getItemCount() {
         return memberFriends.size();
@@ -107,7 +111,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     /**
      * Starts FriendProfileActivity
-     * @param id ID of friend to be shown.
+     * @param id ID of friend whose profile is going to be shown.
      */
     private void newActivity_profileFriend(String id) {
         Intent intent = new Intent(memberContext, FriendProfileActivity.class);

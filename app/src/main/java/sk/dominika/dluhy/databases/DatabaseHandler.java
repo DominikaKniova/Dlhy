@@ -14,6 +14,9 @@ import java.util.List;
 import sk.dominika.dluhy.database_models.Debt;
 import sk.dominika.dluhy.database_models.Friend;
 
+/**
+ * Unused class. I used it when I was not using firebase database.
+ */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
         public static final int DATABASE_VERSION = 1;

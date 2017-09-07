@@ -3,6 +3,9 @@ package sk.dominika.dluhy.database_models;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model for an user.
+ */
 public class User {
     private String id;
     private String firstname;

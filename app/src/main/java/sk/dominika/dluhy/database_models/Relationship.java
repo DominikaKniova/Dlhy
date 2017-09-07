@@ -1,5 +1,8 @@
 package sk.dominika.dluhy.database_models;
 
+/**
+ * Model for relationship.
+ */
 public class Relationship {
     private String fromUserId;
     private String fromUserName;
