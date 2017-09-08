@@ -30,6 +30,9 @@ import sk.dominika.dluhy.utilities.Utility;
 
 /**
  * In the SignUpActivity a new user can be created, authenticated and added to database of users.
+ * Authentication with firebase works here in the same way as in the LogInActivity.
+ * The Activity has input TextViews for first name, last name, email and password.
+ * For successful registration all fields must be completed.
  */
 public class SignUpActivity extends AppCompatActivity {
 
@@ -46,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         setTitle("Sign up");
 
-        //reference to views and listeners for error input checking
+        //reference to views and listeners for detecting errors
         firstname = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
         lastname = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
         emailInput = (TextInputEditText) findViewById(R.id.text_input_signUp_email);

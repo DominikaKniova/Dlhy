@@ -651,7 +651,6 @@ public class MyFirebaseDatabaseHandler {
      */
     public static void deleteDebt(String id_debt) {
         FirebaseDatabase.getInstance().getReference("debts").child(id_debt).removeValue();
-        //TODO sync notification
     }
 
     /**

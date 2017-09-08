@@ -28,9 +28,10 @@ import sk.dominika.dluhy.utilities.Utility;
 
 /**
  * The NewDebtActivity gives an user interface between the app and the database for creating
- * new debts. The user must complete all textviews but texviews for chosing date and time of
- * notification. And also a friend with whom the debt is created must be chosen. Any input errors
- * are notified by Alert Dialog. In the activity's toolbar there is a button for adding the debt.
+ * new debts. An user must complete all TextViews but TextViews for choosing date and time of
+ * notification, those two are not necessary. And also a friend with whom the debt is created
+ * must be chosen. Any input errors are notified by Alert Dialog. In the activity's toolbar
+ * there is a button for adding the debt.
  */
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
     private String idFriend;
@@ -74,7 +75,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
 
         //date picker
         TextInputEditText dateEditText = (TextInputEditText) findViewById(R.id.inputDate);
-        //disable input/keyboard for date textview
+        //disable input/keyboard for date TextView
         dateEditText.setFocusable(false);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +85,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
         });
         //time picker
         TextInputEditText timeEditText = (TextInputEditText) findViewById(R.id.inputTime);
-        //disable input/keyboard for time textview
+        //disable input/keyboard for time TextView
         timeEditText.setFocusable(false);
         timeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +147,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
-            //get reference to textviews
+            //get reference to TextView
             TextView tName = (TextView) findViewById(R.id.friendsPic);
             TextInputEditText tNote = (TextInputEditText) findViewById(R.id.textInput_note);
             TextInputEditText tSum = (TextInputEditText) findViewById(R.id.textInput_money);
@@ -160,7 +161,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
             } else {
 
                 if (tNote.getText().toString().equals("") || tSum.getText().toString().equals("")) {
-                    //if user hasn't completed note and sum text fields
+                    //if user hasn't completed note and sum TextViews
                     ShowAlertDialogNeutral.showAlertDialog("You must complete note and sum", NewDebtActivity.this);
                     item.setEnabled(true);
                 } else {
@@ -176,7 +177,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     }
 
     /**
-     * Expand expandable layout with date and time input fields.
+     * Expand expandable layout with date and time TextViews.
      */
     private void expandableButtonNotification() {
         ExpandableRelativeLayout expandableLayout =
@@ -216,7 +217,6 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
     @Override
     public void onClick(String id) {
         idFriend = id;
-        // get data (name of friend) from firebase database and set view
         TextView tvName = (TextView) findViewById(R.id.friendsPic);
         MyFirebaseDatabaseHandler.getFriendNameFromDatabase(id, tvName, NewDebtActivity.this);
     }

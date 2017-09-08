@@ -34,8 +34,6 @@ public class LogInActivity extends AppCompatActivity {
 
     public final String TAG = "firebase_log";
 
-    private FirebaseAuth mAuth;
-
     private TextInputEditText emailInput, passwordInput;
 
     @Override
@@ -45,10 +43,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
         setTitle("Log in");
 
-        // FirebaseAuth instance
-        mAuth = FirebaseAuth.getInstance();
-
-        //reference to views
+        //reference to views and listeners for detecting errors
         emailInput = (TextInputEditText) findViewById(R.id.textinput_logIn_email);
         passwordInput = (TextInputEditText) findViewById(R.id.textinput_logIn_password);
         emailInput.addTextChangedListener(new TextWatcher() {
@@ -87,6 +82,7 @@ public class LogInActivity extends AppCompatActivity {
 
             }
         });
+
         //button for signing up/registration
         Button signIn = (Button) findViewById(R.id.button_signUp);
         signIn.setOnClickListener(new View.OnClickListener(){
@@ -95,6 +91,7 @@ public class LogInActivity extends AppCompatActivity {
                 toSignUpActivity();
             }
         });
+
         //button for login in. Starts MyProfileActivity if authentication was successful
         final Button toMyProfile = (Button) findViewById(R.id.button_logIn);
         toMyProfile.setOnClickListener(new View.OnClickListener() {
@@ -136,8 +133,8 @@ public class LogInActivity extends AppCompatActivity {
     /**
      * Validates email and password and if the authentication is successful, then log the user in
      * and start MyProfileActivity.
-     * @param email Entered email in textview.
-     * @param password Entered password in textview.
+     * @param email Entered email in TextView.
+     * @param password Entered password in TextView.
      */
     private void logIn(String email, String password) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
@@ -190,7 +187,9 @@ public class LogInActivity extends AppCompatActivity {
         startActivity(myProfileActivity);
     }
 
-    //When back button pressed, do nothing.
+    /**
+     * When back button pressed, do nothing.
+     */
     @Override
     public void onBackPressed() {
     }

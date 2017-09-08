@@ -68,8 +68,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     /**
      * Populate data into the item through holder.
-     *
-     * @param holder
      * @param position Position of the clicked item (friend) in the ArrayList.
      */
     @Override

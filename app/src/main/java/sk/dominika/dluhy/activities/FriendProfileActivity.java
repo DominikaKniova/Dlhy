@@ -23,8 +23,8 @@ import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
  * The FriendProfileActivity is showing profile of a concrete friend based on his id that is sent through
  * Intent from previous activity, from which this activity is called.
  * After the activity has started, the friend with the id is found in database and
- * views are initialized with his name, overall sum of all debts created with him and the recyclerview,
- * which is a list of the debts, is set up.
+ * profile views are initialized with his name, overall sum of all debts created with him and
+ * the RecyclerView, which is a list of the debts, is set up.
  * There is a floating button which starts the NewDebtActivity and simultaneously sends the id of the
  * friend through Intent to initialize the chosen friend for creating a debt in that activity.
  * The activity has menu in toolbar containing of a button for deleting the friend with all the debts
@@ -61,7 +61,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //get data (id of friend) from previous activity
+        //get data (id of the friend) from previous activity
         Intent intent = getIntent();
         id_friend = intent.getStringExtra("id");
 
@@ -74,7 +74,8 @@ public class FriendProfileActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         //set correct profile views for the person
-        MyFirebaseDatabaseHandler.setFriendsProfileViews(id_friend, name, sum, collToolbar, appBarLayout, FriendProfileActivity.this);
+        MyFirebaseDatabaseHandler.setFriendsProfileViews(id_friend, name, sum, collToolbar,
+                appBarLayout, FriendProfileActivity.this);
     }
 
     /**
@@ -116,7 +117,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Add new debt from friend's profile.
+     * Add a new debt from friend's profile.
      * Method starts NewDebtActivity and sends to it the id of the friend.
      */
     private void toNewDebtActivityWithName() {
@@ -126,7 +127,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Get debts from firebase database, store them in an arraylist and then show them in recycleview.
+     * Get debts from firebase database and show them in RecycleView.
      * While data from database are loading, show loading spinner.
      */
     private void getDebtsAndShowRecycleView() {

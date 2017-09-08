@@ -35,8 +35,6 @@ import sk.dominika.dluhy.notifications.MyNotificationManager;
  */
 public class MyProfileActivity extends AppCompatActivity implements DialogListener {
 
-    private final String TAG = "signed/logged";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +45,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //a floating button for adding new debt from my profile
+        //set action for floating button which adds new debt
         FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_newDebt);
         floatingButton_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +103,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     }
 
     /**
-     * Show dialog with list of user's friends.
+     * Show dialog with a list of user's friends.
      */
     private void showDialogFriends() {
         DialogFragment newDialog = new DialogFriends();
@@ -114,7 +112,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
 
     /**
      * Menu handler. Each item in the activity menu starts an activity.
-     * @param item Item that was pressed in menu.
+     * @param item Item that was pressed in the menu.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -160,7 +158,8 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     }
 
     /**
-     * Get debts from firebase database, store them in an arraylist and then show them in recycleview.
+     * Get debts from firebase database, store them in an ArrayList and then show
+     * them in RecyclerView.
      * While data from database are loading, show loading spinner.
      */
     private void getDebtsAndSetRecyclerView() {

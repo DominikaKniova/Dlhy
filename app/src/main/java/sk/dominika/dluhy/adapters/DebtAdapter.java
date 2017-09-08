@@ -63,7 +63,6 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
 
     /**
      * Populate data into the item through holder.
-     * @param holder
      * @param position Position of the clicked item in the ArrayList.
      */
     @Override
@@ -84,7 +83,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
             holder.namesTextView.setTextColor(ContextCompat.getColor(memberContext, R.color.green_sum));
         }
 
-        //check if debt has a notification, if yes then involve it in the item
+        //check if the debt has a notification, if yes then involve it in the item
         if (!debt.getDateOfAlert().equals("")) {
             holder.notificationTextView.setVisibility(View.VISIBLE);
             holder.notificationTextView.setText(debt.getDateOfAlert() + ", " + debt.getTimeOfAlert());

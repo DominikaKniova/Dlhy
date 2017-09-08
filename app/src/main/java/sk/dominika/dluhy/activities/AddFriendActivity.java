@@ -41,7 +41,7 @@ public class AddFriendActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         setTitle("Add Friend");
 
-        //get reference to email textview
+        //get reference to email TextView
         email = (TextInputEditText) findViewById(R.id.textInput_add_person_mail);
         //add text listener to check if input is correct
         email.addTextChangedListener(new TextWatcher() {
@@ -76,7 +76,7 @@ public class AddFriendActivity extends AppCompatActivity {
         return true;
     }
     /**
-     * Menu handler. Menu contains of button for adding a new friend.
+     * Menu handler. Menu contains of a button for adding a new friend.
      * @param item Button clicked.
      */
     @Override
@@ -84,16 +84,17 @@ public class AddFriendActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.check) {
             item.setEnabled(false);
 
-            //if user hasn't completed email text field
             if (email.getText().toString().equals("")){
+                //if user hasn't completed email text field
                 Toast.makeText(AddFriendActivity.this, R.string.uncompleted_fields, Toast.LENGTH_SHORT).show();
                 item.setEnabled(true);
                 email.setError("Email is required");
             }
-            //if email was completed
             else {
+                //if email was completed
                 //check if user is not adding himself
                 if (!email.getText().toString().equals(CurrentUser.UserCurrent.email)) {
+                    //check if email belongs to any user in database and add
                     MyFirebaseDatabaseHandler.checkIfUserAndAdd(item, email, AddFriendActivity.this);
                 }
                 else {
