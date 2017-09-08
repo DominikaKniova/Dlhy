@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -167,9 +168,11 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerViewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        //layout for swiping to refresh RecyclerView
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         //load
         MyFirebaseDatabaseHandler.loadMyDebtsRecyclerView(spinner, recyclerViewDebts,
-                MyProfileActivity.this);
+                MyProfileActivity.this, swipeRefreshLayout);
     }
 
     /**

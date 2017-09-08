@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -402,7 +403,8 @@ public class MyFirebaseDatabaseHandler {
     public static void loadDebtsWithFriendRecyclerView(final String id_friend,
                                                        final ProgressBar spinner,
                                                        final RecyclerView recyclerView,
-                                                       final Activity activity) {
+                                                       final Activity activity,
+                                                       final SwipeRefreshLayout swipeRefreshLayout) {
         //get only the debts created with the friend from database
         FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -416,13 +418,20 @@ public class MyFirebaseDatabaseHandler {
                     }
                 }
                 //set up recycle view from the arraylist of the debts, and its adapter
-                DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
+                final DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
                 //data is loaded, so the loading spinner can be hidden
                 spinner.setVisibility(View.GONE);
                 recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
                 adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        adapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
 
             @Override
@@ -436,10 +445,12 @@ public class MyFirebaseDatabaseHandler {
      * @param spinner      (View) loading spinner.
      * @param recyclerView View for showing list of debts.
      * @param activity     An activity where the recyclerView is shown.
+     * @param swipeRefreshLayout Set refresh listener on swipe.
      */
     public static void loadMyDebtsRecyclerView(final ProgressBar spinner,
                                                final RecyclerView recyclerView,
-                                               final Activity activity) {
+                                               final Activity activity,
+                                               final SwipeRefreshLayout swipeRefreshLayout) {
         //get debts from database
         FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -455,12 +466,19 @@ public class MyFirebaseDatabaseHandler {
                     }
                 }
                 //set up recycle view from the ArrayList of the debts, and its adapter
-                DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
+                final DebtAdapter adapter = new DebtAdapter(activity.getBaseContext(), listDebts);
                 recyclerView.addItemDecoration(new DividerDecoration(activity.getBaseContext()));
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
                 spinner.setVisibility(View.GONE);
                 adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        adapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
 
             @Override

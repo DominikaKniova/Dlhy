@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -135,8 +136,10 @@ public class FriendProfileActivity extends AppCompatActivity {
         final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_viewDebts);
+        //layout for swiping to refresh RecyclerView
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         //load
         MyFirebaseDatabaseHandler.loadDebtsWithFriendRecyclerView(id_friend, spinner,
-                recyclerView, FriendProfileActivity.this);
+                recyclerView, FriendProfileActivity.this, swipeRefreshLayout);
     }
 }
