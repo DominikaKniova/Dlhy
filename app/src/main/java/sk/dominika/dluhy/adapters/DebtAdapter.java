@@ -29,13 +29,13 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.ViewHolder> {
      * It is used to cache the views within the item layout for fast access.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView sum_noteTextView;
-        public ImageView menuImageView;
-        public TextView namesTextView;
-        public TextView notificationTextView;
+        private TextView sum_noteTextView;
+        private ImageView menuImageView;
+        private TextView namesTextView;
+        private TextView notificationTextView;
 
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             sum_noteTextView = (TextView) itemView.findViewById(R.id.dialog_debt_sum_note);
             menuImageView = (ImageView) itemView.findViewById(R.id.dialog_debt_menu);

@@ -36,6 +36,9 @@ import sk.dominika.dluhy.notifications.MyNotificationManager;
  */
 public class MyProfileActivity extends AppCompatActivity implements DialogListener {
 
+    public final String ID = "id";
+    public final String FRIENDS = "friends";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +111,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
      */
     private void showDialogFriends() {
         DialogFragment newDialog = new DialogFriends();
-        newDialog.show(getFragmentManager(), "friends");
+        newDialog.show(getFragmentManager(), FRIENDS);
     }
 
     /**
@@ -154,7 +157,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
     public void onClick(String id) {
         Intent intent = new Intent(this, FriendProfileActivity.class);
         //add data to intent
-        intent.putExtra("id", id);
+        intent.putExtra(ID, id);
         startActivity(intent);
     }
 

@@ -28,11 +28,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
      * It is used to cache the views within the item layout for fast access.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView;
-        public TextView idTextView;
-        public ImageView icon;
+        private TextView nameTextView;
+        private TextView idTextView;
+        private ImageView icon;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.friend_name);
             idTextView = (TextView) itemView.findViewById(R.id.id_friend);

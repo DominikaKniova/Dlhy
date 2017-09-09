@@ -2,15 +2,16 @@ package sk.dominika.dluhy.activities;
 
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,11 +37,9 @@ import sk.dominika.dluhy.utilities.Utility;
  */
 public class SignUpActivity extends AppCompatActivity {
 
-    public final String TAG = "firebase_registration";
-
     private User user;
 
-    private TextInputEditText firstname, lastname, emailInput, passwordInput;
+    private TextInputEditText firstName, lastName, emailInput, passwordInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +49,22 @@ public class SignUpActivity extends AppCompatActivity {
         setTitle("Sign up");
 
         //reference to views and listeners for detecting errors
-        firstname = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
-        lastname = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
+        firstName = (TextInputEditText) findViewById(R.id.text_input_signUp_firstname);
+        lastName = (TextInputEditText) findViewById(R.id.text_input_signUp_lastname);
         emailInput = (TextInputEditText) findViewById(R.id.text_input_signUp_email);
         passwordInput = (TextInputEditText) findViewById(R.id.text_input_signUp_password);
 
-        firstname.addTextChangedListener(new TextWatcher() {
+        firstName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (firstname.getText().toString().equals("")){
-                    firstname.setError("First name is required");
+                if (firstName.getText().toString().equals("")) {
+                    firstName.setError(Resources.getSystem().getString(R.string.firstname_required));
                 }
                 else {
-                    firstname.setError(null);
+                    firstName.setError(null);
                 }
             }
             @Override
@@ -73,17 +72,17 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        lastname.addTextChangedListener(new TextWatcher() {
+        lastName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (lastname.getText().toString().equals("")){
-                    lastname.setError("Last name is required");
+                if (lastName.getText().toString().equals("")) {
+                    lastName.setError(Resources.getSystem().getString(R.string.lastname_required));
                 }
                 else {
-                    lastname.setError(null);
+                    lastName.setError(null);
                 }
             }
             @Override
@@ -98,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (emailInput.getText().toString().equals("")){
-                    emailInput.setError("Email is required");
+                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
                 }
                 else {
                     emailInput.setError(null);
@@ -116,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (passwordInput.getText().toString().equals("")){
-                    passwordInput.setError("Password is required");
+                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
                 }
                 else {
                     passwordInput.setError(null);
@@ -136,22 +135,22 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 newAccountCreated.setEnabled(false);
 
-                if (firstname.getText().toString().equals("") ||
-                        lastname.getText().toString().equals("") ||
+                if (firstName.getText().toString().equals("") ||
+                        lastName.getText().toString().equals("") ||
                         emailInput.getText().toString().equals("") ||
                         passwordInput.getText().toString().equals("")) {
                     //if any text field was not completed, display error messages
                     ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", SignUpActivity.this);
-                    firstname.setError("First name is required");
-                    lastname.setError("Last name is required");
-                    emailInput.setError("Email is required");
-                    passwordInput.setError("Password is required");
+                    firstName.setError(Resources.getSystem().getString(R.string.firstname_required));
+                    lastName.setError(Resources.getSystem().getString(R.string.lastname_required));
+                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
+                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
                     newAccountCreated.setEnabled(true);
                 }
                 else {
                     //all input fields were completed, create an user
-                    user = new User("", firstname.getText().toString(),
-                            lastname.getText().toString(), emailInput.getText().toString());
+                    user = new User("", firstName.getText().toString(),
+                            lastName.getText().toString(), emailInput.getText().toString());
                     //set current user
                     CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
                     createUser(user.getEmail(), passwordInput.getText().toString());
@@ -180,17 +179,20 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            //get his new id
                             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                            String id = currentUser.getUid();
-                            CurrentUser.setId(id);
-                            //set id to the user object and to CurrentUser.UserCurrent static class
-                            user.setId(id);
-                            //add user to database
-                            addNewUser(user);
-                            Log.d(TAG, "user successfully created and added to database ");
-                            //start his profile activity
-                            toMyProfileActivity();
+                            if (currentUser != null) {
+                                //get his new id
+                                String id = currentUser.getUid();
+                                CurrentUser.setId(id);
+                                //set id to the user object and to CurrentUser.UserCurrent static class
+                                user.setId(id);
+                                //add user to database
+                                addNewUser(user);
+                                //start his profile activity
+                                toMyProfileActivity();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, R.string.sign_again, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else {
                             try {
@@ -206,7 +208,6 @@ public class SignUpActivity extends AppCompatActivity {
                                 emailInput.setError(getString(R.string.error_user_exists));
                                 emailInput.requestFocus();
                             } catch(Exception e) {
-                                Log.e(TAG, e.getMessage());
                                 passwordInput.setError(getString(R.string.error_weak_password));
                                 passwordInput.requestFocus();
                             }

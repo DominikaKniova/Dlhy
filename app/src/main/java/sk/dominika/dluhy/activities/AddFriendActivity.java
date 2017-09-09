@@ -108,12 +108,4 @@ public class AddFriendActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    /**
-     * When back button pressed then return to MyProfileActivity
-     */
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
 }

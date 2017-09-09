@@ -32,6 +32,12 @@
     <!--ACTIVITY MESSAGES-->
     <string name="dialog_unsuccessful_registration">Registration was unsuccessful. Check if enetered datas are correct</string>
     <string name="ok">OK</string>
+    <string name="email_required">Email is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="firstname_required">First name is required</string>
+    <string name="lastname_required">Last name is required</string>
+    <string name="log_again">Try to log in again</string>
+    <string name="sign_again">Try to sign up again</string>
     <string name="incorrect_email">The email address is badly formatted</string>
     <string name="error_weak_password">The password must have at least 6 characters</string>
     <string name="error_invalid_email">The email is invalid</string>
