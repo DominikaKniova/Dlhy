@@ -137,9 +137,8 @@ public class FriendProfileActivity extends AppCompatActivity {
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_viewDebts);
         //layout for swiping to refresh RecyclerView
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         //load
         MyFirebaseDatabaseHandler.loadDebtsWithFriendRecyclerView(id_friend, spinner,
-                recyclerView, FriendProfileActivity.this, swipeRefreshLayout);
+                recyclerView, FriendProfileActivity.this);
     }
 }

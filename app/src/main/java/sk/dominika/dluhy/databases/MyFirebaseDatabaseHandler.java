@@ -403,10 +403,9 @@ public class MyFirebaseDatabaseHandler {
     public static void loadDebtsWithFriendRecyclerView(final String id_friend,
                                                        final ProgressBar spinner,
                                                        final RecyclerView recyclerView,
-                                                       final Activity activity,
-                                                       final SwipeRefreshLayout swipeRefreshLayout) {
+                                                       final Activity activity) {
         //get only the debts created with the friend from database
-        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("debts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Debt> listDebts = new ArrayList<Debt>();
@@ -425,13 +424,6 @@ public class MyFirebaseDatabaseHandler {
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
                 adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        adapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
             }
 
             @Override
@@ -445,14 +437,12 @@ public class MyFirebaseDatabaseHandler {
      * @param spinner      (View) loading spinner.
      * @param recyclerView View for showing list of debts.
      * @param activity     An activity where the recyclerView is shown.
-     * @param swipeRefreshLayout Set refresh listener on swipe.
      */
     public static void loadMyDebtsRecyclerView(final ProgressBar spinner,
                                                final RecyclerView recyclerView,
-                                               final Activity activity,
-                                               final SwipeRefreshLayout swipeRefreshLayout) {
+                                               final Activity activity) {
         //get debts from database
-        FirebaseDatabase.getInstance().getReference("debts").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("debts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //loop through all debts in the database
@@ -472,13 +462,6 @@ public class MyFirebaseDatabaseHandler {
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity.getBaseContext()));
                 spinner.setVisibility(View.GONE);
                 adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        adapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
             }
 
             @Override

@@ -169,10 +169,9 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         spinner.setVisibility(View.VISIBLE);
         RecyclerView recyclerViewDebts = (RecyclerView) findViewById(R.id.recycler_viewDebts);
         //layout for swiping to refresh RecyclerView
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         //load
         MyFirebaseDatabaseHandler.loadMyDebtsRecyclerView(spinner, recyclerViewDebts,
-                MyProfileActivity.this, swipeRefreshLayout);
+                MyProfileActivity.this);
     }
 
     /**
