@@ -35,6 +35,8 @@ import sk.dominika.dluhy.utilities.Utility;
  */
 public class NewDebtActivity extends AppCompatActivity implements DialogListener {
     private String idFriend;
+    public final String ID = "id";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,8 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
          YES - NewDebtActivity is called from FriendProfileActivity
          NO - NewDebtActivity is called from MyProfileActivity*/
         Intent intent = getIntent();
-        if (intent.getStringExtra("id") != null) {
-            onClick(intent.getStringExtra("id"));
+        if (intent.getStringExtra(ID) != null) {
+            onClick(intent.getStringExtra(ID));
         }
 
         //expand date/time pickers
@@ -205,8 +207,7 @@ public class NewDebtActivity extends AppCompatActivity implements DialogListener
      * Show dialog with list of user's friends.
      */
     private void showDialogFriends() {
-        DialogFragment newDialog = new DialogFriends();
-        newDialog.show(getFragmentManager(), "friends");
+        MyFirebaseDatabaseHandler.loadFriendsFromDatabase(NewDebtActivity.this);
     }
 
     /**

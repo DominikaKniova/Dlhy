@@ -1,5 +1,6 @@
 package sk.dominika.dluhy.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -57,7 +58,7 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (emailInput.getText().toString().equals("")){
-                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
+                    emailInput.setError(getBaseContext().getResources().getString(R.string.email_required));
                 }
             }
 
@@ -75,7 +76,7 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (passwordInput.getText().toString().equals("")){
-                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
+                    passwordInput.setError(getBaseContext().getResources().getString(R.string.password_required));
                 }
             }
 
@@ -104,8 +105,8 @@ public class LogInActivity extends AppCompatActivity {
                     //inputs were completed incorrectly
                     ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", LogInActivity.this);
                     toMyProfile.setEnabled(true);
-                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
-                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
+                    emailInput.setError(getBaseContext().getResources().getString(R.string.email_required));
+                    passwordInput.setError(getBaseContext().getResources().getString(R.string.password_required));
                 }
                 else {
                     //correctly completed inputs

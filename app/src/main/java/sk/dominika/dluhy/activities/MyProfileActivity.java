@@ -14,11 +14,16 @@ import android.view.View;
 import android.view.MenuInflater;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
+import java.io.Serializable;
+import java.util.List;
+
+import sk.dominika.dluhy.database_models.Friend;
 import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.DialogFriends;
@@ -110,8 +115,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
      * Show dialog with a list of user's friends.
      */
     private void showDialogFriends() {
-        DialogFragment newDialog = new DialogFriends();
-        newDialog.show(getFragmentManager(), FRIENDS);
+        MyFirebaseDatabaseHandler.loadFriendsFromDatabase(MyProfileActivity.this);
     }
 
     /**

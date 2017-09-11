@@ -61,7 +61,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (firstName.getText().toString().equals("")) {
-                    firstName.setError(Resources.getSystem().getString(R.string.firstname_required));
+                    firstName.setError(getBaseContext().getResources().getString(R.string.firstname_required));
                 }
                 else {
                     firstName.setError(null);
@@ -79,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (lastName.getText().toString().equals("")) {
-                    lastName.setError(Resources.getSystem().getString(R.string.lastname_required));
+                    lastName.setError(getBaseContext().getResources().getString(R.string.lastname_required));
                 }
                 else {
                     lastName.setError(null);
@@ -97,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (emailInput.getText().toString().equals("")){
-                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
+                    emailInput.setError(getBaseContext().getResources().getString(R.string.email_required));
                 }
                 else {
                     emailInput.setError(null);
@@ -115,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (passwordInput.getText().toString().equals("")){
-                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
+                    passwordInput.setError(getBaseContext().getResources().getString(R.string.password_required));
                 }
                 else {
                     passwordInput.setError(null);
@@ -141,10 +141,10 @@ public class SignUpActivity extends AppCompatActivity {
                         passwordInput.getText().toString().equals("")) {
                     //if any text field was not completed, display error messages
                     ShowAlertDialogNeutral.showAlertDialog("You must complete text fields", SignUpActivity.this);
-                    firstName.setError(Resources.getSystem().getString(R.string.firstname_required));
-                    lastName.setError(Resources.getSystem().getString(R.string.lastname_required));
-                    emailInput.setError(Resources.getSystem().getString(R.string.email_required));
-                    passwordInput.setError(Resources.getSystem().getString(R.string.password_required));
+                    firstName.setError(getBaseContext().getResources().getString(R.string.firstname_required));
+                    lastName.setError(getBaseContext().getResources().getString(R.string.lastname_required));
+                    emailInput.setError(getBaseContext().getResources().getString(R.string.email_required));
+                    passwordInput.setError(getBaseContext().getResources().getString(R.string.password_required));
                     newAccountCreated.setEnabled(true);
                 }
                 else {

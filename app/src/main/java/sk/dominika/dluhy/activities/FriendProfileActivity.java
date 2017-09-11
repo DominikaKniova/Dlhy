@@ -34,6 +34,8 @@ import sk.dominika.dluhy.dialogs.ShowAlertDialogDeleteFriend;
 public class FriendProfileActivity extends AppCompatActivity {
 
     private String id_friend;
+    public final String ID = "id";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         super.onResume();
         //get data (id of the friend) from previous activity
         Intent intent = getIntent();
-        id_friend = intent.getStringExtra("id");
+        id_friend = intent.getStringExtra(ID);
 
         getDebtsAndShowRecycleView();
 

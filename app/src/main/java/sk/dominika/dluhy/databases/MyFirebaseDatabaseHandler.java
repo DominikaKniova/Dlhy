@@ -2,8 +2,10 @@ package sk.dominika.dluhy.databases;
 
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,6 +51,8 @@ import sk.dominika.dluhy.notifications.MyNotificationManager;
 public class MyFirebaseDatabaseHandler {
 
     private static String TAG = "MyFirebaseHandler";
+    public static final String FRIENDS = "friends";
+
 
     /**
      * Create notifications from my debts.
@@ -472,29 +477,36 @@ public class MyFirebaseDatabaseHandler {
 
     /**
      * Get my friends from database and load them to recyclerView.
+     * If user has no friends than do not show new dialog, only show toast.
+     * If user has friends, put list of them to bundle a send it to dialog.
+     *
+     * @param activity Activity where the recycler view or toast will show.
      */
-    public static void loadFriendsRecyclerView(final RecyclerView recyclerView,
-                                               final DialogListener dialogListener,
-                                               final DialogFriends dialogFriends,
-                                               final View view) {
+    public static void loadFriendsFromDatabase(final Activity activity) {
         FirebaseDatabase.getInstance().getReference("friends")
                 .orderByChild("fromUserId")
                 .equalTo(CurrentUser.UserCurrent.id)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<Friend> listFriends = new ArrayList<Friend>();
+                        List<Friend> friendList = new ArrayList<Friend>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Relationship value = snapshot.getValue(Relationship.class);
                             Friend friend = new Friend(value.getToUserName(), value.getToUserId());
-                            listFriends.add(friend);
+                            friendList.add(friend);
                         }
-                        FriendAdapter adapter = new FriendAdapter(view.getContext(), listFriends,
-                                dialogListener, dialogFriends);
-                        recyclerView.addItemDecoration(new DividerDecoration(view.getContext()));
-                        recyclerView.setAdapter(adapter);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                        adapter.notifyDataSetChanged();
+                        if (friendList.size() != 0) {
+                            //set arguments for a new dialog
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(FRIENDS, (Serializable) friendList);
+                            DialogFragment newDialog = new DialogFriends();
+                            newDialog.setArguments(bundle);
+                            newDialog.show(activity.getFragmentManager(), FRIENDS);
+                        } else {
+                            //user has no friends
+                            Toast.makeText(activity, R.string.no_friends, Toast.LENGTH_SHORT)
+                                    .show();
+                        }
                     }
 
                     @Override
