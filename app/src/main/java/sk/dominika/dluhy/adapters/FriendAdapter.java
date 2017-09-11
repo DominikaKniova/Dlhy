@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,6 +23,8 @@ import sk.dominika.dluhy.listeners.DialogListener;
  */
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
+    private final String ID = "id";
+
     /**
      * Provide a direct reference to each of the views within a data item.
      * Item is one row in the list of friends. (= one friend).
@@ -31,6 +34,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         private TextView nameTextView;
         private TextView idTextView;
         private ImageView icon;
+        private RelativeLayout itemFriend;
 
         private ViewHolder(View itemView) {
             super(itemView);
@@ -38,6 +42,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             idTextView = (TextView) itemView.findViewById(R.id.id_friend);
             idTextView.setVisibility(View.INVISIBLE);
             icon = (ImageView) itemView.findViewById(R.id.friend_profile_icon);
+            itemFriend = (RelativeLayout) itemView.findViewById(R.id.item_friend);
         }
     }
 
@@ -89,8 +94,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             }
         });
 
-        //name TextView clicker for choosing friend in the NewDebtActivity
-        textView.setOnClickListener(new View.OnClickListener() {
+        //clicker for choosing friend in the NewDebtActivity
+        RelativeLayout friendItem = holder.itemFriend;
+        friendItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 memberListener.onClick(memberFriends.get(holder.getAdapterPosition()).getId());
@@ -114,7 +120,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     private void newActivity_profileFriend(String id) {
         Intent intent = new Intent(memberContext, FriendProfileActivity.class);
         //add data to intent
-        intent.putExtra("id", id);
+        intent.putExtra(ID, id);
         memberContext.startActivity(intent);
     }
 }
