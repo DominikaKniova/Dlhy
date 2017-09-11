@@ -43,6 +43,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
 
     public final String ID = "id";
     public final String FRIENDS = "friends";
+    public int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,8 +184,18 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
 
     /**
      * When back button pressed, do nothing.
+     * When pressed twice, leave the app.
      */
     @Override
     public void onBackPressed() {
+        counter++;
+        if (counter == 1) {
+            Toast.makeText(MyProfileActivity.this, R.string.back_pressed_more_times, Toast.LENGTH_SHORT)
+                    .show();
+        }
+        if (counter >= 2) {
+            this.finishAffinity();
+            counter = 0;
+        }
     }
 }

@@ -39,6 +39,8 @@ public class LogInActivity extends AppCompatActivity {
 
     private TextInputEditText emailInput, passwordInput;
 
+    private int counter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,8 +196,18 @@ public class LogInActivity extends AppCompatActivity {
 
     /**
      * When back button pressed, do nothing.
+     * When pressed twice, leave the app.
      */
     @Override
     public void onBackPressed() {
+        counter++;
+        if (counter == 1) {
+            Toast.makeText(LogInActivity.this, R.string.back_pressed_more_times, Toast.LENGTH_SHORT)
+                    .show();
+        }
+        if (counter >= 2) {
+            this.finishAffinity();
+            counter = 0;
+        }
     }
 }

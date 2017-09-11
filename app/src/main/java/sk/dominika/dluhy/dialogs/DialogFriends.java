@@ -36,6 +36,8 @@ import sk.dominika.dluhy.listeners.DialogListener;
 public  class DialogFriends extends DialogFragment {
 
     private DialogListener mListener;
+    public final String FRIENDS = "friends";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,11 +61,17 @@ public  class DialogFriends extends DialogFragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_list_friends, container, false);
-
-        //get my friends from database and create RecyclerView from them
         RecyclerView recyclerViewFriends = (RecyclerView) view.findViewById(R.id.recycler_viewFriends);
-        MyFirebaseDatabaseHandler.loadFriendsRecyclerView(recyclerViewFriends,
-                mListener, DialogFriends.this, view);
+        //get my friends list from bundle
+        Bundle bundle = this.getArguments();
+        List<Friend> listFriends = (List<Friend>) bundle.getSerializable(FRIENDS);
+        //create RecyclerView from the list
+        FriendAdapter adapter = new FriendAdapter(view.getContext(), listFriends,
+                mListener, DialogFriends.this);
+        recyclerViewFriends.addItemDecoration(new DividerDecoration(view.getContext()));
+        recyclerViewFriends.setAdapter(adapter);
+        recyclerViewFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        adapter.notifyDataSetChanged();
         return view;
     }
 }
