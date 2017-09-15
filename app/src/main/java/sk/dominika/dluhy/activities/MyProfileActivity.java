@@ -1,17 +1,16 @@
 package sk.dominika.dluhy.activities;
 
-import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.MenuInflater;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +18,11 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-
-import java.io.Serializable;
-import java.util.List;
-
-import sk.dominika.dluhy.database_models.Friend;
-import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
-import sk.dominika.dluhy.database_models.CurrentUser;
-import sk.dominika.dluhy.dialogs.DialogFriends;
 import sk.dominika.dluhy.R;
+import sk.dominika.dluhy.database_models.CurrentUser;
+import sk.dominika.dluhy.databases.MyFirebaseDatabaseHandler;
 import sk.dominika.dluhy.listeners.DialogListener;
+import sk.dominika.dluhy.network.NetworkChangeReceiver;
 import sk.dominika.dluhy.notifications.MyNotificationManager;
 
 /**
@@ -55,6 +49,7 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+
         //set action for floating button which adds new debt
         FloatingActionButton floatingButton_add = (FloatingActionButton) findViewById(R.id.floatingButton_newDebt);
         floatingButton_add.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +58,11 @@ public class MyProfileActivity extends AppCompatActivity implements DialogListen
                 toNewDebtActivity();
             }
         });
+
+        NetworkChangeReceiver receiver = new NetworkChangeReceiver();
+        final IntentFilter filters = new IntentFilter();
+        filters.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        MyProfileActivity.this.registerReceiver(receiver, filters);
     }
 
     @Override

@@ -51,6 +51,9 @@
     <string name="uncompleted_fields">You must complete input fields</string>
     <string name="no_friends">You have no friends</string>
     <string name="back_pressed_more_times">If you press back again you will exit the app</string>
+    <string name="no_connection">You are not connected to wifi, data will not be loaded</string>
+    <string name="connecting">Connecting to wifi</string>
+    <string name="log_no_connection">You cannot sign in without wifi connection</string>
 
     <!--NOTIFICATIONS-->
     <string name="title">Title</string>

@@ -27,6 +27,7 @@ import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.database_models.User;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
+import sk.dominika.dluhy.network.NetworkChangeReceiver;
 import sk.dominika.dluhy.utilities.Utility;
 
 /**
@@ -148,14 +149,22 @@ public class SignUpActivity extends AppCompatActivity {
                     newAccountCreated.setEnabled(true);
                 }
                 else {
-                    //all input fields were completed, create an user
-                    user = new User("", firstName.getText().toString(),
-                            lastName.getText().toString(), emailInput.getText().toString());
-                    //set current user
-                    CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
-                    createUser(user.getEmail(), passwordInput.getText().toString());
+                    if (NetworkChangeReceiver.isConnected(SignUpActivity.this)) {
+                        //all input fields were completed, create an user
+                        user = new User("", firstName.getText().toString(),
+                                lastName.getText().toString(), emailInput.getText().toString());
+                        //set current user
+                        CurrentUser.setData(user.getFirstname(), user.getLastname(), user.getEmail());
+                        createUser(user.getEmail(), passwordInput.getText().toString());
 
-                    newAccountCreated.setEnabled(true);
+                        newAccountCreated.setEnabled(true);
+                    } else {
+                        ShowAlertDialogNeutral.showAlertDialog(
+                                getBaseContext().getResources().getString(R.string.log_no_connection),
+                                SignUpActivity.this);
+                        newAccountCreated.setEnabled(true);
+                    }
+
                 }
             }
         });

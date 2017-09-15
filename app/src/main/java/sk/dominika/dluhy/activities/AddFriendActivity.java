@@ -88,7 +88,7 @@ public class AddFriendActivity extends AppCompatActivity {
                 //if user hasn't completed email text field
                 Toast.makeText(AddFriendActivity.this, R.string.uncompleted_fields, Toast.LENGTH_SHORT).show();
                 item.setEnabled(true);
-                email.setError("Email is required");
+                email.setError(getBaseContext().getResources().getString(R.string.email_required));
             }
             else {
                 //if email was completed
@@ -102,7 +102,7 @@ public class AddFriendActivity extends AppCompatActivity {
                     Toast.makeText(AddFriendActivity.this, R.string.adding_curUsers_email, Toast.LENGTH_SHORT).show();
                     item.setEnabled(true);
                     email.setText("");
-                    email.setError("Invalid email");
+                    email.setError(getBaseContext().getResources().getString(R.string.error_invalid_email));
                 }
             }
         }

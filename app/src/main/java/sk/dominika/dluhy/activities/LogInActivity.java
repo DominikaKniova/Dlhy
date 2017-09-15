@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import sk.dominika.dluhy.R;
 import sk.dominika.dluhy.database_models.CurrentUser;
 import sk.dominika.dluhy.dialogs.ShowAlertDialogNeutral;
+import sk.dominika.dluhy.network.NetworkChangeReceiver;
 import sk.dominika.dluhy.notifications.MyNotificationManager;
 import sk.dominika.dluhy.utilities.Utility;
 
@@ -112,9 +113,17 @@ public class LogInActivity extends AppCompatActivity {
                 }
                 else {
                     //correctly completed inputs
-                    //Log in
-                    toMyProfile.setEnabled(true);
-                    logIn(emailInput.getText().toString(), passwordInput.getText().toString());
+                    //Log in, only if connected to wifi
+                    if (NetworkChangeReceiver.isConnected(LogInActivity.this)) {
+                        toMyProfile.setEnabled(true);
+                        logIn(emailInput.getText().toString(), passwordInput.getText().toString());
+                    } else {
+                        ShowAlertDialogNeutral.showAlertDialog(
+                                getBaseContext().getResources().getString(R.string.log_no_connection),
+                                LogInActivity.this);
+                        toMyProfile.setEnabled(true);
+                    }
+
                 }
 
             }
